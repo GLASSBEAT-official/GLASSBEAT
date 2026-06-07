@@ -312,6 +312,11 @@ function updateBestScore(songId) {
 }
 
 document.getElementById("startButton").addEventListener("click", () => {
+
+ const se = new Audio("sounds/startsound.mp3");
+  se.volume = 0.8; // 音量調整（任意）
+  se.play();
+
    if (previewAudio) {
     previewAudio.pause();
     previewAudio = null;
@@ -623,6 +628,11 @@ function updatePartnerDisplay() {
         fullImg.classList.remove("canonEventGlow");
         canonGlowTimer = null;
       }, 1000);
+
+      const se = new Audio("sounds/canon_glow_start.mp3");
+      se.volume = 0.9;
+      se.play();
+      
     } else {
       fullImg.classList.remove("canonEventGlow");
     }
