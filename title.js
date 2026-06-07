@@ -39,16 +39,7 @@ window.addEventListener("load", unlockAudio);
 
 
 function playTitleBGM() {
-  // ミュート状態で再生開始（自動再生が許可される）
-  titleBGM.muted = true;
-
-  titleBGM.play().then(() => {
-    // 少し待ってから音を戻す
-    setTimeout(() => {
-      titleBGM.muted = false;
-    }, 100);
-  }).catch(() => {
-    // それでもダメならクリックで再生
+  titleBGM.play().catch(() => {
     document.addEventListener("click", () => {
       titleBGM.play();
     }, { once: true });

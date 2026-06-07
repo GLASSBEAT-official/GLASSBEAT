@@ -108,8 +108,8 @@ const hasFracture = song.info.charts.some(c => c.difficulty.toLowerCase() === "f
 if (currentDiffIsFracture && !hasFracture) {
   text.innerHTML = `
     <div class="songItemTitle">${shouldHideSongInfo ? "???" : song.info.title}</div>
-    <div class="songItemArtist">${shouldHideSongInfo ? "???" : song.info.artist}</div>
-  `;
+    <div class="songItemArtist" style="position: relative; top: 0px;">${shouldHideSongInfo ? "???" : song.info.artist}</div>
+    `;
 } else {
   const chart = song.info.charts[selectedDifficulty] || song.info.charts[0];
   const diffClass = "diff-" + (chart.difficulty || "basic").toLowerCase();
@@ -632,7 +632,7 @@ function updatePartnerDisplay() {
       const se = new Audio("sounds/canon_glow_start.mp3");
       se.volume = 0.9;
       se.play();
-      
+
     } else {
       fullImg.classList.remove("canonEventGlow");
     }

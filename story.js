@@ -831,7 +831,7 @@ async function showCurrentStep() {
   }
 
   setTimeout(() => {
-    location.href = "index.html?endingDemo=1";
+    location.href = "title.html?endingDemo=1";
   }, 900);
 
   return;
