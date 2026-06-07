@@ -334,7 +334,7 @@ document.getElementById("startButton").addEventListener("click", () => {
   });
 
   setTimeout(() => {
-    location.href = `index.html?song=${song.id}&difficulty=${selectedDifficulty}`;
+    location.href = `game.html?song=${song.id}&difficulty=${selectedDifficulty}`;
   }, 700);
 });
 

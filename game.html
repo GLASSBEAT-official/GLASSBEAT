@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Rhythm Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="style.css">
+
+  <link
+  rel="preconnect"
+  href="https://fonts.googleapis.com">
+
+<link
+  rel="preconnect"
+  href="https://fonts.gstatic.com"
+  crossorigin>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap"
+  rel="stylesheet">
+  
+</head>
+
+<body>
+
+  <div id="game">
+
+    <div class="lane" id="lane0">
+      <div class="flash"></div>
+    </div>
+
+    <div class="lane" id="lane1">
+      <div class="flash"></div>
+    </div>
+
+    <div class="lane" id="lane2">
+      <div class="flash"></div>
+    </div>
+
+    <div class="lane" id="lane3">
+      <div class="flash"></div>
+    </div>
+
+    <div class="lane" id="lane4">
+      <div class="flash"></div>
+    </div>
+
+    <div id="judgeline"></div>
+
+    <div id="cover"></div>
+
+    <h1 id="startText">
+  spaceを押してスタート
+</h1>
+    <div id="scoreArea">
+  <h2 id="score">0000000</h2>
+  <h2 id="rank">-</h2>
+</div>
+    <p id="fastLate"></p>
+    <h2 id="combo">0 Combo</h2>
+    <button id="pauseButton">⏸</button>
+
+    <div id="clearSplash">CLEAR!</div>
+    <div id="finishRing"></div>
+
+    <h1 id="fullCombo">FULL COMBO!!</h1>
+<h1 id="allPerfect">ALL PERFECT!!</h1>
+<h1 id="ultimatePerfect">ULTIMATE PERFECT!!!</h1>
+
+    <h1 id="failed">FAILED</h1>
+ 
+    <div id="lifeText">
+  LIFE
+</div>
+
+    <div id="lifeBar">
+    <div id="lifeFill"></div>
+    </div>
+
+  </div>
+
+  <div id="judgeCounterPanel">
+  <span class="judgeCounter yellow">PERFECT <b id="yellowPerfectCounter">0</b></span>
+  <span class="judgeCounter white">PERFECT <b id="whitePerfectCounter">0</b></span>
+  <span class="judgeCounter good">GOOD <b id="goodCounter">0</b></span>
+  <span class="judgeCounter miss">MISS <b id="missCounter">0</b></span>
+</div>
+
+  <h1 id="result"></h1>
+
+   <div id="songInfo">
+
+    <div id="songTitle"></div>
+
+    <div id="songArtist"></div>
+
+    <div id="songDifficulty"></div>
+
+  </div>
+  
+  <div id="resultScreen">
+
+  <div id="resultPartnerArea">
+  <img id="resultPartnerImage" src="images/partners/breaka_full.png" alt="">
+  </div>
+
+  <div id="profileArea">
+  <button id="partnerIconButton">
+    <img id="partnerIcon" src="images/partners/breaka_icon.png" alt="">
+  </button>
+
+  <div id="profilePanel">
+    <div id="profileName">Player</div>
+    <div>
+      <span id="rateGain"></span>
+      <span id="profileRate">RATE 0.0</span>
+    </div>
+  </div>
+
+</div>
+
+  <!-- 帯 -->
+  <div id="resultBanner">
+    <div id="resultBadge"></div>
+  </div>
+
+  <!-- メインエリア -->
+  <div id="resultMain">
+
+    <!-- 左半分 -->
+    <div id="resultLeft">
+
+      <div id="resultSongInfo">
+        <div id="resultTitle"></div>
+        <div id="resultArtist"></div>
+        <div id="resultDifficulty"></div>
+      </div>
+
+      <div id="resultScoreArea">
+        <div id="resultScore"></div>
+        <div id="resultRank"></div>
+      </div>
+
+      <div id="resultBestScore"></div>
+
+      <div id="resultJudge">
+        <div id="resultYellowPerfect"></div>
+        <div id="resultPerfect"></div>
+        <div id="resultGood"></div>
+        <div id="resultMiss"></div>
+      </div>
+
+      <div id="resultFastLate">
+        <div id="resultFast"></div>
+        <div id="resultLate"></div>
+      </div>
+
+      <div id="partnerExpNotify"></div>
+
+    </div>
+
+    <!-- 右半分 -->
+    <div id="resultRight">
+      <img id="resultJacket" src="" alt="jacket">
+    </div>
+
+  </div>
+  <div id="storyUnlockNotice"></div>
+
+  <!-- ボタン -->
+  <div id="resultButtons">
+    <button id="retryButton">RETRY</button>
+    <button id="selectButton">SELECT</button>
+  </div>
+  
+</div>
+
+</div>
+
+<div id="pauseScreen">
+  <button id="pauseRetry">RETRY</button>
+  <button id="pauseBack">BACK</button>
+  <button id="pauseContinue">CONTINUE</button>
+</div>
+
+<div id="fadeOverlay"></div>
+<div id="blackOverlay"></div>
+<div id="secretNoiseOverlay"></div>
+
+ <script src="script.js"></script>
+
+</body>
+
+<div id="playProfileArea">
+  <div id="playPartnerIconButton">
+    <img id="playPartnerIcon" src="images/partners/breaka_icon.png" alt="">
+  </div>
+
+  <div id="playProfilePanel">
+    <div id="playProfileName">Player</div>
+    <div id="playProfileRate">RATE 0.0</div>
+  </div>
+</div>
+
+</html>
