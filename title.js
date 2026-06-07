@@ -32,12 +32,19 @@ function applyTitleBackground() {
 }
 
 function playTitleBGM() {
-  titleBGM.play().catch(() => {
+  titleBGM.muted = true;
+  titleBGM.play().then(() => {
+    setTimeout(() => {
+      titleBGM.muted = false;
+    }, 100);
+  }).catch(() => {
+    // それでもダメならクリック待ち fallback
     document.addEventListener("click", () => {
       titleBGM.play();
     }, { once: true });
   });
 }
+
 
 function typeEndingText(text, onDone) {
   const el = document.getElementById("endingDemoText");
