@@ -119,7 +119,7 @@ function forceStartBoss() {
 
   setTimeout(() => {
     location.href =
-      `index.html?song=${BOSS_ID}&difficulty=${selectedDifficulty}&bossChallenge=1&autoStart=1`;
+      `game.html?song=${BOSS_ID}&difficulty=${selectedDifficulty}&bossChallenge=1&autoStart=1`;
   }, 2500);
 }
 

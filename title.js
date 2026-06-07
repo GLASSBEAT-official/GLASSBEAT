@@ -31,20 +31,29 @@ function applyTitleBackground() {
     `linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.48)), url("${bg}")`;
 }
 
+function unlockAudio() {
+  const silent = new Audio("sounds/silent.mp3"); // 無音ファイル
+  silent.play().catch(() => {});
+}
+window.addEventListener("load", unlockAudio);
+
+
 function playTitleBGM() {
+  // ミュート状態で再生開始（自動再生が許可される）
   titleBGM.muted = true;
+
   titleBGM.play().then(() => {
+    // 少し待ってから音を戻す
     setTimeout(() => {
       titleBGM.muted = false;
     }, 100);
   }).catch(() => {
-    // それでもダメならクリック待ち fallback
+    // それでもダメならクリックで再生
     document.addEventListener("click", () => {
       titleBGM.play();
     }, { once: true });
   });
 }
-
 
 function typeEndingText(text, onDone) {
   const el = document.getElementById("endingDemoText");

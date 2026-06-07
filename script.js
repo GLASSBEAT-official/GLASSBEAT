@@ -188,7 +188,7 @@ resultBGM.loop = true;
 
 // ---- ゲーム状態 ----
 let combo = 0;
-let life = 2000;
+let life = 5000;
 let score = 0;
 let missCount = 0;
 let goodCount = 0;
@@ -196,7 +196,7 @@ let yellowPerfectCount = 0;
 let perfectCount = 0;
 let fastCount = 0;
 let lateCount = 0;
-const maxLife = 2000;
+const maxLife = 5000;
 const keys = {};
 const notes = [];
 const measureLines = [];
