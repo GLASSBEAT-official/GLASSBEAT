@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>GLASSBEAT 初回設定</title>
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+  <div id="setupScreen" class="screen active">
+    <h1>GLASSBEATへようこそ。</h1>
+    <p>ユーザー名を入力してください</p>
+
+    <input id="usernameInput" type="text" maxlength="12" placeholder="ユーザー名">
+    <button id="nameNextButton">次へ</button>
+  </div>
+
+  <div id="tutorialScreen" class="screen">
+    <img id="tutorialImage" src="images/tutorial1.png" alt="">
+    <h2 id="tutorialTitle"></h2>
+    <p id="tutorialText"></p>
+
+    <div class="buttons">
+      <button id="prevButton">戻る</button>
+      <button id="nextButton">次へ</button>
+    </div>
+  </div>
+
+  <audio id="bgm" src="sounds/tutorial.mp3" loop></audio>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>

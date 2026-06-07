@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>GlassBeat Story</title>
+  <link rel="stylesheet" href="story.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="storyPage">
+  <aside id="chapterSide">
+    <h1>STORY</h1>
+
+    <button class="chapterButton selected" data-chapter="0">はじまりの歌</button>
+
+    <button id="storyBackButton">BACK</button>
+  </aside>
+
+  <main id="episodeSide">
+    <div id="chapterTitle">はじまりの歌</div>
+    <div id="episodeList"></div>
+    <div id="lockedStoryMessage"></div>
+  </main>
+</div>
+
+<div id="readingOverlay" class="hidden">
+ <img id="storyIntroImage" class="hidden" src="" alt="">
+  <div id="storyText"></div>
+  <button id="readingPrevButton">前のページへ</button>
+  <button id="readingBackButton">戻る</button>
+</div>
+
+<div id="storyIntroFade"></div>
+
+  <script src="story.js"></script>
+</body>
+</html>

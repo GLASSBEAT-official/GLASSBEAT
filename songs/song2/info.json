@@ -1,0 +1,6 @@
+{
+  "title": "星屑サラウンド",
+  "artist": "龍崎一",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 3,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 5, "file": "expert.txt" }]
+}

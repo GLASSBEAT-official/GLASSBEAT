@@ -1,0 +1,191 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  user-select: none;
+}
+
+#titleScreen {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+#titleLogo {
+  width: min(680px, 82vw);
+  opacity: 0;
+  transform: translateY(18px) scale(1.6);
+  filter: drop-shadow(0 0 24px rgba(120, 220, 255, 0.75));
+  animation: logoFadeIn 1.4s ease forwards;
+}
+
+#titleStartText {
+  position: fixed;
+  left: 50%;
+  bottom: 150px;
+  transform: translateX(-50%);
+  color: #66ddff;
+  font-size: 30px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  opacity: 0;
+  font-family: 'Orbitron', sans-serif;
+  animation: startTextFade 1.2s ease forwards 1.1s,
+             startTextBlink 1.6s ease-in-out infinite 2.3s;
+}
+
+
+#titleFadeOverlay {
+  position: fixed;
+  inset: 0;
+  background: black;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 100;
+  transition: opacity 0.9s ease;
+}
+
+#titleFadeOverlay.fadeIn {
+  opacity: 0;
+}
+
+#titleFadeOverlay.fadeOut {
+  opacity: 1;
+}
+
+@keyframes logoFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes startTextFade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes startTextBlink {
+  0%, 100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+#endingDemoText {
+  position: fixed;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  width: min(900px, calc(100vw - 80px));
+  color: white;
+  font-size: 26px;
+  line-height: 1.9;
+  text-align: center;
+  white-space: pre-wrap;
+  opacity: 0;
+  z-index: 120;
+  pointer-events: none;
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.95);
+}
+
+#endingDemoText.visible {
+  opacity: 1;
+}
+
+#titleFadeOverlay.fadeOut {
+  opacity: 1;
+}
+
+#menuButton {
+  position: fixed;
+  top: 16px;
+  right: 25px;
+  font-size: 24px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 50;
+}
+
+#menuOverlay, #creditOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+}
+
+#menuPopup {
+  position: fixed;
+  top: 56px;
+  right: 25px;
+  background: rgba(8, 12, 20, 0.96);
+  border: 1px solid rgba(120, 210, 255, 0.45);
+  padding: 8px 0;
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+}
+
+#menuPopup button {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s;
+}
+
+#menuPopup button:hover {
+  background: rgba(120, 210, 255, 0.1);
+}
+
+#creditPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(8, 12, 20, 0.96);
+  border: 1px solid rgba(120, 210, 255, 0.45);
+  padding: 40px;
+  z-index: 101;
+  min-width: 300px;
+  text-align: center;
+  font-family: 'Orbitron', sans-serif;
+  color: white;
+}
+
+#creditClose {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+#creditText {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.hidden {
+  display: none !important;
+}

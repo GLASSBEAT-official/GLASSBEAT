@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Chart Editor</title>
+  <link rel="stylesheet" href="editor.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div id="editorLayout">
+
+    <!-- 左側：設定パネル -->
+    <div id="controlPanel">
+      <h2>Chart Editor</h2>
+
+      <div class="sectionLabel">基本設定</div>
+
+      <div class="controlGroup">
+        <label>BPM</label>
+        <input type="number" id="bpmInput" value="180">
+      </div>
+
+      <div class="controlGroup">
+        <label>拍子</label>
+        <input type="number" id="timesigInput" value="4">
+      </div>
+
+      <div class="controlGroup">
+        <label>オフセット (ms)</label>
+        <input type="number" id="offsetInput" value="0">
+      </div>
+
+      <div class="controlGroup">
+        <label>グリッド分割</label>
+        <input type="number" id="gridInput" value="4">
+      </div>
+
+      <div class="controlGroup">
+        <label>小節数</label>
+        <input type="number" id="measuresInput" value="50">
+      </div>
+
+      <div class="sectionLabel">BPM・拍子変化</div>
+
+      <div id="tempoChangeList"></div>
+      <button id="addTempoChange">+ 変化を追加</button>
+
+      <div class="sectionLabel">音源</div>
+
+      <div class="controlGroup">
+        <label>音源ファイル</label>
+        <input type="file" id="audioFile" accept="audio/*">
+      </div>
+
+      <div id="audioControls" style="display:none;">
+        <button id="playButton">▶ 再生</button>
+        <button id="stopButton">■ 停止</button>
+        <div id="currentTime">0:00</div>
+      </div>
+
+      <div class="sectionLabel">ノーツ種類</div>
+
+      <div id="noteTypeButtons">
+        <button class="noteTypeBtn selected" data-type="tap">TAP</button>
+        <button class="noteTypeBtn" data-type="long">LONG</button>
+        <button class="noteTypeBtn" data-type="dual">DUAL</button>
+      </div>
+
+      <div class="controlGroup" id="dualLaneGroup" style="display:none;">
+        <label>DUALレーン選択</label>
+        <div id="dualLaneButtons">
+          <button class="dualLaneBtn" data-lane="0">D</button>
+          <button class="dualLaneBtn" data-lane="1">F</button>
+          <button class="dualLaneBtn" data-lane="2">SP</button>
+          <button class="dualLaneBtn" data-lane="3">J</button>
+          <button class="dualLaneBtn" data-lane="4">K</button>
+        </div>
+      </div>
+
+      <div class="sectionLabel">保存</div>
+
+<div class="controlGroup">
+  <label>保存名</label>
+  <input type="text" id="saveNameInput" placeholder="例: song1_expert">
+</div>
+
+<button id="saveProjectButton">保存 / 上書き</button>
+
+<div class="controlGroup">
+  <label>保存済み譜面</label>
+  <select id="savedProjectSelect"></select>
+</div>
+
+<div class="controlGroup">
+  <label>txt読み込み</label>
+  <input type="file" id="importChartFile" accept=".txt,text/plain">
+</div>
+
+<button id="loadProjectButton">読み込み</button>
+<button id="deleteProjectButton">保存データ削除</button>
+
+      <div class="sectionLabel">操作</div>
+
+      <button id="exportButton">エクスポート</button>
+      <button id="clearButton">全消去</button>
+
+      <div id="noteCount">ノーツ数: 0</div>
+    </div>
+
+    <!-- 右側：エディター -->
+    <div id="editorArea">
+      <div id="laneHeader">
+        <div class="laneLabel">D</div>
+        <div class="laneLabel">F</div>
+        <div class="laneLabel">SP</div>
+        <div class="laneLabel">J</div>
+        <div class="laneLabel">K</div>
+      </div>
+      <div id="editorWrapper">
+        <div id="editorCanvas"></div>
+        <div id="judgeLine"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="editor.js"></script>
+</body>
+</html>

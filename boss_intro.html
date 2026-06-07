@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>And So, a New Journey Begins.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="boss_intro.css">
+</head>
+<body>
+  <div id="introBg"></div>
+  <div id="darkLayer"></div>
+  <div id="noiseLayer"></div>
+  <div id="whiteFlash"></div>
+  <div id="burstFlash"></div>
+
+  <main id="introRoot">
+    <div id="introText"></div>
+
+    <section id="bossPanel" class="hidden">
+      <div id="jacketFrame">
+        <img id="bossJacket" src="songs/boss/jacket.png" alt="">
+      </div>
+
+      <div id="bossInfo">
+        <div id="bossTitle"></div>
+        <div id="bossArtist"></div>
+        <div id="bossDifficultyButtons"></div>
+        <div id="difficultyHint">難易度を選んでください</div>
+      </div>
+    </section>
+  </main>
+
+  <div id="startNoise"></div>
+  <div id="startDark"></div>
+
+  <script src="boss_intro.js"></script>
+</body>
+</html>

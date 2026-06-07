@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Select</title>
+  <link rel="stylesheet" href="select.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div id="selectScreen">
+
+    <!-- 左側：曲リスト -->
+    <div id="songList"></div>
+
+    <!-- 右側：曲情報 -->
+    <div id="songDetail">
+
+      <div id="detailBestScore">
+        <span id="detailRank">-</span>
+        <span id="detailBest">BEST: 0000000</span>
+      </div>
+
+      <div id="jacketArea">
+        <img id="jacketImage" src="" alt="jacket">
+      </div>
+
+      <div id="detailInfo">
+        <div id="detailTitle"></div>
+        <div id="detailArtist"></div>
+      </div>
+
+      <div id="difficultyButtons"></div>
+
+      <div id="playButtonArea">
+  <button id="startButton">START</button>
+  <button id="storyButton">STORY▶</button>
+</div>
+
+    </div>
+
+  </div>
+
+  <div id="jacketOverlay"></div>
+  <div id="blackOverlay"></div>
+  <div id="selectFadeOverlay"></div>
+
+  <!-- 歯車ボタン -->
+<button id="settingsButton">⚙</button>
+
+<!-- 設定ポップアップ -->
+<div id="settingsOverlay"></div>
+<div id="settingsPopup">
+  <h2>SETTINGS</h2>
+
+  <div class="settingGroup">
+    <label>ノーツ速度</label>
+    <div id="speedControl">
+      <button id="speedMinus">－</button>
+      <input type="number" id="speedInput" min="1" max="20" step="0.1">
+      <button id="speedPlus">＋</button>
+    </div>
+  </div>
+
+  <div class="settingGroup">
+    <label>キー配置</label>
+    <div id="keyLayoutButtons">
+      <button class="keyLayoutBtn selected" data-layout="default">D F Space J K</button>
+      <button class="keyLayoutBtn" data-layout="alt">G H J K L</button>
+    </div>
+  </div>
+
+  <button id="settingsClose">閉じる</button>
+</div>
+
+<div id="profileArea">
+  <button id="partnerIconButton">
+    <img id="partnerIcon" src="images/partners/breaka_icon.png" alt="">
+  </button>
+
+  <div id="profilePanel">
+    <div id="profileName">Player</div>
+    <div id="profileRate">RATE 0.00</div>
+  </div>
+</div>
+
+<div id="partnerModal" class="hidden">
+  <div id="partnerModalBg"></div>
+  <div id="partnerModalInner">
+
+    <button id="partnerCloseButton">×</button>
+
+    <button id="partnerPrev">‹</button>
+    <button id="partnerNext">›</button>
+
+    <div id="partnerDisplay">
+      <div id="partnerSpeechBubble">今日も一緒にがんばろう。</div>
+      <img id="partnerFullImage" src="" alt="">
+    </div>
+
+    <div id="partnerInfo">
+      <div id="partnerName"></div>
+      <div id="partnerLevel">Lv.1</div>
+      <div id="partnerSkillBox">
+        <div id="partnerSkillLabel">SKILL</div>
+        スキル機能はまだ開発中です！
+      </div>
+      <div id="partnerEventMessage"></div>
+    </div>
+
+  </div>
+</div>
+
+<div id="storyFadeOverlay"></div>
+
+  <script src="select.js"></script>
+</body>
+</html>

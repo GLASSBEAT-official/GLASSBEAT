@@ -1,0 +1,6 @@
+{
+  "title": "START!!",
+  "artist": "Regu",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 1,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 2, "file": "expert.txt" }]
+}

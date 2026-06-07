@@ -1,0 +1,6 @@
+{
+  "title": "今すぐ、逃げろ",
+  "artist": "さんうさぎ",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 4,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9, "file": "expert.txt" }]
+}
