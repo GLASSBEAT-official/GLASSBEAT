@@ -643,8 +643,8 @@ text-shadow: 0 0 6px white, 0 0 12px white;
 }
 
 #resultJacket {
-  width: 420px;
-  height: 420px;
+  width: min(420px, 40vw);
+  height: min(420px, 40vw);
   object-fit: cover;
   transform: rotate(5deg);
   box-shadow: -8px 8px 24px rgba(0, 0, 0, 0.8);
