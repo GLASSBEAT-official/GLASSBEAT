@@ -4,6 +4,48 @@ let selectedDifficulty = 0;
 let previewAudio = null;
 let canonGlowTimer = null;
 
+function loadUserOffset(songId) {
+  const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
+  return saveData.userOffsets?.[songId] || 0;
+}
+
+function saveUserOffset(songId, value) {
+  const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
+  if (!saveData.userOffsets) saveData.userOffsets = {};
+  saveData.userOffsets[songId] = value;
+  localStorage.setItem("rhythmGame", JSON.stringify(saveData));
+}
+
+function updateOffsetUI(songId) {
+  const offset = loadUserOffset(songId);
+  document.getElementById("userOffsetInput").value = offset;
+}
+
+document.getElementById("userOffsetMinus").addEventListener("click", () => {
+  const song = songList[selectedSongIndex];
+  const input = document.getElementById("userOffsetInput");
+  const val = Math.max(-50, Number(input.value) - 1);
+  input.value = val;
+  saveUserOffset(song.id, val);
+});
+
+document.getElementById("userOffsetPlus").addEventListener("click", () => {
+  const song = songList[selectedSongIndex];
+  const input = document.getElementById("userOffsetInput");
+  const val = Math.min(50, Number(input.value) + 1);
+  input.value = val;
+  saveUserOffset(song.id, val);
+});
+
+document.getElementById("userOffsetInput").addEventListener("change", () => {
+  const song = songList[selectedSongIndex];
+  const input = document.getElementById("userOffsetInput");
+  let val = Number(input.value);
+  val = Math.min(50, Math.max(-50, val));
+  input.value = val;
+  saveUserOffset(song.id, val);
+});
+
 function isSongLocked(songId) {
   const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
 
@@ -183,6 +225,8 @@ if (song.id === "boss" && isLocked) {
   } else {
     document.getElementById("jacketArea").classList.remove("lockedJacket");
   }
+
+  updateOffsetUI(song.id);
 }
 
 //曲名＋アーティスト
@@ -322,6 +366,7 @@ document.getElementById("startButton").addEventListener("click", () => {
     previewAudio = null;
   }
   const song = songList[selectedSongIndex];
+  const userOffset = loadUserOffset(song.id);
 
   const overlay = document.getElementById("jacketOverlay");
   const blackOverlay = document.getElementById("blackOverlay");
@@ -339,7 +384,7 @@ document.getElementById("startButton").addEventListener("click", () => {
   });
 
   setTimeout(() => {
-    location.href = `game.html?song=${song.id}&difficulty=${selectedDifficulty}`;
+    location.href = `game.html?song=${song.id}&difficulty=${selectedDifficulty}&userOffset=${userOffset}`;
   }, 700);
 });
 
@@ -356,7 +401,8 @@ function loadSettings() {
   const settings = saveData.settings || {};
   return {
     speed: settings.speed || DEFAULT_SPEED,
-    keyLayout: settings.keyLayout || DEFAULT_KEY_LAYOUT
+    keyLayout: settings.keyLayout || DEFAULT_KEY_LAYOUT,
+    sfx: settings.sfx !== false // デフォルトはON
   };
 }
 
@@ -373,7 +419,22 @@ function applySettingsToUI(settings) {
   document.querySelectorAll(".keyLayoutBtn").forEach(btn => {
     btn.classList.toggle("selected", btn.dataset.layout === settings.keyLayout);
   });
+
+  document.querySelectorAll(".sfxToggleBtn").forEach(btn => {
+    const isOn = btn.dataset.value === "on";
+    btn.classList.toggle("selected", isOn === settings.sfx);
+  });
 }
+
+document.querySelectorAll(".sfxToggleBtn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".sfxToggleBtn").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    const settings = loadSettings();
+    settings.sfx = btn.dataset.value === "on";
+    saveSettings(settings);
+  });
+});
 
 // 設定ポップアップの開閉
 document.getElementById("settingsButton").addEventListener("click", () => {

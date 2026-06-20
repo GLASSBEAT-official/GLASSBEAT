@@ -561,6 +561,29 @@ display: flex;
   background: #333;
 }
 
+#sfxToggle {
+  display: flex;
+  gap: 8px;
+}
+
+.sfxToggleBtn {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid #555;
+  color: white;
+  cursor: pointer;
+  flex: 1;
+  transition: background 0.2s;
+}
+
+.sfxToggleBtn.selected {
+  background: cyan;
+  color: black;
+  border-color: cyan;
+}
+
 #settingsClose {
   font-family: 'Orbitron', sans-serif;
   font-size: 14px;
@@ -920,5 +943,50 @@ display: flex;
   color: #ff4444;
   font-size: 14px;
   font-weight: bold;
+  text-align: center;
+}
+
+#userOffsetArea {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+#userOffsetArea label {
+  font-size: 10px;
+  color: #aaaaaa;
+}
+
+#userOffsetControl {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+#userOffsetMinus, #userOffsetPlus {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  width: 26px;
+  height: 26px;
+  background: #333;
+  border: 1px solid #555;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#userOffsetMinus:hover, #userOffsetPlus:hover {
+  background: #555;
+}
+
+#userOffsetInput {
+  background: #333;
+  border: 1px solid #555;
+  color: white;
+  padding: 4.75px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  width: 60px;
   text-align: center;
 }

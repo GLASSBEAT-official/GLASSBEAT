@@ -6,6 +6,8 @@ const SECRET_SOURCE_SONG = "song3";
 const SECRET_BOSS_SONG = "boss";
 const SECRET_TRIGGER_MEASURE = 94;
 const autoStart = params.get("autoStart") === "1";
+const userOffset = Number(params.get("userOffset")) || 0;
+
 // ---- 設定読み込み ----
 const saveDataForSettings = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
 const settings = saveDataForSettings.settings || {};
@@ -155,6 +157,8 @@ const blackOverlay = document.getElementById("blackOverlay");
 const resultBGM = new Audio("sounds/result.mp3");
 const secretNoiseOverlay = document.getElementById("secretNoiseOverlay");
 const judgeTimeOffsetMs = 20;
+const dualSound = new Audio("sounds/dualsound.mp3");
+
 //パートナー追加時書き足す
 const partners = {
   breaka: {
@@ -637,6 +641,13 @@ function updateComboGlow() {
   }
 }
 
+function updateComboText(value) {
+  comboText.textContent = value;
+  comboText.classList.remove("bounce");
+  void comboText.offsetWidth; // アニメーションリセット
+  comboText.classList.add("bounce");
+}
+
 function updateJudgeCounters() {
   const yellowEl = document.getElementById("yellowPerfectCounter");
   const whiteEl = document.getElementById("whitePerfectCounter");
@@ -674,7 +685,7 @@ function applyMiss(showText = true) {
 // ---- ノーツ・小節線生成 ----
 function getCurrentMs() {
   if (!started) return -prerollMs;
-  return performance.now() - gameStartTime - prerollMs;
+  return performance.now() - gameStartTime - prerollMs + userOffset;
 }
 
 function getYFromTime(hitTime) {
@@ -920,7 +931,7 @@ if (note.holding) {
         }
 
         combo++;
-        comboText.textContent = combo + " Combo";
+        updateComboText(combo + " Combo");;
         updateScore();
       } else {
         applyMiss();
@@ -1329,21 +1340,35 @@ document.addEventListener("keydown", async (e) => {
   console.log("グロー呼び出し:", targetLane);
 spawnLaneGlow(Number(targetLane.replace("lane", "")), "white");
 
-  // dualノーツの場合、関係するレーンをすべて光らせる
-  for (let note of notes) {
-    if (!note.active) continue;
-    if (note.type !== "dual") continue;
-    const hit = note.lanes.some(lane => "lane" + lane === targetLane);
-    if (!hit) continue;
-    for (let lane of note.lanes) {
-      const dualLane = document.getElementById("lane" + lane);
-      const dualFlash = dualLane.querySelector(".flash");
-      dualFlash.style.opacity = "1";
-      setTimeout(() => { dualFlash.style.opacity = "0"; }, 100);
-      spawnLaneGlow(lane, "#66DDFF",0.6);
-    }
-    break;
+  // dualノーツ発光/効果音
+ for (let note of notes) {
+  if (!note.active) continue;
+  if (note.type !== "dual") continue;
+  const hit = note.lanes.some(lane => "lane" + lane === targetLane);
+  if (!hit) continue;
+
+  // タイミングが合っているかも確認
+  const dualDiff = Math.abs(getCurrentMs() - note.hitTime);
+  if (dualDiff > 140) continue;
+
+  const saveDataForSfx = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
+const sfxEnabled = saveDataForSfx.settings?.sfx !== false;
+
+// dualSound再生部分を修正
+if (sfxEnabled) {
+  dualSound.currentTime = 0;
+  dualSound.play().catch(e => console.log("dualSound play failed:", e));
+}
+
+  for (let lane of note.lanes) {
+    const dualLane = document.getElementById("lane" + lane);
+    const dualFlash = dualLane.querySelector(".flash");
+    dualFlash.style.opacity = "1";
+    setTimeout(() => { dualFlash.style.opacity = "0"; }, 100);
+    spawnLaneGlow(lane, "#66DDFF", 0.6);
   }
+  break;
+}
 
   // ノーツ判定
   for (let note of notes) {
@@ -1372,7 +1397,6 @@ if (note.type === "long") {
     note.holding = true;
     showJudgeText("Perfect!","#FFE87C");
     fastLateText.textContent = "";
-    comboText.textContent = combo + " Combo";
 spawnParticles(laneIndex, "#FFE87C");
     break;
   } else if (diff < 120) {
@@ -1380,7 +1404,6 @@ spawnParticles(laneIndex, "#FFE87C");
     note.holding = true;
     showJudgeText("Good!","#88FF88");
     fastLateText.textContent = getCurrentMs() < note.hitTime ? "Fast" : "Late";
-    comboText.textContent = combo + " Combo";
     if (getCurrentMs() < note.hitTime) {
     fastCount++;
   } else {
@@ -1400,7 +1423,7 @@ if (diff < 40) {
   yellowPerfectCount++
   score += perfectScore + 1;
   updateScore();
-  comboText.textContent = combo + " Combo";
+  updateComboText(combo + " Combo");
   note.active = false;
   note.element.remove();
   checkClear();
@@ -1418,7 +1441,7 @@ spawnParticles(laneIndex, "#FFE87C");
   }
   score += perfectScore;
   updateScore();
-  comboText.textContent = combo + " Combo";
+  updateComboText(combo + " Combo");
   note.active = false;
   note.element.remove();
   checkClear();
@@ -1436,7 +1459,7 @@ spawnParticles(laneIndex, "#FFE87C");
   }
   score += goodScore;
   updateScore();
-  comboText.textContent = combo + " Combo";
+  updateComboText(combo + " Combo");
   note.active = false;
   note.element.remove();
   checkClear();
@@ -1465,6 +1488,7 @@ document.addEventListener("keyup", (e) => {
 
 // ---- 起動 ----
 async function startGame() {
+  console.log("userOffset:", userOffset);
   await loadSongInfo();
   await loadChart();
   updateLifeBar();

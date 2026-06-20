@@ -111,6 +111,31 @@ body {
    white-space: nowrap;
 }
 
+@keyframes comboBounce {
+  0%   { transform: translateX(-50%) scale(1); }
+  30%  { transform: translateX(-50%) scale(1.1); }
+  60%  { transform: translateX(-50%) scale(0.95); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+@keyframes comboPerfectGlow {
+  0%   { text-shadow: 0 0 6px white, 0 0 12px white; }
+  50%  { text-shadow: 0 0 12px white, 0 0 24px white; }
+  100% { text-shadow: 0 0 6px white, 0 0 12px white; }
+}
+
+#combo.glowing {
+  animation: comboPerfectGlow 1.5s ease-in-out infinite;
+}
+
+#combo.glowing.bounce {
+  animation: comboPerfectGlow 1.5s ease-in-out infinite, comboBounce 0.25s ease;
+}
+
+#combo.bounce:not(.glowing) {
+  animation: comboBounce 0.25s ease;
+}
+
 .flash {
   position: absolute;
   bottom: 98px;
@@ -983,16 +1008,6 @@ text-shadow: 0 0 6px white, 0 0 12px white;
   pointer-events: none;
   z-index: 3;
   animation: laneGlow 0.4s ease-out forwards;
-}
-
-@keyframes comboPerfectGlow {
-  0%   { text-shadow: 0 0 6px white, 0 0 12px white; }
-  50%  { text-shadow: 0 0 12px white, 0 0 24px white; }
-  100% { text-shadow: 0 0 6px white, 0 0 12px white; }
-}
-
-#combo.glowing {
-  animation: comboPerfectGlow 1.5s ease-in-out infinite;
 }
 
 #profileArea {

@@ -37,6 +37,16 @@
       <div id="playButtonArea">
   <button id="startButton">START</button>
   <button id="storyButton">STORY▶</button>
+
+  <div id="userOffsetArea">
+  <label>オフセット [ms]</label>
+  <div id="userOffsetControl">
+    <button id="userOffsetMinus">－</button>
+    <input type="number" id="userOffsetInput" min="-50" max="50" step="1" value="0">
+    <button id="userOffsetPlus">＋</button>
+  </div>
+</div>
+
 </div>
 
     </div>
@@ -71,6 +81,14 @@
       <button class="keyLayoutBtn" data-layout="alt">G H J K L</button>
     </div>
   </div>
+
+  <div class="settingGroup">
+  <label>デュアルノーツの効果音</label>
+  <div id="sfxToggle">
+    <button class="sfxToggleBtn" data-value="on">ON</button>
+    <button class="sfxToggleBtn" data-value="off">OFF</button>
+  </div>
+</div>
 
   <button id="settingsClose">閉じる</button>
 </div>
