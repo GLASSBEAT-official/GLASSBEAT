@@ -1,5 +1,14 @@
 {
-  "songs": [
-    "song1","song2","song6","song4","song5","song7","song3","boss"
+  "folders": [
+    {
+      "name": "GLASSBEAT",
+      "image": "assets/folders/glassbeat.png",
+      "songs": ["song6", "song4", "song7"]
+    },
+    {
+      "name": "はじまりの歌",
+      "image": "assets/folders/hajimari.png",
+      "songs": ["song1","song2","song5","song3","boss"]
+    }
   ]
 }

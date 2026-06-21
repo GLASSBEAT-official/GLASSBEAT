@@ -688,6 +688,11 @@ function getCurrentMs() {
   return performance.now() - gameStartTime - prerollMs + userOffset;
 }
 
+function getRawCurrentMs() {
+  if (!started) return -prerollMs;
+  return performance.now() - gameStartTime - prerollMs;
+}
+
 function getYFromTime(hitTime) {
   const currentMs = getCurrentMs();
 
@@ -795,6 +800,7 @@ function gameLoop() {
   if (paused) return;
 
   const currentMs = getCurrentMs();
+  const rawMs = getRawCurrentMs();
 
   if (
   secretBossTriggerTime !== null &&
@@ -809,7 +815,7 @@ function gameLoop() {
   }
 }
 
-  if (!musicStarted && currentMs >= 0) {
+  if (!musicStarted && rawMs >= 0) { // ← currentMsからrawMsに変更
   musicStarted = true;
   music.currentTime = 0;
   music.play().catch(e => {

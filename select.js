@@ -1,4 +1,6 @@
 let songList = [];
+let folders = [];
+let selectedFolderIndex = 0;
 let selectedSongIndex = 0;
 let selectedDifficulty = 0;
 let previewAudio = null;
@@ -22,26 +24,26 @@ function updateOffsetUI(songId) {
 }
 
 document.getElementById("userOffsetMinus").addEventListener("click", () => {
-  const song = songList[selectedSongIndex];
+  const song = getVisibleSongs()[selectedSongIndex];
   const input = document.getElementById("userOffsetInput");
-  const val = Math.max(-50, Number(input.value) - 1);
+  const val = Math.max(-99, Number(input.value) - 5);
   input.value = val;
   saveUserOffset(song.id, val);
 });
 
 document.getElementById("userOffsetPlus").addEventListener("click", () => {
-  const song = songList[selectedSongIndex];
+  const song = getVisibleSongs()[selectedSongIndex];
   const input = document.getElementById("userOffsetInput");
-  const val = Math.min(50, Number(input.value) + 1);
+  const val = Math.min(99, Number(input.value) + 5);
   input.value = val;
   saveUserOffset(song.id, val);
 });
 
 document.getElementById("userOffsetInput").addEventListener("change", () => {
-  const song = songList[selectedSongIndex];
+  const song = getVisibleSongs()[selectedSongIndex];
   const input = document.getElementById("userOffsetInput");
   let val = Number(input.value);
-  val = Math.min(50, Math.max(-50, val));
+  val = Math.min(99, Math.max(-99, val));
   input.value = val;
   saveUserOffset(song.id, val);
 });
@@ -75,41 +77,106 @@ function getSongUnlockMessage(songId) {
 async function loadSongList() {
   const response = await fetch("songs/songlist.json");
   const data = await response.json();
+  folders = data.folders;
 
-  for (let songId of data.songs) {
+  const allSongIds = folders.flatMap(f => f.songs);
+  for (let songId of allSongIds) {
     const infoResponse = await fetch(`songs/${songId}/info.json`);
     const info = await infoResponse.json();
     songList.push({ id: songId, info: info });
   }
 
-   const fadeOverlay = document.getElementById("selectFadeOverlay");
+  const fadeOverlay = document.getElementById("selectFadeOverlay");
   setTimeout(() => {
     fadeOverlay.classList.add("fadeIn");
   }, 100);
 
   const params = new URLSearchParams(window.location.search);
   const initialSong = params.get("song");
-  const initialDifficulty = Number(params.get("difficulty")) || 0;
+  const initialDifficulty = params.get("difficulty");
 
-  const initialIndex = initialSong
-    ? songList.findIndex(s => s.id === initialSong)
-    : 0;
+  if (initialSong) {
+    // URLパラメータがある場合（ゲームから戻ってきた場合など）
+    const folderIndex = folders.findIndex(f => f.songs.includes(initialSong));
+    if (folderIndex >= 0) selectedFolderIndex = folderIndex;
+    selectedDifficulty = Number(initialDifficulty) || 0;
+  } else {
+    // URLパラメータがない場合は保存された選択を復元
+    const saveData = getSaveData();
+    const last = saveData.lastSelection;
+    if (last) {
+      selectedFolderIndex = last.folderIndex || 0;
+      selectedDifficulty = last.difficulty || 0;
+    }
+  }
 
-  selectedDifficulty = initialDifficulty;
+  renderFolderButtons();
+  renderSongList();
+
+  const visibleSongs = getVisibleSongs();
+  let initialIndex = 0;
+
+  if (initialSong) {
+    initialIndex = visibleSongs.findIndex(s => s.id === initialSong);
+  } else {
+    const saveData = getSaveData();
+    const last = saveData.lastSelection;
+    if (last && last.songIndex < visibleSongs.length) {
+      initialIndex = last.songIndex;
+    }
+  }
+
   selectSong(initialIndex >= 0 ? initialIndex : 0);
 
-  renderSongList();
   calculatePlayerRate(songList);
   loadProfilePanel();
   checkCanonPartnerEvent();
+}
+
+function getVisibleSongs() {
+  const folder = folders[selectedFolderIndex];
+  if (!folder) return songList;
+  return songList.filter(s => folder.songs.includes(s.id));
+}
+
+function renderFolderButtons() {
+  const area = document.getElementById("folderButtons");
+  area.innerHTML = "";
+
+  folders.forEach((folder, index) => {
+    const btn = document.createElement("button");
+    btn.classList.add("folderButton");
+    if (index === selectedFolderIndex) btn.classList.add("selected");
+    btn.textContent = folder.name;
+
+    if (folder.image) {
+      btn.style.backgroundImage = `url('${folder.image}')`;
+      btn.style.backgroundSize = "cover";
+      btn.style.backgroundPosition = "center";
+    }
+
+    btn.addEventListener("click", () => {
+      selectedFolderIndex = index;
+      document.querySelectorAll(".folderButton").forEach((b, i) => {
+        b.classList.toggle("selected", i === index);
+      });
+      renderSongList();
+      selectSong(0);
+      saveLastSelection(); // ← 追加
+    });
+
+    area.appendChild(btn);
+  });
 }
 
 function renderSongList() {
   const listEl = document.getElementById("songList");
   listEl.innerHTML = "";
 
-  for (let i = 0; i < songList.length; i++) {
-    const song = songList[i];
+  const visibleSongs = getVisibleSongs(); // ← 追加
+
+  for (let i = 0; i < visibleSongs.length; i++) {
+    const song = visibleSongs[i]; // ← songList[i] から変更
     const isLocked = isSongLocked(song.id);
     const shouldHideSongInfo = song.id === "boss" && isLocked;
     const item = document.createElement("div");
@@ -117,89 +184,80 @@ function renderSongList() {
     if (i === selectedSongIndex) item.classList.add("selected");
 
     // ジャケット背景
-const bg = document.createElement("div");
-bg.classList.add("songItemBg");
+    const bg = document.createElement("div");
+    bg.classList.add("songItemBg");
 
+    if (song.id === "boss" && isLocked) {
+      bg.style.backgroundImage = "";
+      bg.style.backgroundColor = "#000";
+      bg.classList.remove("lockedSongBg");
+    } else if (isLocked) {
+      bg.style.backgroundImage = `url('songs/${song.id}/jacket.png')`;
+      bg.classList.add("lockedSongBg");
+    } else {
+      bg.style.backgroundImage = `url('songs/${song.id}/jacket.png')`;
+      bg.classList.remove("lockedSongBg");
+    }
 
-if (song.id === "boss" && isLocked) {
-  bg.style.backgroundImage = "";
-  bg.style.backgroundColor = "#000";
-  bg.classList.remove("lockedSongBg");
-} else if (isLocked) {
-  bg.style.backgroundImage = `url('songs/${song.id}/jacket.png')`;
-  bg.classList.add("lockedSongBg");
-} else {
-  bg.style.backgroundImage = `url('songs/${song.id}/jacket.png')`;
-  bg.classList.remove("lockedSongBg");
-}
-
-    // テキスト
     const text = document.createElement("div");
     text.classList.add("songItemText");
-   
-  const chart = song.info.charts[selectedDifficulty] || song.info.charts[0];
-  const diffClass = "diff-" + (chart.difficulty || "basic").toLowerCase();
 
-  // fracture選択中かどうか
-const selectedChart = songList[selectedSongIndex]?.info.charts[selectedDifficulty];
-const currentDiffIsFracture = selectedChart?.difficulty.toLowerCase() === "fracture";
+    const chart = song.info.charts[selectedDifficulty] || song.info.charts[0];
+    const diffClass = "diff-" + (chart.difficulty || "basic").toLowerCase();
 
-// この曲にfractureがあるか
-const hasFracture = song.info.charts.some(c => c.difficulty.toLowerCase() === "fracture");
+    const selectedChart = visibleSongs[selectedSongIndex]?.info.charts[selectedDifficulty]; // ← songListから変更
+    const currentDiffIsFracture = selectedChart?.difficulty.toLowerCase() === "fracture";
 
-if (currentDiffIsFracture && !hasFracture) {
-  text.innerHTML = `
-    <div class="songItemTitle">${shouldHideSongInfo ? "???" : song.info.title}</div>
-    <div class="songItemArtist" style="position: relative; top: 0px;">${shouldHideSongInfo ? "???" : song.info.artist}</div>
-    `;
-} else {
-  const chart = song.info.charts[selectedDifficulty] || song.info.charts[0];
-  const diffClass = "diff-" + (chart.difficulty || "basic").toLowerCase();
-  text.innerHTML = `
-    <div class="songItemTitle">${shouldHideSongInfo ? "???" : song.info.title}
-      <span class="songItemLevel ${diffClass}">${shouldHideSongInfo ? "?" : chart.level}</span>
-    </div>
-    <div class="songItemArtist">${shouldHideSongInfo ? "???" : song.info.artist}</div>
-  `;
-}
+    const hasFracture = song.info.charts.some(c => c.difficulty.toLowerCase() === "fracture");
+
+    if (currentDiffIsFracture && !hasFracture) {
+      text.innerHTML = `
+        <div class="songItemTitle">${shouldHideSongInfo ? "???" : song.info.title}</div>
+        <div class="songItemArtist" style="position: relative; top: 0px;">${shouldHideSongInfo ? "???" : song.info.artist}</div>
+      `;
+    } else {
+      text.innerHTML = `
+        <div class="songItemTitle">${shouldHideSongInfo ? "???" : song.info.title}
+          <span class="songItemLevel ${diffClass}">${shouldHideSongInfo ? "?" : chart.level}</span>
+        </div>
+        <div class="songItemArtist">${shouldHideSongInfo ? "???" : song.info.artist}</div>
+      `;
+    }
+
     item.appendChild(bg);
 
-// ランプ
-const lamp = document.createElement("div");
-lamp.classList.add("songItemLamp");
+    const lamp = document.createElement("div");
+    lamp.classList.add("songItemLamp");
 
-// fracture選択中かつこの曲にfractureがない場合はランプ非表示
-if (currentDiffIsFracture && !hasFracture) {
-  lamp.style.display = "none";
-} else {
-  const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
-  const chartIndex = song.info.charts.findIndex(
-    c => c.difficulty === (song.info.charts[selectedDifficulty] || song.info.charts[0]).difficulty
-  );
-  const songSave = saveData[song.id]?.[chartIndex] || {};
+    if (currentDiffIsFracture && !hasFracture) {
+      lamp.style.display = "none";
+    } else {
+      const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
+      const chartIndex = song.info.charts.findIndex(
+        c => c.difficulty === (song.info.charts[selectedDifficulty] || song.info.charts[0]).difficulty
+      );
+      const songSave = saveData[song.id]?.[chartIndex] || {};
 
-  if (songSave.allPerfect) {
-    lamp.classList.add("allPerfect");
-  } else if (songSave.fullCombo) {
-    lamp.classList.add("fullCombo");
-  } else if (songSave.cleared) {
-    lamp.classList.add("cleared");
-  }
-}
+      if (songSave.allPerfect) {
+        lamp.classList.add("allPerfect");
+      } else if (songSave.fullCombo) {
+        lamp.classList.add("fullCombo");
+      } else if (songSave.cleared) {
+        lamp.classList.add("cleared");
+      }
+    }
 
-item.appendChild(lamp);
-
-item.appendChild(text);
-
-item.addEventListener("click", () => selectSong(i));
-
-listEl.appendChild(item);
+    item.appendChild(lamp);
+    item.appendChild(text);
+    item.addEventListener("click", () => selectSong(i));
+    listEl.appendChild(item);
   }
 }
 
 function selectSong(index) {
   selectedSongIndex = index;
-  const song = songList[index];
+  const visibleSongs = getVisibleSongs();
+  const song = visibleSongs[index]; 
   const isLocked = isSongLocked(song.id);
 const shouldHideSongInfo = song.id === "boss" && isLocked;
   if (selectedDifficulty >= song.info.charts.length) {
@@ -217,13 +275,16 @@ const shouldHideSongInfo = song.id === "boss" && isLocked;
 if (song.id === "boss" && isLocked) {
   document.getElementById("jacketImage").src = "assets/black.png";
   document.getElementById("jacketArea").classList.remove("lockedJacket");
+  document.getElementById("userOffsetArea").style.display = "none"; // ← 追加
 } else {
   document.getElementById("jacketImage").src = `songs/${song.id}/jacket.png`;
 
   if (isLocked) {
     document.getElementById("jacketArea").classList.add("lockedJacket");
+    document.getElementById("userOffsetArea").style.display = "none"; // ← 追加
   } else {
     document.getElementById("jacketArea").classList.remove("lockedJacket");
+    document.getElementById("userOffsetArea").style.display = "flex"; // ← 追加
   }
 
   updateOffsetUI(song.id);
@@ -266,6 +327,8 @@ if (isLocked) {
   updateBestScore(song.id);
 
   renderSongList();
+
+  saveLastSelection();
 
   // プレビュー再生
 if (previewAudio) {
@@ -310,8 +373,9 @@ function renderDifficultyButtons(song) {
         b.classList.toggle("selected", j === i);
       });
 
-      updateBestScore(songList[selectedSongIndex].id);
+      updateBestScore(getVisibleSongs()[selectedSongIndex].id);
       renderSongList();
+      saveLastSelection(); 
     });
 
     area.appendChild(btn);
@@ -365,7 +429,7 @@ document.getElementById("startButton").addEventListener("click", () => {
     previewAudio.pause();
     previewAudio = null;
   }
-  const song = songList[selectedSongIndex];
+  const song = getVisibleSongs()[selectedSongIndex];
   const userOffset = loadUserOffset(song.id);
 
   const overlay = document.getElementById("jacketOverlay");
@@ -870,3 +934,14 @@ document.getElementById("storyButton").addEventListener("click", () => {
     location.href = "story.html";
   }, 700);
 });
+
+//選曲保存
+function saveLastSelection() {
+  const saveData = getSaveData();
+  saveData.lastSelection = {
+    folderIndex: selectedFolderIndex,
+    songIndex: selectedSongIndex,
+    difficulty: selectedDifficulty
+  };
+  setSaveData(saveData);
+}
