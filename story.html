@@ -10,20 +10,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div id="storyBackground"></div>
   <div id="storyPage">
+
   <aside id="chapterSide">
     <h1>STORY</h1>
 
-    <button class="chapterButton selected" data-chapter="0">はじまりの歌</button>
+    <div id="chapterList"></div>
 
     <button id="storyBackButton">BACK</button>
   </aside>
 
   <main id="episodeSide">
-    <div id="chapterTitle">はじまりの歌</div>
+  <div id="chapterTitle">はじまりの歌</div>
+
+  <div id="episodeArea">
     <div id="episodeList"></div>
-    <div id="lockedStoryMessage"></div>
-  </main>
+    <div id="fragmentEpisodeList"></div>
+  </div>
+
+  <div id="lockedStoryMessage"></div>
+</main>
 </div>
 
 <div id="readingOverlay" class="hidden">
@@ -34,6 +41,43 @@
 </div>
 
 <div id="storyIntroFade"></div>
+
+<div id="song9DifficultyOverlay" class="hidden">
+  <div id="song9DifficultyPanel">
+    <div id="song9DifficultyTitle">難易度を選んでください</div>
+    <div id="song9DifficultyButtons">
+      <button data-difficulty="0">BASIC</button>
+      <button data-difficulty="1">EXPERT</button>
+    </div>
+  </div>
+</div>
+
+<div id="boss2DifficultyOverlay" class="hidden">
+  <div id="boss2DifficultyPanel">
+    <div id="boss2DifficultyTitle">難易度を選んでください</div>
+
+    <div id="boss2DifficultyButtons">
+      <button data-difficulty="0">BASIC</button>
+      <button data-difficulty="1">EXPERT</button>
+      <button data-difficulty="2">FRACTURE</button>
+    </div>
+  </div>
+</div>
+
+<div id="partnerUnlockOverlay" class="hidden">
+  <div id="partnerUnlockInner">
+    <img id="partnerUnlockImage" src="" alt="">
+    <div id="partnerUnlockText">キャラクターが解禁されました</div>
+    <div id="partnerUnlockName"></div>
+  </div>
+</div>
+
+<div id="boss2IntroOverlay" class="hidden">
+  <img id="boss2IntroImage" src="" alt="">
+  <div id="boss2LightParticles"></div>
+  <div id="boss2CenterGlow"></div>
+  <div id="boss2WhiteDissolve"></div>
+</div>
 
   <script src="story.js"></script>
 </body>

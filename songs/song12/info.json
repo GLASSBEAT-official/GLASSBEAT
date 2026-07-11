@@ -1,0 +1,6 @@
+{
+  "title": "Entwined Legacy",
+  "artist": "zvuc",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 8,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 13, "file": "expert.txt" }]
+}

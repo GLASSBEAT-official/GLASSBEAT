@@ -6,7 +6,7 @@
   <title>Rhythm Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="game.css">
 
   <link
   rel="preconnect"
@@ -26,6 +26,8 @@
 <body>
 
   <div id="game">
+
+    <div id="rushEffectLayer"></div>
 
     <div class="lane" id="lane0">
       <div class="flash"></div>
@@ -189,11 +191,17 @@
 <div id="blackOverlay"></div>
 <div id="secretNoiseOverlay"></div>
 
- <script src="script.js"></script>
-
-</body>
-
 <div id="playProfileArea">
+
+  <div id="playSkillLine" class="hidden">
+  <div id="playSkillLineSlant"></div>
+  <div id="playSkillLineMain"></div>
+ <span id="playSkillLineText">
+  <span id="playSkillLineState">SKILL ON</span>
+  <span id="playSkillLineName"></span>
+</span>
+</div>
+
   <div id="playPartnerIconButton">
     <img id="playPartnerIcon" src="images/partners/breaka_icon.png" alt="">
   </div>
@@ -203,5 +211,23 @@
     <div id="playProfileRate">RATE 0.0</div>
   </div>
 </div>
+
+<div id="storyChallengeIntro" class="hidden">
+  <img id="storyChallengePartner" src="images/partners/breaka_challenge.png" alt="">
+  <div id="storyChallengeBubble">この歌……絶対に、つかみ取ってみせる。</div>
+</div>
+
+<div id="damageVignette"></div>
+<div id="unlockFailedText">UNLOCK FAILED</div>
+<div id="unlockFailShutter">
+  <div id="unlockFailShutterTop"></div>
+  <div id="unlockFailShutterBottom"></div>
+</div>
+
+<div id="song11WhiteFlash"></div>
+
+ <script src="game.js"></script>
+
+</body>
 
 </html>

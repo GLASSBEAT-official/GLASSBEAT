@@ -22,7 +22,7 @@
 
       <div id="detailBestScore">
         <span id="detailRank">-</span>
-        <span id="detailBest">BEST: 0000000</span>
+        <span id="detailBest">BEST : 0000000</span>
       </div>
 
       <div id="jacketArea">
@@ -81,16 +81,9 @@
     <div id="keyLayoutButtons">
       <button class="keyLayoutBtn selected" data-layout="default">D F Space J K</button>
       <button class="keyLayoutBtn" data-layout="alt">G H J K L</button>
+      <button class="keyLayoutBtn" data-layout="num">4 5 7 8 9</button>
     </div>
   </div>
-
-  <div class="settingGroup">
-  <label>デュアルノーツの効果音</label>
-  <div id="sfxToggle">
-    <button class="sfxToggleBtn" data-value="on">ON</button>
-    <button class="sfxToggleBtn" data-value="off">OFF</button>
-  </div>
-</div>
 
   <button id="settingsClose">閉じる</button>
 </div>
@@ -123,10 +116,13 @@
     <div id="partnerInfo">
       <div id="partnerName"></div>
       <div id="partnerLevel">Lv.1</div>
-      <div id="partnerSkillBox">
-        <div id="partnerSkillLabel">SKILL</div>
-        スキル機能はまだ開発中です！
-      </div>
+      <button id="partnerSkillBox" type="button">
+  <div id="partnerSkillLabel">SKILL</div>
+  <div id="partnerSkillName"></div>
+  <div id="partnerSkillDescription"></div>
+</button>
+
+<div id="partnerSkillToggleText"></div>
       <div id="partnerEventMessage"></div>
     </div>
 

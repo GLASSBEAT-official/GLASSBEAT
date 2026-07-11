@@ -1,0 +1,6 @@
+{
+  "title": "グラビティプレア",
+  "artist": "流星のサイトシーイングfeat.朝比奈こん",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 3,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 6, "file": "expert.txt" }]
+}

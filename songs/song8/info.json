@@ -1,0 +1,6 @@
+{
+  "title": "Phoenix",
+  "artist": "gooset",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 3,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 7, "file": "expert.txt" }]
+}

@@ -1,6 +1,6 @@
 const chapters = [
-{
-   title: "はじまりの歌",
+{ title: "はじまりの歌",
+   background: "assets/bg/story_chapter1.jpg",
     episodes: [
       {
   title: "1-1",
@@ -50,7 +50,7 @@ const chapters = [
 「……別に。」/「またそれ。」/「別に、嫌じゃないけど。」/「おお。」/
 「その反応やめて。」/「えへへ。」/
 カノンは楽しそうに笑った。/]
-[その笑顔を見ていると、なんだか調子が狂う。/でも。/悪い気分ではなかった。//
+[その笑顔を見ていると、なんだか調子が狂う。/でも、悪い気分ではなかった。//
 青空の下、二人は並んで歩いていく。/
 「帰ったらブレイカの家でおやつ食べようよ！」/「まだそのこと覚えてたの？」/
 「もちろん！」/「食い意地張りすぎでしょ。」/「それは褒め言葉？」/
@@ -276,7 +276,7 @@ title: "1-2",
 「……絶対に。」/
 誰にも聞こえないほど小さな声だった。/
 「絶対に助けるから。」/
-ガラスは、何も答えなかった。/]`
+ガラスの結晶は、何も答えなかった。/]`
       },
       { id: "chapter1_episode6",
         title: "1-6",
@@ -285,8 +285,7 @@ title: "1-2",
       storyId: "chapter1_episode5",
       song: "boss",
       message: "このストーリーの解禁には、前のストーリーの読了と、楽曲「Starlight Adventure」のクリアが必要です"},
-      introImage: "images/story/chapter1_6_intro.png",
-        script: `[「絶対に助けるから。」彼女はそう心に誓った。//
+          script: `{image:images/story/chapter1_6_intro.png}[「絶対に助けるから。」彼女はそう心に誓った。//
 「…まだここにおったか。」/
 後ろから声がした。おもむろに振り返ると、村長が立っていた。/
 「……村長。」/
@@ -385,7 +384,7 @@ title: "1-2",
 けれど、今はそれでよかった。/
 ブレイカは向き直る。/
 そして一歩を踏み出した。//
-村の入り口にそびえる門を、はじめてくぐり抜ける。/
+村の入り口にそびえる門をくぐり抜ける。/
 村の外に出ると、心なしか風が背中を押しているように感じた。/
 知らない世界へ。
 まだ見ぬ歌を探して。/
@@ -397,10 +396,566 @@ title: "1-2",
         ]`
       }
     ]
-  }
+  },
+
+{
+  title:"破砕の旋律",
+  background: "assets/bg/story_chapter2.jpg",
+  episodes: [
+  {title: "2-1",
+        unlock: null,
+        script:`[村を出て三十分ほど明るい林道を歩くと、隣町の街並みが木々の向こうに見えてきた。/
+彼女は足取りを早める。/
+向かう先は、懐かしい学び舎のすぐ隣。恩師、ケイティ先生が住む藁ぶき屋根の家だ。//
+ブレイカが暮らす村には、学校がない。/
+だからブレイカは、毎日カノンと一緒に隣町の学校まで歩いて通っていたのだった。/
+卒業した後も隣町を訪れる機会は少なくなかったが、学校まで来るのは久しぶりだ。/
+そんな感傷に浸りながら、ブレイカは先生の家の戸を叩いた。/
+「はい、何の用かし......あなた、ブレイカ？」/
+「先生！」/
+「ええ、久しぶりね。」/
+「先生も元気そうでよかった。」/
+「ふふ、それにしても背、大きくなったわね。」/
+懐かしい会話も束の間、ブレイカは真剣な表情になる。/
+「先生、話があるの。/
+......カノンが、ガラスになっちゃった。」/
+ケイティは目を見開き、青ざめた。/]
+[「......カノンちゃんが。」/
+ブレイカはカノンのことを話す。/
+助けたいこと。ガラスを砕く歌があること。その歌を探していること。/
+そして、この町でガラス化した少女が発見されたことを知っていること。/
+ケイティはそれを聞いて、本棚に手を伸ばす。古い本を取り出した。/
+ページを開く。/
+そこには古代文字と、楽譜のような模様が描かれていた。/
+「昔から、この地方にはこんな伝承が残っているそうなの。」/
+『歌は、眠る者をも目覚めさせる。』/
+「ガラスを壊す歌、のこと...？」/
+「読み聞かせの授業のために調べた伝承よ。本当に存在するのか、私は知らない。」/
+「でも、もしこれが砕く歌のことなら。そして存在するなら。」/
+「カノンさんを救える可能性はある。」/]
+[ブレイカの表情が少し明るくなる。/
+「本当に……？」/
+「ええ。でも、今は伝承以上のことは、まだ。」/
+少し沈黙が流れた。/
+「それから……。」/
+「あのガラスになった子。」
+「イザベルは、私の教え子だった。
+あの子は、真面目で優しい子だった。
+どうしてあんな森の中へ行ったのか……私には分からない。」
+そしてケイティは言った。
+「......私も、力になりたい。」
+ブレイカは静かに頷く。
+「うん。カノンも、イザベルも。絶対助ける。」
+ケイティはブレイカを見つめた。
+「ありがとう。」
+二人は家を出る。
+まずはイザベルが眠る森へ向かうことにした。]`},
+
+{title: "2-2",id: "chapter2_episode2",
+        unlock: {
+      type: "songPlayed",
+      song: "song8",
+      message: "このストーリーの解禁には、楽曲「Phoenix」のプレイが必要です"},
+        script:`[町の空気は、少しだけ変わったように思えた。/
+行き交う人々は普段通り話し、買い物をし、子どもたちは走り回っている。/
+それでも、どこか声を潜めている。イザベルがガラスの中で見つかってから、町全体が何かに怯えているようだ。/
+ブレイカとケイティが通りを歩いていると、道端で話し込む人々の声が耳に入る。/
+「やっぱり、あの子も洞窟へ向かったらしいよ。」/
+「歌を探してたんじゃないかって。」/
+「だから言ったんだ。あそこへ近付くなって。」/
+ブレイカの足が止まる。イザベルの話だろうか。/
+「……洞窟？」/
+呟きが聞こえたのか、人々は少し気まずそうに口を閉ざした。ケイティが穏やかに尋ねる。/
+「今の話、もう少し聞かせてもらえませんか。」/
+女性たちが、遠慮がちに口を開く。/
+「確かな話じゃありません。でも……。」/
+「イザベルさんを見かけた人がいるんです。」/
+「森の奥へ、一人で歩いていくところを。」/
+「その先には、昔から誰も近寄らない洞窟があります。」/
+「翌日、あの子は洞窟の入口で、ガラスの結晶に閉じ込められているのが見つかりました。」/
+そう言って彼女らは口をつぐんでしまった。]
+[風だけが通りを吹き抜ける。ケイティが小さく呟く。/
+「どうして、あの子が洞窟なんかに……。」/
+誰も答えられない。/
+そのとき、一人の女性が思い出したように言った。/
+「そういえば、昔話なら町外れのおばあさんが詳しかったね。」/
+「ああ、あの偏屈さんか。子どもの頃はよく聞かされたものよ。」/
+「龍がどうとか、歌がどうとか……。」/
+ケイティが顔を上げる。/
+「……あの人なら、何か知っているかもしれない。」//
+町外れの小さな家。/
+扉を叩くと、白髪のおばあさんがゆっくりと姿を現した。音を立てて軋みながらドアが開く。/]
+[おばあさんはブレイカを見るなり、目を細めた。/
+「歌を探しに来た子だね。」/
+「えっ？」/
+虚を突かれた。ブレイカとケイティは顔を見合わせる。/
+「その顔を見れば分かるさ。」/
+「昔も、そんな目をした子を何人も見送った。」/
+ケイティが一歩前へ出る。/
+「歌の伝承について教えてください。」/
+おばあさんはにやりと笑った。/
+「誰かを救う方法は、大抵おとぎ話から始まる。/
+大人は笑うさ。でもね、おとぎ話は、ときどき真実が隠れている。」/
+少し間を置いて、おばあさんは山のほうを見た。/
+「この世界にはたくさんの、隠された歌がある。
+そして、その中のひとつは、あの洞窟に眠っている。そう伝えられてきた。/
+わたしは、その歌に挑んだ勇者のおとぎ話を知っているのさ。
+いなくなった娘さんも、その話を聞きに来たよ。宝探しって言っとったね。」/
+ブレイカはケイティと目を合わせる。もう迷う理由はなかった。]
+[おばあさんの家を後にし、二人は洞窟へ続く林道を歩き始めた。足元に落ちた木の葉が、小気味のいい音を立てる。/
+「きれいな森ね。」
+樹木の下で色とりどりの花々が咲いている。たしかに美しい森だ。
+「先生、一つ気になることがあるんだけど。」/
+「何かしら。」/
+「イザベルは、どうして歌を探そうとしたんだろう。」/
+ケイティは少しだけ考え、首を横に振る。/
+「私にも分からない。...あの子は確かに勉強熱心だった。でも、伝承に夢中になるような子ではなかった。」/
+「じゃあ、誰かから聞いたのかな。」/
+「……その可能性はあるわね。」/
+少し間が空く。/
+「でも、それなら誰が？」/
+答えは返ってこない。森は静かだった。/
+鳥のさえずりだけが、会話の続きを待っているように響いている。/]
+[「先生。」/
+「イザベルは、一人で洞窟へ向かったんだよね。」/
+「ええ。」/
+「誰にも相談しなかったのかな。」/
+「少なくとも、私は何も聞いていない。」/
+ケイティは寂しそうに笑った。/
+「先生失格ね。」/
+ブレイカは首を振る。/
+「そんなことない。」/
+ケイティは何も答えなかった。/
+二人は黙って、木々の間を歩いていく。]
+[かなり進んだだろうか、木々の向こうに岩壁が見えてきた。/
+「あれが……。」/
+洞窟の入口だった。/
+その前には、一人の少女が静かに立っている。/
+深緑色の髪を持つ、どこか神秘的な雰囲気をまとった少女だった。/
+洞窟へ向かおうとした、その瞬間の姿勢のまま、透明なガラスの結晶に包まれていた。/
+「……イザベル。」/
+ケイティはゆっくりと近づく。/
+結晶越しに見える表情は、不思議なほど穏やかだった。/
+まるで、眠りに落ちたまま時が止まったように。]`},
+
+{title: "2-3",
+  id:"chapter2_episode3",
+  unlock: {
+      type: "storyRead",
+      storyId: "chapter2_episode2",
+      message: "このストーリーの解禁には、前のストーリーの読了が必要です"},
+  script:`{image:images/story/2_3.png}[透明な結晶に包まれたイザベルを前に、ケイティはしばらく言葉を失っていた。/
+結晶は陽の光を受けて静かに輝いている。/
+まるで壊れやすい宝石ではなく、触れることさえ拒む氷のようだった。/
+「……歌があれば。」/
+ブレイカは小さく呟く。/
+「きっと助けられる。」//
+その言葉を、誰かが拾った。/
+「その歌を、何のために探す。」/
+二人は振り返る。/
+少し離れた木陰に、一人の男が立っていた。]
+[黒い外套を羽織り、表情は木漏れ日に隠れてよく見えない。/
+いつからそこにいたのか分からない。森に溶け込むように、静かに立っていた。/
+「……誰？」/
+男は答えない。/
+しかしその視線は、まっすぐにブレイカへ向けられている。/
+「君に聞いている。」/
+「何のために歌を探す。」/
+ブレイカは迷わなかった。/
+「親友を助けるため。」/
+男はわずかに目を伏せる。風が吹き、木々が揺れる。/
+「……そうか。」/
+それだけ言うと、男は踵を返した。/
+「待って！」/
+ブレイカが呼び止めても、男は振り返らない。/
+「一つだけ。」/
+男の足が止まる。]
+[「...歌は、人を選ぶ。」/
+「選ばれなかった者は、歌を見つけることさえできない。」/
+短く言い残し、男は森の奥へ消えていった。/
+静寂だけが残る。/
+「先生。/
+...いまの、知ってる人？」/
+ケイティは首を横に振る。/
+「いいえ。...でも......。」/
+言葉は続かなかった。/
+森はまた何事もなかったように葉を揺らしている。/
+まるで、さっきまで誰もいなかったかのように。/
+ブレイカは洞窟へ目を向ける。暗闇は口を開けたまま、何も語らない。/
+「行こう。答えは、きっとあの中にある。」/
+ブレイカは一歩、洞窟の中へ足を踏み入れた。]`},
+{title: "2-4", 
+  id:"chapter2_episode4",
+  unlock: {
+      type: "storyReadAndSongPlayed",
+      storyId: "chapter2_episode3",
+      song: "song10",
+      message: "このストーリーの解禁には、前のストーリーの読了と、楽曲「Ancient Gust」のプレイが必要です"},
+  id: "chapter2_episode4",
+  script:`[洞窟の中に入ると、森の音が少し遠くなった気がした。/
+鳥の声も、風に揺れる葉の音も、ここまでは来ない。/
+代わりに聞こえるのは、どこか遠くで水が落ちる音だけだった。/
+「……静かだね。」/
+「ええ。」/
+ケイティは洞窟の奥を見つめる。/
+「静かすぎるくらいに。」/
+ブレイカは振り返る。外に佇むイザベルの姿を見た。/
+彼女のことも、絶対に助ける。そう決意を込め、洞窟の中へ足を踏み入れる。/
+冷たい空気が肌を撫でた。/
+森の空気とは違う。もっと乾いていて、もっと古い。/
+何百年も前の空気が、そのまま閉じ込められているような気がした。/
+石の壁には、見たことのない模様が彫られている。/
+文字にも見える。楽譜にも見える。/
+意味は分からない。だが、不思議と目が離せなかった。/
+「先生、これって……。」]
+[ケイティは壁に触れた。/
+「古代文字……かもしれない。」/
+「でも、こんな形、見たことない。」/
+「まるで、文字と音符を混ぜたみたいね。」/
+ブレイカは壁を見上げる。/
+曲線。直線。繰り返される記号。/
+どこか規則性があるようで、ないようにも見える。/
+その時、ブレイカはふと呟いた。/
+「……なんか。/
+聞こえる気がする。」/
+ケイティが振り向く。/
+「え？」/
+「ううん、音じゃないんだけど、なんていうか……/
+見てると、頭の中で勝手に音が鳴るっていうか。」/
+ケイティは驚いた。彼女には何も聞こえなかったのだ。/
+「…不思議ね。やっぱり、ここには何かあるかもしれないわよ。」]
+[洞窟の奥へ踏み入る。/
+道は思ったより長くて険しい。/
+途中で何度も分かれ道が現れた。/
+けれど、不思議なことに迷うことはなかった。/
+左へ行くべきか、右へ行くべきか。考えるより先に足が動く。/
+まるで、洞窟そのものが二人をどこかへ導いているみたいだった。/
+やがて、視界が開ける。/
+天井の見えない、大きな空洞。/
+中央には、石でできた祭壇が置かれていた。/
+その上には何もない。/
+少なくとも、最初はそう見えた。/
+「……これだけ？」/
+ブレイカが呟く。/
+歌なんてない。楽譜もない。宝箱もない。/
+あるのは古びた祭壇だけ。/
+その時だった。/]
+[ぽたり。/
+水滴の落ちる音。/
+一つ。/
+また一つ。/
+それに重なるように、どこか遠くで音が鳴った。/
+「……え？」/
+風ではない。水でもない。もっと澄んだ音。/
+ガラスを指で弾いたような、小さな音。/
+リン。/
+また一つ。/
+リン。/
+リン。/
+音が増える。/
+気づけば、それは旋律になっていた。/
+「先生。」/
+ケイティは答えない。祭壇をじっと見つめている。/
+いや、見つめていたのは祭壇ではない。/
+祭壇の上の空間だった。/]
+[無機質な祭壇の上、何もなかった場所。/
+その空間に、光が集まっている。/
+小さな粒。/
+星屑みたいな光。/
+それが少しずつ、/
+少しずつ形を作っていく。/
+五本の線。/
+その上に並ぶ記号。その形は、音符そのもので。/
+楽譜だった。/
+誰かが書き記したわけではない。/
+光そのものが、楽譜の形をしていた。/]
+{image:images/story/2_4.png}
+[ケイティが息を呑む。/
+「……伝承は、本当だった。」/
+ブレイカは祭壇へ近づく。/
+光の楽譜は静かに浮かんでいる。/
+まるで最初からそこにあったみたいに。/
+「これが……。」/
+ガラスを壊す歌。/
+カノンを救えるかもしれない歌。/
+イザベルを助けられるかもしれない歌。/
+ブレイカはゆっくりと手を伸ばした。/
+不意に、あの男の言葉が脳裏をよぎった。「歌は、人を選ぶ。」/
+その瞬間だった。まばゆい光が、彼女を包み込む。]`},
+{title: "2-5",id: "chapter2_episode5",unlock: {type: "songPlayed",
+      song: "song9",
+      message: "このストーリーの解禁には、楽曲「Maverick」のクリアが必要です"},
+      script:`[何があったのか、分からない。/
+      白い世界が、少しずつ輪郭を取り戻していく。/
+ブレイカは祭壇の前に立っていた。/
+洞窟だ。天井から落ちる水滴の音。冷たい空気。/
+隣にはケイティがいる。/
+時間は、ほとんど進んでいないように見えた。/
+「ブレイカ、それ…」ケイティが祭壇を指さした。ブレイカは振り返る。/
+光の楽譜はもうない。代わりに、一枚の紙が置かれていた。/
+古びているが、不思議と朽ちてはいない。/
+ブレイカはそっと、それを手に取る。/
+触れた瞬間、彼女の中に音が流れ込んでくるのを感じた。/
+旋律。そして歌詞。知らない言葉。知らないはずの発音。/
+それなのに、不思議なくらい自然に理解できる。/
+まるで昔から知っていた歌を思い出すみたいに。/]
+[「……これは。」/
+ブレイカが呟く。/
+ケイティは息を吞む。/
+「これが……歌、なの？」/
+こくりと頷いて、ブレイカは楽譜を見た。/
+「たぶん、歌える。」/
+「え？」/
+「なんでか分からないけど、歌い方が分かる。」/
+気づけば洞窟の壁が、淡く光っていた。/
+古代文字。いや、文字ではない。/
+音符に似た記号たち。/
+それらが、まるで祝福するみたいに輝いていた。/
+「歌は、人を選ぶ。」あの男の言葉。/
+わたしは、きっと選ばれたのだろう。そんな気がした。/
+理由はわからない。/
+歌についても。自分を包んだ光についても、意味が分からない。/
+それでも、一つだけ確かなことがある。/]
+[この歌は。/
+間違いなく誰かを救うために生まれた歌だ。/
+壊すための歌じゃない。/
+終わらせるための歌でもない。/
+閉じ込められた誰かを、もう一度世界へ連れ戻すための歌。/
+ブレイカは楽譜を胸に抱く。/
+「先生。」/「帰ろう。/カノンを、イザベルを助けよう。」/
+ふたりは、下ってきた洞窟の隧道に、再び。足を踏み出した。/
+歩き出す。透明な結晶の中で眠る少女のもとへ。]`},
+
+{title: "2-6",id: "chapter2_episode6",unlock: {
+      type: "storyRead",
+      storyId: "chapter2_episode5",
+      message: "このストーリーの解禁には、前のストーリーの読了が必要です"},script:`[洞窟を出る頃には、空の色が少しだけ変わっていた。
+森の中を吹き抜ける風は相変わらず冷たいのに、ブレイカの胸の奥だけが妙に熱かった。
+胸元には、一枚の楽譜。
+古びているはずなのに、触れるたびに微かな温もりがある。
+まるで、心臓みたいだった。
+洞窟の入口は静かだった。イザベルは、まだそこにいる。
+ケイティが結晶へ近づく。そっと手を触れた。
+「……冷たい。」
+「ずっと、このままだったのね。」
+ブレイカは楽譜を見る。/書かれている文字は読めない。
+音符も見たことがない形をしている。
+それでも、分かるのだ。不思議なくらい自然に。
+旋律が頭の中に流れ始める。]
+[歌詞も言葉も、知らないはずなのに。
+まるで昔から知っていた歌を思い出すみたいな感覚で。
+「……先生。」
+「うん。」
+「歌ってみる。」
+ケイティは静かに頷いた。
+ブレイカは結晶をじっと見つめる。/
+透明な結晶の向こう側。イザベルの表情は、変わらず穏やかだった。
+「……帰ろう。」
+誰に向けた言葉だったのか、自分でも分からなかった。
+イザベルに。カノンに。あるいは、まだ見ぬ誰かに。
+ブレイカは息を吸う。
+そして歌いはじめた。]
+{bgm:stop:1500}
+{wait:1500}
+{bgm:play:sounds/2-6.mp3:0.45}
+[最初の一音が、森に溶ける。
+歌声は決して大きくなかった。
+けれど、その声色に迷いはなかった。
+絶対に救ってみせると、そんな決意が彼女の歌を衝き動かしていたのだ。
+歌に共鳴するように、胸元の楽譜が淡く光る。
+風が吹く。木々が揺れる。葉と葉が擦れる音。遠くで鳴く鳥の声。
+まるで伴奏のようだと、ブレイカは思った。
+ブレイカは歌う。
+知らない言葉だった。知らないはずの旋律だった。
+それなのに、不思議と間違える気がしなかった。
+歌詞が口をついて出てくる。]
+[歌うたびに、楽譜の光が少しずつ強くなる。
+それに比例するように、森はざわめきを増す。
+世界は、歌を拒んでいるようにも思えた。
+仮にそうだとしても、彼女の意志が揺らぐことはないが。
+そして、楽譜に書かれていた一節が終わる。ブレイカは最後の一音を、長く長く伸ばした。
+そして──
+ぱきっ……と、小さな音が響いた。
+それと同時に、風が止まる。木々のざわめきも止まる。
+森そのものが息を止めたみたいな静寂。
+ブレイカは結晶を見た。
+イザベルの指先。
+そのすぐ近く。
+透明なガラスの表面に、細いひびが走っていた。]
+[「……！」
+ひびが広がる。
+音を立てながら、結晶は砕けていく。
+いや、ほどけていく。春の雪融けのように。花びらのように。
+透明な欠片が風に乗る。
+名残を惜しむようにその場できらりと舞い、森の中へ消えていった。
+そのとき、支えをなくしたイザベルの身体が前へ傾く。
+「危ない！」
+ケイティの声に、ブレイカは我にかえった。
+イザベルに駆け寄る。その身体を受け止めた。
+軽かった。驚くくらいに。
+まるで長い間、世界の重さを忘れていたみたいに。
+イザベルの瞼が震える。
+そしてそれはゆっくりと開いた。]
+[イザベルは空を見る。
+木々を見る。
+風を見る。
+そして、小さく笑った。
+「……神様。」
+ブレイカが目を瞬く。
+イザベルは空を見上げていた。
+まるで誰かがそこにいるみたいに。
+「ありがとう。」
+風が吹く。
+木々が揺れる。
+「私に、またチャンスを与えてくれて。」
+まだ生きていられる、その感動は彼女にしか分からないだろう。
+ブレイカはそう思った。]
+[イザベルはゆっくりと視線を下ろす。
+そして初めて、ブレイカを見る。
+「……あなたが、助けてくれたの？」
+「うん。」
+「そっか。」
+イザベルの顔がほころんだ。ブレイカも笑みを返す。
+また、風が吹く。
+ケイティがゆっくり歩み寄る。そして、声をかけた。
+「おかえり、イザベル。」
+イザベルは少し驚いて、それから笑った。
+「……ただいま、先生。」]{bgm:stop:1500}{wait:1600}`},
+{title: "2-7",id: "chapter2_episode7",unlock: {type: "songPlayed",song: "song11",
+      message: "このストーリーの解禁には、楽曲「グラビティプレア」のクリアが必要です"}
+      ,script:`[夕焼けに染まる林道を、三人はゆっくり歩いていた。
+森を抜ける風はどこか柔らかく、さっきまでの緊張が少しずつほどけていく。
+イザベルはまだ足元がおぼつかなかったが、自分の足で歩いていた。
+「大丈夫？」
+「うん。」
+「少しふらふらするけど……歩ける。」
+その言葉に、ブレイカはほっと息をつく。
+ガラスの結晶に閉じ込められた人は、救える。
+その事実だけで、胸に灯がともったような気がした。
+「カノン……待ってて。今助けるから。」
+その言葉に、ケイティは優しく頷く。
+イザベルがブレイカの隣へ並ぶ。
+「その……私も行って、いいかな？
+「助けてもらったお礼、まだしてないし、
+……一人でやるより、楽しそう。」
+「わかった。一緒に行こう。」
+ブレイカは微笑む。三人はそのまま村へ向かった。]
+[空はすっかり夕暮れに染まっていた。
+見慣れた街並み、見慣れた花屋。
+店先には、あの日と何も変わらない姿で、カノンが眠っていた。
+「……カノン。」
+ブレイカは駆け寄る。
+胸元から楽譜を取り出す。
+深く息を吸う。歌い始める。
+それは、祈るような歌声で。
+洞窟で歌ったときよりも自然に。
+まるで何度も歌ってきた歌みたいに。/旋律が村へ広がる。
+風が吹く。花が揺れる。空気が震える。/やがて。
+結晶が淡く光り始めた。]
+[「……！」
+ブレイカの表情が明るくなる。
+光は少しずつ強くなる。
+そして。/ぱき。/小さな音が響いた。
+結晶の表面。爪でひっかいたような、一本の細いひび。
+「やった……！」
+ブレイカは歌い続ける。心臓が脈打つのを感じた。
+もう少し。/あと少し。/きっと届く。/そう信じて。/けれど。
+光は少しずつ弱くなっていく。/歌は、まもなく終わる。
+光は、ふっと搔き消えた。]
+[ひびは残っている。しかし、それ以上広がることはなかった。
+ブレイカは結晶へ駆け寄る。
+「カノン……！」/返事はない。/眠ったまま。/何も変わらない。
+「どうして……。」/握り締めた楽譜が、小さく震えた。/ケイティが結晶へ近付く。
+ひびへそっと指を添える。しばらく黙って見つめていた。
+「……歌は、本物よ。」/ブレイカが顔を上げる。/「でも、これだけでは足りない。/
+結晶は確かに反応している。だけど、砕き切れない。」]
+[ブレイカはひびを見つめる。
+ほんのわずかに入ったひび。ケイティは続けた。
+「私が思うに、あの歌はまだ、一節だけなの。全部じゃない。」
+「じゃあ……。」/「続きを探さなきゃ。」
+イザベルが静かに口を開いた。/「歌の続きを。」
+ブレイカは楽譜を胸に抱く。/悔しかった。
+でも、希望は消えていない。
+ひびは残っているのだから。
+この歌は、確かにカノンへ届いている。そう信じたい。
+ブレイカは、イザベルの手を取った。
+「やろう。
+絶対に、続きを見つける。」
+夕日を背に、二人は歩き出した。]{bgm:stop:1500}
+[....../村を離れた二人と入れ替わるように、一人の男が花屋の前へ立つ。/
+黒い外套。/静かな足取り。/男はカノンを包む結晶を見つめる。
+表面に残る、一本のひび。/ゆっくりと目を細める。
+「……そうか。」/その声に驚きはなかった。
+男はひびへそっと指を添える。
+「歌は、確かに力を持っている。」/小さく息をつく。
+「君は……。/どこまで行き至るか。」/答えは返ってこない。
+軒先の花が、夕暮れの風に吹かれて揺れていた。]`}
+  ],
+  fragmentEpisodes: [
+    {
+      title: "2-R",
+      id: "chapter2_fragment1",
+      unlock: null,
+      script: `[ブレイカが初めてカノンと出会ったのは、彼女がまだ五つのころであった。//
+家族と一緒に隣町を訪れた帰り道。/「少しだけ、探検してみよう。」/
+そんな軽い気持ちで森へ入った。/木漏れ日が綺麗だった。
+/名前も知らない花が咲いていて、小鳥が枝から枝へ飛び移る。
+歩いているだけで楽しかった。/気が付けば、夢中になっていた。/
+「……あれ？」/振り返る。/誰もいない。/さっきまで見えていた道も、家族の姿も消えていた。
+どこを見ても同じ景色。木々ばかり。/「ママ？」/あどけない声が、森の静寂に虚しく吸い込まれた。
+少し歩く。/違う方向へ歩く。/景色は変わらない。だんだん足取りが重くなる。]
+[「ママ……どこ？」/胸の奥がつんとした。泣きそうだった。
+その時だった。/風が、音を運んできた。/小さな歌声。遠くで、誰かが歌っている。/下手なハミングだ。
+けれど、不思議と安心する声だった。/ブレイカは耳を澄ませる。/歌は風に乗って、森の奥から聞こえてくる。
+「……あっち。」/歌を頼りに歩き始める。/少しずつ、少しずつ。
+歌声に近付いていった。/やがて木々が開ける。]
+[小さな花畑。色とりどりの花が風に揺れている。
+その真ん中で、一人の女の子がしゃがみ込み、花を摘んでいた。/歌を口ずさみながら。
+ブレイカが近付くと、女の子は顔を上げた。/「あ。」
+目が合う。女の子はぱっと笑った。/「こんにちは！」
+一点の曇りもない笑顔につられて、ブレイカも少しだけ笑ってしまった。/「……こんにちは。」
+「どうしたの？まいご？」/ブレイカは小さく頷く。/「うん……。」
+女の子は立ち上がり、服についた綿毛を払う。/「じゃあ、いっしょに帰ろ！」
+女の子はそう言った。/迷うこともなく、知らない子を警戒することもなく。
+まるで最初から友達だったようで。ブレイカの目に涙がにじんだ。/]
+[「私はカノン！あなたは？」/「……ブレイカ。」/「ブレイカ！」/
+カノンはその名前を嬉しそうに繰り返した。/「よろしくね！」
+二人は並んで歩き始める。/「さっきの歌。」/ブレイカが口を開く。
+「あれが聞こえたから、ここまで来られたんだ。」
+カノンは少しだけ驚いた顔をした。
+「私、歌ってた？」/「うん。」/「全然気付かなかった。」
+カノンは照れくさそうに笑った。
+「そのおかげだよ。ありがとね。」
+ブレイカは言った。]
+[カノンはにっこりと笑う。/「どういたしまして！……あ、ほら、着いたよ。」
+再び森が開ける。行き先を示す看板が見える。
+さっき見た、林道の入り口だった。
+「あっ！」
+ブレイカが指を差す。
+「あそこ！」
+通りに家族の姿が見える。
+必死に辺りを探している。
+「お母さん！」
+ブレイカが駆け出す。母が振り返る。
+ブレイカは母の胸に飛び込んだ。
+母親はブレイカを抱きしめ、安心したように息をついた。]
+[「もう、心配したのよ。さあ、おうちに帰りましょう。」
+母はブレイカの手を取った。/
+ブレイカは振り返る。林道の入り口で、カノンが手を振っていた。
+「ありがとー！」
+そう叫ぶと、カノンは大きく手を振り返す。
+「ブレイカ～！また会おうね！」/「うん！絶対だよ！」
+これが、二人の始まりだった。]`
+    }
+  ]
+},
 ];
 
-let currentChapterIndex = 0;
+//{title: "2-1",unlock: null,script:`[]`}
+
+const LAST_STORY_CHAPTER_KEY = "glassbeatLastStoryChapter";
+
+let currentChapterIndex = Number(localStorage.getItem(LAST_STORY_CHAPTER_KEY) || 0);
 let currentEpisodeIndex = null;
 let currentLineIndex = 0;
 let typingTimer = null;
@@ -408,6 +963,7 @@ let isTyping = false;
 let fullText = "";
 let introImageActive = false;
 let introImageFading = false;
+let currentEpisodeSource = "normal";
 
 const storyPage = document.getElementById("storyPage");
 const readingOverlay = document.getElementById("readingOverlay");
@@ -415,8 +971,31 @@ const storyText = document.getElementById("storyText");
 const chapterTitle = document.getElementById("chapterTitle");
 const episodeList = document.getElementById("episodeList");
 
+const song9StartSound = new Audio("sounds/startsound.mp3");
+song9StartSound.volume = 0.9;
+
 function getSaveData() {
   return JSON.parse(localStorage.getItem("rhythmGame") || "{}");
+}
+
+function getCurrentPartnerId() {
+  const saveData = getSaveData();
+  return saveData.profile?.partner || "breaka";
+}
+
+function unlockPartner(partnerId) {
+  const saveData = getSaveData();
+
+  if (!saveData.unlockedPartners) {
+    saveData.unlockedPartners = {};
+  }
+
+  const alreadyUnlocked = saveData.unlockedPartners[partnerId] === true;
+
+  saveData.unlockedPartners[partnerId] = true;
+  localStorage.setItem("rhythmGame", JSON.stringify(saveData));
+
+  return !alreadyUnlocked;
 }
 
 function isEpisodeUnlocked(episode) {
@@ -440,6 +1019,14 @@ function isEpisodeUnlocked(episode) {
   return false;
 }
 
+function clearLockedStoryMessage() {
+  const messageEl = document.getElementById("lockedStoryMessage");
+  if (!messageEl) return;
+
+  messageEl.textContent = "";
+  messageEl.classList.remove("visible");
+}
+
 function hasPlayedSong(songId) {
   const saveData = getSaveData();
   const songData = saveData[songId];
@@ -455,16 +1042,38 @@ function hasReadStory(storyId) {
 }
 
 function renderChapters() {
-  document.querySelectorAll(".chapterButton").forEach((button) => {
-    const index = Number(button.dataset.chapter);
 
-    button.classList.toggle("selected", index === currentChapterIndex);
+  const chapterList = document.getElementById("chapterList");
+  chapterList.innerHTML = "";
+
+  chapters.forEach((chapter, index) => {
+    const button = document.createElement("button");
+    button.classList.add("chapterButton");
+    button.textContent = chapter.title;
+    button.dataset.chapter = index;
+
+    if (index === currentChapterIndex) {
+      button.classList.add("selected");
+    }
+
+    if (
+  Number.isNaN(currentChapterIndex) ||
+  currentChapterIndex < 0 ||
+  currentChapterIndex >= chapters.length
+) {
+  currentChapterIndex = 0;
+}
 
     button.addEventListener("click", () => {
+       clearLockedStoryMessage();
       currentChapterIndex = index;
+        localStorage.setItem(LAST_STORY_CHAPTER_KEY, String(currentChapterIndex));
       renderChapters();
       renderEpisodes();
+      updateChapterBackground();
     });
+
+    chapterList.appendChild(button);
   });
 }
 
@@ -479,21 +1088,73 @@ function renderEpisodes() {
     button.classList.add("episodeButton");
     button.innerHTML = `<span>${episode.title}</span>`;
 
+    if (episode.id === "chapter2_episode4") {
+  button.classList.add("episodeButtonSpecial");
+}
+
+    if (!isEpisodeUnlocked(episode)) {
+  button.classList.add("locked");
+
+  button.addEventListener("click", () => {
+    clearLockedStoryMessage();
+
+    const messageEl = document.getElementById("lockedStoryMessage");
+    if (messageEl) {
+      messageEl.textContent =
+        episode.unlock?.message || "このストーリーはまだ解禁されていません";
+      messageEl.classList.add("visible");
+    }
+  });
+} else {
+  button.addEventListener("click", () => {
+    clearLockedStoryMessage();
+
+    if (
+      episode.id === "chapter2_episode4" &&
+      getCurrentPartnerId() === "isabel"
+    ) {
+      runBoss2IntroSequence();
+      return;
+    }
+
+    openEpisode(index);
+  });
+}
+
+const fragmentList = document.getElementById("fragmentEpisodeList");
+if (fragmentList) {
+  fragmentList.innerHTML = "";
+
+  const fragments = chapter.fragmentEpisodes || [];
+
+  fragments.forEach((episode, index) => {
+    const button = document.createElement("button");
+    button.classList.add("episodeButton");
+    button.innerHTML = `<span>${episode.title}</span>`;
+
     if (!isEpisodeUnlocked(episode)) {
       button.classList.add("locked");
 
       button.addEventListener("click", () => {
+        clearLockedStoryMessage();
+
         const messageEl = document.getElementById("lockedStoryMessage");
         if (messageEl) {
           messageEl.textContent =
             episode.unlock?.message || "このストーリーはまだ解禁されていません";
+          messageEl.classList.add("visible");
         }
       });
     } else {
       button.addEventListener("click", () => {
-        openEpisode(index);
+        clearLockedStoryMessage();
+        openFragmentEpisode(index);
       });
     }
+
+    fragmentList.appendChild(button);
+  });
+}
 
     episodeList.appendChild(button);
   });
@@ -528,12 +1189,28 @@ function parseStoryScript(script) {
   return tokens;
 }
 
+function updateStoryTextPosition(text) {
+  const previousText = storyText.textContent;
+
+  storyText.style.visibility = "hidden";
+  storyText.textContent = text;
+
+  const textHeight = storyText.offsetHeight;
+  const top = Math.max(48, (window.innerHeight - textHeight) / 2);
+
+  storyText.style.top = top + "px";
+  storyText.textContent = previousText;
+  storyText.style.visibility = "";
+}
+
 function typeText(text) {
   clearInterval(typingTimer);
 
   if (Array.isArray(text)) {
     text = text.join("\n");
   }
+
+  updateStoryTextPosition(text);
 
   fullText = text;
   storyText.textContent = "";
@@ -565,26 +1242,54 @@ function getEpisodeSteps(episode) {
   return [];
 }
 
+function updateChapterBackground() {
+  const chapter = chapters[currentChapterIndex];
+  const bg = chapter.background || "assets/bg/select_bg.jpg";
+  const storyBackground = document.getElementById("storyBackground");
+
+  if (storyBackground) {
+    storyBackground.style.backgroundImage = `url("${bg}")`;
+  }
+}
+
+function getCurrentEpisode() {
+  const chapter = chapters[currentChapterIndex];
+
+  if (currentEpisodeSource === "fragment") {
+    return chapter.fragmentEpisodes?.[currentEpisodeIndex];
+  }
+
+  return chapter.episodes[currentEpisodeIndex];
+}
+
 function openEpisode(index) {
+  currentEpisodeSource = "normal";
   currentEpisodeIndex = index;
   currentLineIndex = 0;
 
-  storyPage.classList.add("blurred");
+  document.body.classList.add("readingMode");
   readingOverlay.classList.remove("hidden");
-
-  const episode = chapters[currentChapterIndex].episodes[currentEpisodeIndex];
-
-  if (episode.introImage) {
-    showIntroImage(episode.introImage);
-    return;
-  }
 
   showCurrentStep();
 }
 
-function showIntroImage(src) {
+function openFragmentEpisode(index) {
+  currentEpisodeSource = "fragment";
+  currentEpisodeIndex = index;
+  currentLineIndex = 0;
+
+  document.body.classList.add("readingMode");
+  readingOverlay.classList.remove("hidden");
+
+  showCurrentStep();
+}
+
+function showStoryImage(src) {
+  console.log("表示する画像:", src);
+
   const img = document.getElementById("storyIntroImage");
   if (!img) {
+    currentLineIndex++;
     showCurrentStep();
     return;
   }
@@ -608,18 +1313,19 @@ function closeEpisode() {
   clearInterval(typingTimer);
 
   readingOverlay.classList.add("hidden");
-  storyPage.classList.remove("blurred");
+  document.body.classList.remove("readingMode");
   storyText.textContent = "";
 
   currentEpisodeIndex = null;
   currentLineIndex = 0;
+  currentEpisodeSource = "normal";
   isTyping = false;
 
   playStoryBGM("sounds/story_bgm.mp3", 0.45);
 }
 
 function markEpisodeRead() {
-  const episode = chapters[currentChapterIndex].episodes[currentEpisodeIndex];
+const episode = getCurrentEpisode();
   if (!episode?.id) return;
 
   const saveData = getSaveData();
@@ -628,38 +1334,61 @@ function markEpisodeRead() {
     saveData.storyRead = {};
   }
 
+  if (!saveData.storyFlags) {
+    saveData.storyFlags = {};
+  }
+
   saveData.storyRead[episode.id] = true;
 
+  let isabelFirstUnlock = false;
+
   if (episode.id === "chapter1_episode4") {
-    if (!saveData.storyFlags) saveData.storyFlags = {};
     saveData.storyFlags.pendingCanonPartnerEvent = true;
   }
 
+  if (episode.id === "chapter2_episode4") {
+    saveData.storyFlags.song9ChallengeStarted = true;
+  }
+
+  if (episode.id === "chapter2_episode7") {
+    if (!saveData.unlockedPartners) {
+      saveData.unlockedPartners = {};
+    }
+
+    isabelFirstUnlock = saveData.unlockedPartners.isabel !== true;
+    saveData.unlockedPartners.isabel = true;
+  }
+
   localStorage.setItem("rhythmGame", JSON.stringify(saveData));
+
+  if (isabelFirstUnlock) {
+    showPartnerUnlockOverlay("isabel");
+  }
 }
 
 readingOverlay.addEventListener("click", () => {
   if (isAdvancingStory) return;  
   if (currentEpisodeIndex === null) return;
 
-  // 挿絵表示中なら、クリックで挿絵を消して1ページ目へ
   if (introImageActive) {
-    if (introImageFading) return;
+  if (introImageFading) return;
 
-    const img = document.getElementById("storyIntroImage");
-    introImageFading = true;
+  const img = document.getElementById("storyIntroImage");
+  introImageFading = true;
 
-    img.classList.remove("visible");
+  img.classList.remove("visible");
 
-    setTimeout(() => {
-      img.classList.add("hidden");
-      introImageActive = false;
-      introImageFading = false;
-      showCurrentStep();
-    }, 550);
+  setTimeout(() => {
+    img.classList.add("hidden");
+    introImageActive = false;
+    introImageFading = false;
 
-    return;
-  }
+    currentLineIndex++;
+    showCurrentStep();
+  }, 550);
+
+  return;
+}
 
   // 文字送り中なら全文表示
   if (isTyping) {
@@ -757,6 +1486,11 @@ function playStoryBGM(src = "sounds/story_bgm.mp3", volume = 0.45) {
     bgmFadeTimer = null;
   }
 
+   if (storyBGM) {
+    storyBGM.pause();
+    storyBGM.currentTime = 0;
+  }
+
   storyBGM = new Audio(src);
   currentBgmSrc = src;
   storyBGM.loop = true;
@@ -771,6 +1505,163 @@ function playStoryBGM(src = "sounds/story_bgm.mp3", volume = 0.45) {
 
 function waitMs(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function playBoss2Riser() {
+  const sound = new Audio("sounds/riser.mp3");
+  sound.volume = 0.85;
+  sound.play().catch(() => {});
+}
+
+function spawnBoss2LightParticles() {
+  const area = document.getElementById("boss2LightParticles");
+  if (!area) return;
+
+  area.innerHTML = "";
+
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  for (let i = 0; i < 48; i++) {
+    const particle = document.createElement("div");
+    particle.classList.add("boss2LightParticle");
+
+    const x = Math.random() * width;
+    const y = Math.random() * height;
+
+    particle.style.left = x + "px";
+    particle.style.top = y + "px";
+
+    particle.style.setProperty("--x", x + "px");
+    particle.style.setProperty("--y", y + "px");
+
+    particle.style.animationDelay = Math.random() * 0.45 + "s";
+
+    area.appendChild(particle);
+  }
+}
+
+function playCanonGlowStartSound() {
+  const sound = new Audio("sounds/canon_glow_start.mp3");
+  sound.volume = 0.8;
+  sound.play().catch(() => {});
+}
+
+async function runBoss2IntroSequence() {
+  stopStoryBGM(700);
+
+  const overlay = document.getElementById("boss2IntroOverlay");
+  const image = document.getElementById("boss2IntroImage");
+  if (!overlay || !image) return;
+
+  document.body.classList.remove("whiteFlashOut");
+  document.body.classList.remove("readingMode");
+
+  if (readingOverlay) {
+    readingOverlay.classList.add("hidden");
+  }
+
+  if (storyText) {
+    storyText.textContent = "";
+  }
+
+  overlay.classList.remove(
+    "hidden",
+    "whiteFlash",
+    "fadeToBlack",
+    "lightGather",
+    "whiteDissolve"
+  );
+
+  image.className = "";
+  image.src = "";
+  image.style.opacity = "0";
+  image.style.transform = "scale(1)";
+
+  overlay.classList.add("fadeToBlack");
+
+  await waitMs(900);
+
+  overlay.classList.remove("fadeToBlack");
+
+  image.className = "";
+  image.src = "images/story/2_3.png";
+  image.style.opacity = "0";
+  image.style.transform = "scale(1)";
+
+  await waitMs(250);
+
+  image.classList.add("fadeIn");
+
+  await waitMs(2300);
+
+  overlay.classList.remove("whiteFlash");
+  void overlay.offsetWidth;
+  overlay.classList.add("whiteFlash");
+  playCanonGlowStartSound();
+
+  await waitMs(100);
+
+  image.className = "";
+  image.src = "images/story/2_3_after.png";
+  image.style.opacity = "1";
+  image.style.transform = "scale(1)";
+
+  playBoss2Riser();
+
+  await waitMs(1300);
+
+  image.classList.add("zoomIn");
+
+  await waitMs(2600);
+
+  overlay.classList.add("lightGather");
+  spawnBoss2LightParticles();
+
+  await waitMs(2600);
+
+  overlay.classList.add("whiteDissolve");
+
+  await waitMs(1200);
+
+overlay.classList.remove("lightGather");
+
+const centerGlow = document.getElementById("boss2CenterGlow");
+if (centerGlow) {
+  centerGlow.style.opacity = "0";
+}
+
+  overlay.classList.add("fadeToBlack");
+
+  await waitMs(1300);
+
+  showBoss2DifficultySelect();
+}
+
+function showBoss2DifficultySelect() {
+  const overlay = document.getElementById("boss2DifficultyOverlay");
+  const buttons = document.querySelectorAll("#boss2DifficultyButtons button");
+
+  if (!overlay) return;
+
+  overlay.classList.remove("hidden");
+  overlay.classList.remove("fadeOut");
+
+  buttons.forEach(button => {
+    button.onclick = () => {
+      const difficulty = button.dataset.difficulty;
+
+      const startSound = new Audio("sounds/startsound.mp3");
+      startSound.play().catch(() => {});
+
+      overlay.classList.add("fadeOut");
+
+      setTimeout(() => {
+        location.href =
+          `game.html?song=boss2&difficulty=${difficulty}&storyChallenge=1&boss2Challenge=1&skipStoryIntro=1`;
+      }, 650);
+    };
+  });
 }
 
 async function runStoryCommand(command) {
@@ -803,17 +1694,26 @@ async function showCurrentStep() {
   if (isAdvancingStory) return;
   isAdvancingStory = true;
 
-  const episode = chapters[currentChapterIndex].episodes[currentEpisodeIndex];
+  const episode = getCurrentEpisode();
   const steps = getEpisodeSteps(episode);
 
   while (currentLineIndex < steps.length) {
     const step = steps[currentLineIndex];
 
     if (step.type === "command") {
-      await runStoryCommand(step.command);
-      currentLineIndex++;
-      continue;
-    }
+  const command = step.command;
+
+  if (command.startsWith("image:")) {
+    const src = command.slice("image:".length).trim();
+    showStoryImage(src);
+    isAdvancingStory = false;
+    return;
+  }
+
+  await runStoryCommand(command);
+  currentLineIndex++;
+  continue;
+}
 
     typeText(step.text);
     updateReadingPrevButton();
@@ -836,9 +1736,28 @@ async function showCurrentStep() {
 
   return;
 }
+
+if (episode.id === "chapter2_episode4") {
+  stopStoryBGM(900);
+  document.body.classList.add("whiteFlashOut");
+
+  setTimeout(() => {
+    showSong9DifficultySelect();
+  }, 900);
+
+  return;
+}
+
   closeEpisode();
   renderEpisodes();
   isAdvancingStory = false;
+}
+
+function showSong9DifficultySelect() {
+  const overlay = document.getElementById("song9DifficultyOverlay");
+  if (!overlay) return;
+
+  overlay.classList.remove("hidden");
 }
 
 const storyBackButton = document.getElementById("storyBackButton");
@@ -869,5 +1788,56 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+let song9DifficultySelected = false;
+
+document.querySelectorAll("#song9DifficultyButtons button").forEach(button => {
+ button.addEventListener("click", () => {
+  if (song9DifficultySelected) return;
+  song9DifficultySelected = true;
+
+  song9StartSound.currentTime = 0;
+  song9StartSound.play().catch(e => {
+    console.log("startsound play failed:", e);
+  });
+
+  const difficulty = Number(button.dataset.difficulty || 0);
+  const overlay = document.getElementById("song9DifficultyOverlay");
+
+  if (overlay) {
+    overlay.classList.add("fadeOut");
+  }
+
+  setTimeout(() => {
+    location.href = `game.html?song=song9&difficulty=${difficulty}&storyChallenge=1`;
+  }, 650);
+});
+});
+
+function showPartnerUnlockOverlay(partnerId) {
+  const overlay = document.getElementById("partnerUnlockOverlay");
+  const image = document.getElementById("partnerUnlockImage");
+  const name = document.getElementById("partnerUnlockName");
+
+  if (!overlay || !image || !name) return;
+
+  if (partnerId === "isabel") {
+    image.src = "images/partners/isabel_full.png";
+    name.textContent = "イザベル";
+  }
+
+  overlay.classList.remove("hidden", "fadeOut");
+
+  overlay.onclick = () => {
+    overlay.classList.add("fadeOut");
+
+    setTimeout(() => {
+      overlay.classList.add("hidden");
+      overlay.classList.remove("fadeOut");
+      overlay.onclick = null;
+    }, 450);
+  };
+}
+
 renderChapters();
 renderEpisodes();
+updateChapterBackground();

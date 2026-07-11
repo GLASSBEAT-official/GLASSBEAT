@@ -1,0 +1,6 @@
+{
+  "title": "Maverick",
+  "artist": "nons works",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11, "file": "expert.txt" }]
+}

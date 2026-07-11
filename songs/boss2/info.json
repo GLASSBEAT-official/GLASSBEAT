@@ -1,0 +1,6 @@
+{
+  "title": "収束する青",
+  "artist": "Hareno",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 9,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 14, "file": "fracture.txt" }]
+}

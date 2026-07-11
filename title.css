@@ -21,7 +21,7 @@ body {
 #titleLogo {
   width: min(680px, 82vw);
   opacity: 0;
-  transform: translateY(18px) scale(1.6);
+  transform: translateY(18px) scale(2.0);
   filter: drop-shadow(0 0 24px rgba(120, 220, 255, 0.75));
   animation: logoFadeIn 1.4s ease forwards;
 }

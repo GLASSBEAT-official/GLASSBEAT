@@ -850,6 +850,7 @@ function stopPlayback() {
 }
 
 // ---- エクスポート ----
+
 document.getElementById("exportButton").addEventListener("click", () => {
   const sortedNotes = [...notes].sort((a, b) =>
     positionToNumber(a.position) - positionToNumber(b.position)
@@ -889,7 +890,18 @@ document.getElementById("exportButton").addEventListener("click", () => {
   const blob = new Blob([lines.join("\n")], { type: "text/plain" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = "chart.txt";
+  const fileNameInput = document.getElementById("exportFileNameInput");
+let fileName = fileNameInput.value.trim();
+
+if (!fileName) {
+  fileName = "chart";
+}
+
+if (!fileName.endsWith(".txt")) {
+  fileName += ".txt";
+}
+
+a.download = fileName;
   a.click();
 });
 

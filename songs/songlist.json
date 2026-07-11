@@ -9,6 +9,11 @@
       "name": "はじまりの歌",
       "image": "assets/folders/hajimari.png",
       "songs": ["song1","song2","song5","song3","boss"]
-    }
+    },
+  {
+    "name": "破砕の旋律",
+      "image": "assets/folders/fukkatsu.jpg",
+      "songs": ["song8","song10","song9","song11","boss2"]
+  }
   ]
 }

@@ -2,5 +2,5 @@
   "title": "Crystal brriliance",
   "artist": "Tak_mfk",
   "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 9,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12, "file": "expert.txt"},{"difficulty": "FRACTURE","level": 15,"file":"fracture.txt"}]
+  "charts":[{"difficulty": "BASIC","level": 10,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12, "file": "expert.txt"},{"difficulty": "FRACTURE","level": 15,"file":"fracture.txt"}]
 }

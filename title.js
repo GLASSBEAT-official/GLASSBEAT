@@ -111,9 +111,9 @@ function runEndingDemoSequence() {
   playTitleBGM();
 
   const message =
-    "デモ版をプレイしていただきありがとうございます！\n" +
-    "続きは鋭意制作中です！\n" +
-    "感想や要望があればぜひお聞かせください！";
+    "Chapter1をプレイしていただきありがとうございます！\n" +
+    "chapter2もぜひ！\n" +
+    "感想や要望があれば教えていただけると励みになります！";
 
   setTimeout(() => {
     typeEndingText(message, () => {
