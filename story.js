@@ -2523,15 +2523,15 @@ async function showCurrentStep() {
 
   if (episode.id === "chapter3_episode13") {
     stopStoryBGM(800);
-    const fade = document.getElementById("storyIntroFade");
-    if (fade) {
-      fade.classList.remove("fadeIn");
-      fade.classList.add("fadeOut");
-    }
 
-    setTimeout(() => {
-      location.href = "credits.html";
-    }, 900);
+    if (typeof window.beginIntegratedCredits === "function") {
+      window.beginIntegratedCredits(2800);
+    } else {
+      // 共通クレジット処理が読み込めなかった場合だけ専用ページへ退避する。
+      setTimeout(() => {
+        location.href = "credits.html";
+      }, 900);
+    }
 
     return;
   }

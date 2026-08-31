@@ -7,13 +7,26 @@
   box-sizing: border-box;
 }
 
-html,
-body {
+body.creditsPage {
   width: 100%;
   height: 100%;
   margin: 0;
   overflow: hidden;
   background: #020306;
+}
+
+#creditsRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: none;
+  overflow: hidden;
+  background: #020306;
+}
+
+body.creditsPage #creditsRoot,
+body.integratedCreditsActive #creditsRoot {
+  display: block;
 }
 
 #creditsBackdrop {
@@ -93,6 +106,31 @@ body.creditsRolling #creditsTrack {
   height: auto;
   margin: 0 auto;
   filter: drop-shadow(0 0 18px rgba(118, 229, 255, .3));
+}
+
+#creditsSoundPrompt {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  z-index: 6;
+  color: rgba(170, 241, 255, .88);
+  font: 600 11px "M PLUS 1", sans-serif;
+  letter-spacing: .22em;
+  text-shadow: 0 0 10px rgba(80, 218, 255, .62);
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity .35s ease;
+  pointer-events: none;
+}
+
+body.creditsSoundBlocked #creditsSoundPrompt {
+  opacity: 1;
+  animation: creditsSoundPromptPulse 1.25s ease-in-out infinite alternate;
+}
+
+@keyframes creditsSoundPromptPulse {
+  from { opacity: .48; }
+  to { opacity: 1; }
 }
 
 #creditsSkip {

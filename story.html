@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>GlassBeat Story</title>
-  <link rel="stylesheet" href="story.css">
+  <link rel="stylesheet" href="story.css?v=20260831-7">
+  <link rel="stylesheet" href="credits.css?v=20260831-10">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,7 +88,18 @@
   <div id="boss2WhiteDissolve"></div>
 </div>
 
+<div id="creditsRoot">
+  <div id="creditsBackdrop" aria-hidden="true"></div>
+  <main id="creditsViewport" aria-label="スタッフロール">
+    <div id="creditsTrack"></div>
+  </main>
+  <div id="creditsSoundPrompt" aria-live="polite">CLICK FOR SOUND</div>
+  <button id="creditsSkip" type="button">SKIP</button>
+  <div id="creditsFade" aria-hidden="true"></div>
+</div>
+
   <script src="loading-tips.js"></script>
-  <script src="story.js?v=20260830-6"></script>
+  <script src="credits.js?v=20260831-15"></script>
+  <script src="story.js?v=20260831-8"></script>
 </body>
 </html>

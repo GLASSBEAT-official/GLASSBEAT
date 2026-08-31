@@ -49,12 +49,16 @@ const creditsBgm = new Audio("sounds/chapter3end.mp3");
 
 creditsBgm.loop = true;
 creditsBgm.volume = 0.45;
+creditsBgm.preload = "auto";
+creditsBgm.load();
 
 let creditsStarted = false;
 let creditsFinished = false;
 let creditsAnimation = null;
 let creditsBgmStarted = false;
+let creditsBgmAttempting = false;
 const CREDITS_EXIT_FADE_MS = 3200;
+const CREDITS_BGM_VOLUME = 0.45;
 
 function renderStaffRoll() {
   const fragment = document.createDocumentFragment();
@@ -109,7 +113,7 @@ function finishCredits() {
   const initialVolume = creditsBgm.volume;
   const fadeStartedAt = performance.now();
   const fadeBgm = now => {
-    const progress = Math.min(1, (now - fadeStartedAt) / CREDITS_EXIT_FADE_MS);
+    const progress = Math.max(0, Math.min(1, (now - fadeStartedAt) / CREDITS_EXIT_FADE_MS));
     creditsBgm.volume = initialVolume * (1 - progress);
     if (progress < 1) {
       requestAnimationFrame(fadeBgm);
@@ -149,12 +153,20 @@ function startRoll() {
 }
 
 function tryStartCreditsBgm() {
-  if (creditsBgmStarted) return;
+  if (creditsBgmStarted || creditsBgmAttempting) return;
+  creditsBgmAttempting = true;
   creditsBgm.play()
     .then(() => {
+      creditsBgmAttempting = false;
       creditsBgmStarted = true;
+      document.body.classList.remove("creditsSoundBlocked");
+      document.removeEventListener("pointerdown", tryStartCreditsBgm);
     })
-    .catch(() => {});
+    .catch(() => {
+      creditsBgmAttempting = false;
+      document.body.classList.add("creditsSoundBlocked");
+      document.addEventListener("pointerdown", tryStartCreditsBgm);
+    });
 }
 
 function beginCredits() {
@@ -162,14 +174,52 @@ function beginCredits() {
   tryStartCreditsBgm();
 }
 
+function fadeInIntegratedCreditsBgm(durationMs = 1400) {
+  if (!creditsBgmStarted) return;
+  creditsBgm.currentTime = 0;
+  creditsBgm.volume = 0;
+  const startedAt = performance.now();
+  const update = now => {
+    const progress = Math.max(0, Math.min(1, (now - startedAt) / durationMs));
+    creditsBgm.volume = CREDITS_BGM_VOLUME * progress;
+    if (progress < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+
+function beginIntegratedCredits(delayMs = 2800) {
+  if (creditsStarted || creditsFinished) return;
+
+  // 最後のストーリークリックと同じイベント内で無音再生し、再生許可を確保する。
+  creditsBgm.volume = 0;
+  creditsBgm.currentTime = 0;
+  tryStartCreditsBgm();
+  document.body.classList.add("integratedCreditsActive");
+  creditsFade.classList.remove("visible", "leaving");
+
+  setTimeout(() => {
+    creditsFade.classList.add("visible");
+    startRoll();
+    fadeInIntegratedCreditsBgm();
+  }, Math.max(0, Number(delayMs) || 0));
+}
+
+window.beginIntegratedCredits = beginIntegratedCredits;
+
 renderStaffRoll();
-requestAnimationFrame(() => creditsFade.classList.add("visible"));
-beginCredits();
+if (document.body.classList.contains("creditsPage")) {
+  requestAnimationFrame(() => creditsFade.classList.add("visible"));
+  beginCredits();
+}
 
 // 自動再生が制限された環境では、最初のユーザー操作でBGMだけ再試行する。
-document.addEventListener("pointerdown", tryStartCreditsBgm, { once: true });
 creditsSkip.addEventListener("click", finishCredits);
 document.addEventListener("keydown", event => {
-  tryStartCreditsBgm();
+  if (
+    document.body.classList.contains("creditsPage") ||
+    document.body.classList.contains("creditsSoundBlocked")
+  ) {
+    tryStartCreditsBgm();
+  }
   if (event.code === "Escape") finishCredits();
 });
