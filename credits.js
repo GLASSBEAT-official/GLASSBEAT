@@ -44,7 +44,6 @@ const STAFF_ROLL_SECTIONS = [
 
 const creditsTrack = document.getElementById("creditsTrack");
 const creditsFade = document.getElementById("creditsFade");
-const creditsStart = document.getElementById("creditsStart");
 const creditsSkip = document.getElementById("creditsSkip");
 const creditsBgm = new Audio("sounds/chapter3end.mp3");
 
@@ -54,6 +53,7 @@ creditsBgm.volume = 0.45;
 let creditsStarted = false;
 let creditsFinished = false;
 let creditsAnimation = null;
+let creditsBgmStarted = false;
 const CREDITS_EXIT_FADE_MS = 3200;
 
 function renderStaffRoll() {
@@ -127,7 +127,6 @@ function finishCredits() {
 function startRoll() {
   if (creditsStarted) return;
   creditsStarted = true;
-  document.body.classList.remove("awaitingStart");
   document.body.classList.add("creditsRolling");
   requestAnimationFrame(() => {
     const lastContent = creditsTrack.lastElementChild;
@@ -149,25 +148,28 @@ function startRoll() {
   });
 }
 
-async function beginCredits() {
-  if (creditsStarted) return;
-  try {
-    await creditsBgm.play();
-    startRoll();
-  } catch {
-    document.body.classList.add("awaitingStart");
-  }
+function tryStartCreditsBgm() {
+  if (creditsBgmStarted) return;
+  creditsBgm.play()
+    .then(() => {
+      creditsBgmStarted = true;
+    })
+    .catch(() => {});
+}
+
+function beginCredits() {
+  startRoll();
+  tryStartCreditsBgm();
 }
 
 renderStaffRoll();
 requestAnimationFrame(() => creditsFade.classList.add("visible"));
 beginCredits();
 
-creditsStart.addEventListener("click", beginCredits);
+// 自動再生が制限された環境では、最初のユーザー操作でBGMだけ再試行する。
+document.addEventListener("pointerdown", tryStartCreditsBgm, { once: true });
 creditsSkip.addEventListener("click", finishCredits);
 document.addEventListener("keydown", event => {
+  tryStartCreditsBgm();
   if (event.code === "Escape") finishCredits();
-  if ((event.code === "Space" || event.code === "Enter") && !creditsStarted) {
-    beginCredits();
-  }
 });

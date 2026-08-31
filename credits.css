@@ -95,26 +95,6 @@ body.creditsRolling #creditsTrack {
   filter: drop-shadow(0 0 18px rgba(118, 229, 255, .3));
 }
 
-#creditsStart {
-  display: none;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  z-index: 5;
-  padding: 15px 24px;
-  border: 1px solid rgba(130, 234, 255, .72);
-  background: rgba(4, 12, 18, .88);
-  color: #a9f3ff;
-  font: 700 13px "M PLUS 1", sans-serif;
-  letter-spacing: .18em;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-}
-
-body.awaitingStart #creditsStart {
-  display: block;
-}
-
 #creditsSkip {
   position: fixed;
   right: 22px;
