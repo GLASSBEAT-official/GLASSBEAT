@@ -206,6 +206,13 @@ function beginIntegratedCredits(delayMs = 2800) {
 
 window.beginIntegratedCredits = beginIntegratedCredits;
 
+// story.js とは window 上の関数参照ではなく DOM イベントでも連携する。
+// WebView／通常ブラウザ間でグローバル公開の扱いが異なっても、同一ページ内で確実に開始できる。
+document.addEventListener("glassbeat:start-integrated-credits", event => {
+  beginIntegratedCredits(event.detail?.delayMs ?? 2800);
+});
+document.documentElement.dataset.creditsIntegrationReady = "true";
+
 renderStaffRoll();
 if (document.body.classList.contains("creditsPage")) {
   requestAnimationFrame(() => creditsFade.classList.add("visible"));

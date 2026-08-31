@@ -2524,8 +2524,10 @@ async function showCurrentStep() {
   if (episode.id === "chapter3_episode13") {
     stopStoryBGM(800);
 
-    if (typeof window.beginIntegratedCredits === "function") {
-      window.beginIntegratedCredits(2800);
+    if (document.documentElement.dataset.creditsIntegrationReady === "true") {
+      document.dispatchEvent(new CustomEvent("glassbeat:start-integrated-credits", {
+        detail: { delayMs: 2800 }
+      }));
     } else {
       // 共通クレジット処理が読み込めなかった場合だけ専用ページへ退避する。
       setTimeout(() => {
