@@ -1460,7 +1460,7 @@ function applyMiss(showText = true) {
   comboText.textContent = "0 Combo";
   // boss3解禁演出中はミス数・コンボ切断だけを記録し、ライフは減らさない。
   if (!boss3Intro) {
-    const missDamage = song19StoryChallenge ? 85 : 70;
+    const missDamage = song19StoryChallenge ? 80 : 70;
     damageTakenDuringPlay += missDamage;
     life -= missDamage;
     if (life < 0) life = 0;
