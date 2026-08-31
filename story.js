@@ -2523,17 +2523,7 @@ async function showCurrentStep() {
 
   if (episode.id === "chapter3_episode13") {
     stopStoryBGM(800);
-
-    if (document.documentElement.dataset.creditsIntegrationReady === "true") {
-      document.dispatchEvent(new CustomEvent("glassbeat:start-integrated-credits", {
-        detail: { delayMs: 2800 }
-      }));
-    } else {
-      // 共通クレジット処理が読み込めなかった場合だけ専用ページへ退避する。
-      setTimeout(() => {
-        location.href = "credits.html";
-      }, 900);
-    }
+    beginStoryCredits(2800);
 
     return;
   }
@@ -2661,3 +2651,148 @@ if (requestedEpisodeId) {
 preloadStoryImages()
   .catch(error => console.error("Failed to preload story images:", error))
   .finally(hideAssetLoadingScreen);
+
+// chapter3_episode13 読了後のスタッフロール。
+// story.html 内だけで完結させ、専用ページや別スクリプトには依存しない。
+const STORY_CREDIT_SECTIONS = [
+  { title: "GLASSBEAT", names: ["Chapter 1～3"] },
+  {
+    title: "MUSIC",
+    names: [
+      "EN_OKAWA", "MFP", "YaGiYa music", "魔王魂", "mn free music", "さんうさぎ",
+      "M-ART", "Regu", "龍崎一", "kuku", "UcchiiØ-うっちーぜろ-", "Tak_mfk",
+      "gooset", "Peritune", "nons works", "流星のサイトシーイング", "Hareno",
+      "Kyatto", "Popoti", "えだまめ88", "リイカ", "zippy", "keogh", "O_koge"
+    ]
+  },
+  { title: "BGM", names: ["佐土原隼人", "hitoshi by Senses Circuit", "Tak_mfk", "shimtone", "Low"] },
+  { title: "sound", names: ["効果音ラボ", "音人", "pixabay", "ニコニ・コモンズ"] },
+  { title: "Ending Theme", names: ["「Coolness」by Fukagawa"] },
+  { title: "TEST PLAY", names: ["かつらにき", "いかっち"] },
+  { title: "DEVELOPMENT", names: ["glassniki"] },
+  { title: "SPECIAL THANKS", names: ["O_koge", "KT", "Nagi", "Castor", "Lume", "And You"] },
+  { title: "", names: ["Thank you for playing！"] }
+];
+
+const storyCreditsTrack = document.getElementById("creditsTrack");
+const storyCreditsFade = document.getElementById("creditsFade");
+const storyCreditsSkip = document.getElementById("creditsSkip");
+const storyCreditsBgm = new Audio("sounds/chapter3end.mp3");
+const STORY_CREDITS_VOLUME = 0.45;
+const STORY_CREDITS_EXIT_FADE_MS = 3200;
+let storyCreditsStarted = false;
+let storyCreditsFinished = false;
+let storyCreditsAnimation = null;
+
+storyCreditsBgm.loop = true;
+storyCreditsBgm.volume = 0;
+storyCreditsBgm.preload = "auto";
+storyCreditsBgm.load();
+
+function renderStoryCredits() {
+  const fragment = document.createDocumentFragment();
+  STORY_CREDIT_SECTIONS.forEach(section => {
+    const sectionElement = document.createElement("section");
+    sectionElement.className = "creditsSection";
+    if (section.title) {
+      const title = document.createElement("h2");
+      title.className = "creditsTitle";
+      title.textContent = section.title;
+      sectionElement.appendChild(title);
+    }
+    section.names.forEach(text => {
+      const name = document.createElement("p");
+      name.className = "creditsName";
+      name.textContent = text;
+      sectionElement.appendChild(name);
+    });
+    fragment.appendChild(sectionElement);
+  });
+
+  const logoSection = document.createElement("section");
+  logoSection.className = "creditsLogoSection";
+  const logo = document.createElement("img");
+  logo.className = "creditsLogo";
+  logo.src = "assets/title/logo.png";
+  logo.alt = "GlassBeat";
+  logoSection.appendChild(logo);
+  fragment.appendChild(logoSection);
+  storyCreditsTrack.replaceChildren(fragment);
+}
+
+function fadeInStoryCreditsBgm(durationMs = 1400) {
+  const startedAt = performance.now();
+  const update = now => {
+    const progress = Math.max(0, Math.min(1, (now - startedAt) / durationMs));
+    storyCreditsBgm.volume = Math.max(0, Math.min(1, STORY_CREDITS_VOLUME * progress));
+    if (progress < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+
+function startStoryCreditsRoll() {
+  if (storyCreditsStarted) return;
+  storyCreditsStarted = true;
+  document.body.classList.add("creditsRolling");
+  requestAnimationFrame(() => {
+    const lastContent = storyCreditsTrack.lastElementChild;
+    const lastContentBottom = lastContent
+      ? lastContent.offsetTop + lastContent.offsetHeight
+      : storyCreditsTrack.scrollHeight;
+    const endOffset = Math.max(0, lastContentBottom - window.innerHeight * 0.08);
+    const travelDistance = window.innerHeight + endOffset;
+    const duration = Math.max(30000, travelDistance / 42 * 1000);
+    storyCreditsAnimation = storyCreditsTrack.animate(
+      [
+        { transform: `translateY(${window.innerHeight * 0.9}px)` },
+        { transform: `translateY(-${endOffset}px)` }
+      ],
+      { duration, easing: "linear", fill: "forwards" }
+    );
+    storyCreditsAnimation.finished.then(finishStoryCredits).catch(() => {});
+  });
+}
+
+function beginStoryCredits(delayMs = 2800) {
+  if (storyCreditsStarted || storyCreditsFinished) return;
+
+  // 読了クリックのイベント内で再生を要求し、ブラウザの音声許可を引き継ぐ。
+  storyCreditsBgm.currentTime = 0;
+  storyCreditsBgm.volume = 0;
+  storyCreditsBgm.play().catch(error => console.warn("Credits BGM playback failed:", error));
+  document.body.classList.add("integratedCreditsActive");
+  storyCreditsFade.classList.remove("visible", "leaving");
+
+  setTimeout(() => {
+    storyCreditsFade.classList.add("visible");
+    startStoryCreditsRoll();
+    fadeInStoryCreditsBgm();
+  }, Math.max(0, Number(delayMs) || 0));
+}
+
+function finishStoryCredits() {
+  if (storyCreditsFinished) return;
+  storyCreditsFinished = true;
+  const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
+  if (!saveData.storyFlags) saveData.storyFlags = {};
+  saveData.storyFlags.chapter3CreditsSeen = true;
+  saveData.song26Unlocked = true;
+  localStorage.setItem("rhythmGame", JSON.stringify(saveData));
+
+  storyCreditsAnimation?.pause();
+  storyCreditsFade.classList.remove("visible");
+  storyCreditsFade.classList.add("leaving");
+  const initialVolume = Math.max(0, Math.min(1, storyCreditsBgm.volume));
+  const fadeStartedAt = performance.now();
+  const fadeBgm = now => {
+    const progress = Math.max(0, Math.min(1, (now - fadeStartedAt) / STORY_CREDITS_EXIT_FADE_MS));
+    storyCreditsBgm.volume = Math.max(0, Math.min(1, initialVolume * (1 - progress)));
+    if (progress < 1) requestAnimationFrame(fadeBgm);
+    else storyCreditsBgm.pause();
+  };
+  requestAnimationFrame(fadeBgm);
+  setTimeout(() => { location.href = "title.html"; }, STORY_CREDITS_EXIT_FADE_MS + 120);
+}
+
+renderStoryCredits();
+storyCreditsSkip.addEventListener("click", finishStoryCredits);
