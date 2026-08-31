@@ -2656,6 +2656,7 @@ preloadStoryImages()
 // story.html 内だけで完結させ、専用ページや別スクリプトには依存しない。
 const STORY_CREDIT_SECTIONS = [
   { title: "GLASSBEAT", names: ["Chapter 1～3"] },
+   { title: "Ending Themeで流れるはずだった曲", names: ["「Coolness」by Fukagawa"] },
   {
     title: "MUSIC",
     names: [
@@ -2667,7 +2668,6 @@ const STORY_CREDIT_SECTIONS = [
   },
   { title: "BGM", names: ["佐土原隼人", "hitoshi by Senses Circuit", "Tak_mfk", "shimtone", "Low"] },
   { title: "sound", names: ["効果音ラボ", "音人", "pixabay", "ニコニ・コモンズ"] },
-  { title: "Ending Theme", names: ["「Coolness」by Fukagawa"] },
   { title: "TEST PLAY", names: ["かつらにき", "いかっち"] },
   { title: "DEVELOPMENT", names: ["glassniki"] },
   { title: "SPECIAL THANKS", names: ["O_koge", "KT", "Nagi", "Castor", "Lume", "And You"] },
