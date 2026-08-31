@@ -1,0 +1,6 @@
+{
+  "title": "Heaven's gate",
+  "artist": "Popoti",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 4.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.2, "file": "expert.txt" }]
+}

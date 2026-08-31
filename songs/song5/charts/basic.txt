@@ -1,6 +1,6 @@
 @bpm,133
 @timesig,4
-@offset,4
+@offset,37
 @tempo,63,133,2
 @tempo,64,133,4
 

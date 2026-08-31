@@ -2,5 +2,13 @@
   "title": "START!!",
   "artist": "Regu",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 1,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 2, "file": "expert.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 1.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 2.0, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "first-note",
+    "name": "はじまりの一音",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "play"
+  }
+]
 }

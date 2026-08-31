@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "maps": [
+    { "id": "map01", "data": "map/maps/map01.json", "status": "available" },
+    { "id": "map02", "data": "map/maps/map02.json", "status": "available" },
+    { "id": "map03", "number": "03", "title": "準備中…", "status": "preparing" }
+  ]
+}

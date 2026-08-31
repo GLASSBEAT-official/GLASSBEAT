@@ -1,0 +1,475 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;600&family=Orbitron:wght@400;500;600&display=swap");
+
+:root {
+  color-scheme: dark;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: #f7f2ff;
+  background: #03020e;
+  user-select: none;
+}
+
+button { font: inherit; }
+
+#mapSelectBackground {
+  position: fixed;
+  inset: 0;
+  background: url("assets/bg/select_bg.jpg") center / cover no-repeat;
+  filter: saturate(0.9) brightness(0.7);
+  transform: scale(1.015);
+}
+
+#mapSelectBackground::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(2, 1, 12, 0.5), transparent 25%, transparent 75%, rgba(2, 1, 12, 0.52)),
+    radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 8, 0.54) 100%);
+}
+
+#mapSelectScreen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#mapSelectHeader {
+  position: absolute;
+  top: 3.5vh;
+  left: 3.4vw;
+  right: 3.2vw;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+#mapSelectHeader h1 {
+  margin: 0;
+  font-size: clamp(27px, 2.7vw, 48px);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 22px rgba(188, 151, 255, 0.42);
+}
+
+#mapSelectHeader h1::after {
+  content: "";
+  display: block;
+  width: 32vw;
+  height: 1px;
+  margin-top: 8px;
+  background: linear-gradient(90deg, rgba(197, 156, 255, 0.75), transparent);
+}
+
+#mapSelectHeader p {
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-family: "M PLUS 1", sans-serif;
+  font-size: clamp(13px, 1.15vw, 20px);
+  letter-spacing: 0.12em;
+}
+
+#mapSelectShard {
+  height: 44px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(148, 170, 210, 0.45);
+  border-radius: 24px;
+  background: rgba(4, 10, 25, 0.68);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+#mapSelectShard img {
+  width: 20px;
+  height: 31px;
+  object-fit: contain;
+}
+
+.mapCardReward img {
+  width: 31px;
+  height: 31px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(158, 101, 255, 0.8));
+}
+
+.mapCardReward .mainRewardVisual {
+  display: flex;
+  align-items: center;
+}
+
+.mapCardReward .mainRewardJacket {
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(223, 205, 255, 0.65);
+  border-radius: 4px;
+  object-fit: cover;
+  filter: brightness(0.95) drop-shadow(0 0 7px rgba(158, 101, 255, 0.5));
+}
+
+.preparingReward {
+  color: rgba(220, 207, 240, 0.5);
+  font-size: 28px;
+}
+
+#mapCardList {
+  position: absolute;
+  top: calc(22vh - 27px);
+  left: 0;
+  right: 0;
+  bottom: 15vh;
+  display: flex;
+  gap: clamp(58px, 8vw, 130px);
+  align-items: start;
+  padding: 42px 7vw 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 7vw;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+#mapCardList:not(.scrollable) {
+  justify-content: center;
+}
+
+#mapCardList::-webkit-scrollbar { display: none; }
+
+.mapSelectCard {
+  position: relative;
+  flex: 0 0 min(32vw, 410px);
+  min-width: 0;
+  text-align: center;
+  outline: none;
+  color: rgba(245, 239, 255, 0.82);
+  scroll-snap-align: center;
+}
+
+.mapSelectCard:not(.preparing) .mapOrbFrame { cursor: pointer; }
+
+.mapOrbFrame {
+  position: relative;
+  width: min(22vw, 330px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  padding: 9px;
+  border-radius: 50%;
+  border: 1px solid rgba(220, 205, 255, 0.72);
+  background: rgba(7, 5, 23, 0.66);
+  box-shadow:
+    inset 0 0 0 5px rgba(4, 2, 18, 0.8),
+    inset 0 0 25px rgba(116, 74, 194, 0.2);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.mapOrbFrame::before,
+.mapOrbFrame::after {
+  content: "◆";
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  color: rgba(225, 207, 255, 0.72);
+  font-size: 13px;
+  transform: translateY(-50%);
+}
+
+.mapOrbFrame::before { left: -9px; }
+.mapOrbFrame::after { right: -9px; }
+
+.mapOrbTopMark {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  z-index: 4;
+  color: #f0e4ff;
+  transform: translateX(-50%) rotate(45deg);
+  text-shadow: 0 0 8px #bb7cff;
+}
+
+.mapOrbImage,
+.mapPreparingOrb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+.mapOrbImage {
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.78) saturate(0.85);
+  transition: filter 0.28s ease;
+}
+
+.mapCompleteBand {
+  position: absolute;
+  top: 50%;
+  left: 9px;
+  right: 9px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  height: 54px;
+  overflow: hidden;
+  border-block: 1px solid rgba(255, 226, 113, .42);
+  background: rgba(8, 8, 24, .48);
+  box-shadow: 0 0 18px rgba(9, 7, 24, .7), inset 0 0 20px rgba(177, 145, 255, .12);
+  transform: translateY(-50%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+.mapCompleteBand span {
+  color: #ffe681;
+  font: 600 clamp(16px, 1.5vw, 23px) "Orbitron", sans-serif;
+  letter-spacing: .2em;
+  text-indent: .2em;
+  text-shadow: 0 0 8px rgba(255, 218, 88, .72);
+}
+
+.mapOrbGlow {
+  position: absolute;
+  inset: -5px;
+  z-index: -1;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 18px #a75cff, 0 0 48px rgba(125, 70, 255, 0.72);
+  transition: opacity 0.25s ease;
+}
+
+.mapSelectCard.selected .mapOrbFrame {
+  border-color: #d6b5ff;
+  transform: scale(1.055);
+  box-shadow:
+    inset 0 0 0 5px rgba(18, 7, 42, 0.82),
+    inset 0 0 30px rgba(164, 96, 255, 0.32),
+    0 0 8px rgba(222, 193, 255, 0.9),
+    0 0 28px rgba(135, 75, 255, 0.72);
+}
+
+.mapSelectCard.selected .mapOrbGlow { opacity: 1; }
+.mapSelectCard.selected .mapOrbImage { filter: brightness(1.04) saturate(1.08); }
+
+.mapPreparingOrb {
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle, rgba(62, 43, 96, 0.24), rgba(3, 3, 14, 0.95)),
+    repeating-linear-gradient(55deg, transparent 0 25px, rgba(131, 95, 181, 0.08) 26px 27px);
+  color: rgba(218, 198, 239, 0.38);
+  font-size: 72px;
+}
+
+.mapCardNumber {
+  margin-top: 15px;
+  color: #b987ff;
+  font-size: clamp(20px, 1.7vw, 28px);
+  letter-spacing: 0.12em;
+}
+
+.mapSelectCard h2 {
+  margin: 4px auto 13px;
+  padding-bottom: 7px;
+  width: 82%;
+  border-bottom: 1px solid rgba(214, 191, 255, 0.24);
+  font-family: "M PLUS 1", sans-serif;
+  font-size: clamp(18px, 1.45vw, 25px);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+.mapCardProgress {
+  display: inline-block;
+  vertical-align: middle;
+  width: 62%;
+  height: 7px;
+  overflow: hidden;
+  border: 1px solid rgba(200, 177, 255, 0.18);
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.mapCardProgress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8d56ff, #e6d4ff);
+  box-shadow: 0 0 8px #a36eff;
+  transition: width 0.65s ease;
+}
+
+.mapCardPercent {
+  display: inline-block;
+  width: 58px;
+  color: #d4c1f2;
+  font-size: 17px;
+  text-align: right;
+}
+
+.mapCardReward {
+  position: relative;
+  isolation: isolate;
+  width: 66%;
+  height: 44px;
+  margin: 17px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  border: 0;
+  background: transparent;
+  font-size: 21px;
+  overflow: visible;
+}
+
+.mapCardReward::before,
+.mapCardReward::after {
+  content: "";
+  position: absolute;
+  clip-path: polygon(6% 0, 94% 0, 100% 18%, 100% 82%, 94% 100%, 6% 100%, 0 82%, 0 18%);
+  pointer-events: none;
+}
+
+.mapCardReward::after {
+  inset: 0;
+  z-index: -2;
+  background: rgba(202, 170, 255, 0.52);
+}
+
+.mapCardReward::before {
+  inset: 1px;
+  z-index: -1;
+  background: rgba(8, 5, 25, 0.94);
+}
+
+.mapCardReward > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.rewardLabel {
+  color: rgba(210, 188, 239, 0.7);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+}
+
+.mapSelectCard.preparing { opacity: 0.5; }
+.mapCardReward.disabled { filter: grayscale(0.8); }
+
+#mapSelectGuide {
+  position: absolute;
+  left: 50%;
+  bottom: 7.5vh;
+  width: min(750px, 49vw);
+  padding-top: 19px;
+  transform: translateX(-50%);
+  border-top: 1px solid rgba(194, 165, 239, 0.38);
+  color: rgba(244, 236, 255, 0.68);
+  text-align: center;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: clamp(12px, 1vw, 17px);
+  letter-spacing: 0.11em;
+}
+
+#mapSelectBack {
+  position: fixed;
+  isolation: isolate;
+  bottom: -5px;
+  height: 70px;
+  color: #f7efff;
+  border: 0;
+  background: rgba(190, 143, 255, 0.72);
+  cursor: pointer;
+}
+
+#mapSelectBack {
+  left: -20px;
+  width: 190px;
+  clip-path: polygon(12% 0, 88% 0, 100% 50%, 88% 100%, 12% 100%, 0 50%);
+  font-size: 18px;
+}
+
+#mapSelectBack::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  clip-path: polygon(12% 0, 88% 0, 100% 50%, 88% 100%, 12% 100%, 0 50%);
+  background: rgba(17, 8, 45, 0.96);
+  pointer-events: none;
+}
+
+#mapSelectBack:hover {
+  background: rgba(218, 183, 255, 0.82);
+}
+
+#mapSelectBack:hover::before { background: rgba(69, 33, 116, 0.96); }
+
+#mapSelectFade {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: black;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.65s ease;
+}
+
+#mapSelectFade.visible { opacity: 0; }
+#mapSelectFade.leaving { opacity: 1; pointer-events: auto; }
+
+#mapSelectImageOverlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 10001;
+  display: none;
+  width: 280px;
+  height: 280px;
+  background-position: center;
+  background-size: cover;
+  opacity: 1;
+  transform: translate(-50%, -50%);
+  transition: width .6s ease, height .6s ease, opacity .6s ease;
+  pointer-events: none;
+}
+
+#mapSelectImageOverlay.active { display: block; }
+#mapSelectImageOverlay.expand { width: 200vw; height: 200vh; opacity: 0; }
+
+#mapSelectBlackOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #000;
+  opacity: 0;
+  transition: opacity .6s ease;
+  pointer-events: none;
+}
+
+#mapSelectBlackOverlay.dark { opacity: 1; pointer-events: auto; }
+
+@media (max-height: 780px) {
+  #mapCardList { top: calc(18vh - 27px); }
+  .mapOrbFrame { width: min(19vw, 265px); }
+  .mapCardReward { margin-top: 12px; height: 40px; }
+  #mapSelectGuide { bottom: 6vh; }
+}

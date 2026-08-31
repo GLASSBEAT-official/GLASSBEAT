@@ -1,0 +1,14 @@
+{
+  "title": "シャイニングスター",
+  "artist": "魔王魂",
+   "background":"background.png",
+   "shardUnlockCost": 50,
+  "charts":[{"difficulty": "BASIC","level": 4.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 8.1, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song23achieve",
+    "name": "トキメキを感じて",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }]
+}

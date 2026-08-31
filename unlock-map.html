@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAP</title>
+  <link rel="stylesheet" href="unlock-map.css?v=20260827-1">
+</head>
+<body>
+  <div id="mapLoadingScreen" role="status" aria-live="polite" aria-label="マップをロード中">
+    <div id="mapLoadingMark" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div id="mapLoadingText">MAP LOADING<span>...</span></div>
+  </div>
+  <main id="mapScreen">
+    <header id="mapHeader">
+      <section id="mapIdentity">
+        <div id="mapIdentityBanner">
+          <div id="mapNumber">MAP 01</div>
+          <h1 id="mapTitle">サンプルマップ</h1>
+        </div>
+        <div id="mapIdentityIcon" aria-hidden="true">
+          <img id="mapIdentityIconImage" src="" alt="">
+        </div>
+      </section>
+      <p id="mapGuide">ピースを選択して、楽曲をプレイしよう</p>
+      <nav id="mapHeaderActions" aria-label="マップメニュー">
+        <div id="mapPointDisplay"><span class="mapPointIcon"></span><span id="mapPointValue">0</span></div>
+      </nav>
+    </header>
+
+    <section id="mapMain">
+      <aside id="mapSummary">
+        <div id="mapStaminaPanel">
+          <div id="mapStaminaHeader">
+            <div class="mapPanelLabel">スタミナ</div>
+            <div id="mapStaminaRecoveryTimer"></div>
+          </div>
+          <div id="mapStaminaHearts" aria-label="スタミナ"></div>
+        </div>
+        <div class="mapPanel" id="mapProgressPanel">
+          <div class="mapPanelLabel">完成度</div>
+          <div id="mapCompletionValue">0%</div>
+          <div id="mapCompletionTrack"><div id="mapCompletionFill"></div></div>
+          <div id="mapRestoredPieces">
+            <span class="mapPanelLabel">復元ピース</span>
+            <span id="mapRestoredPiecesValue">0 / 0</span>
+          </div>
+          <div class="mapPanelDivider"></div>
+          <div class="mapPanelLabel">累計獲得シャード</div>
+          <div id="mapEarnedPoints"><span class="mapPointIcon"></span>0</div>
+        </div>
+      </aside>
+
+      <section id="mapBoardArea" aria-label="マップピース"><div id="mapBoard"></div></section>
+
+      <div id="mapRightRail">
+        <aside class="mapPanel" id="mapPieceDetail">
+          <div class="mapPanelLabel">選択中のピース</div>
+          <div class="mapPanelDivider"></div>
+          <div id="mapPieceChallengeArea">
+            <div id="selectedPieceIcon"><span id="selectedPieceIconSymbol">！</span></div>
+            <h2 id="selectedPieceType">ミッション</h2>
+            <div id="selectedPieceRule">楽曲をクリアしよう</div>
+            <div id="selectedPieceTarget">目標：CLEAR</div>
+          </div>
+          <div id="mapPieceActionArea">
+            <div id="pieceCrackProgress">
+              <div id="pieceCrackProgressHeader"><span>CRACK PROGRESS</span><span id="pieceCrackProgressCount">0 / 3</span></div>
+              <div id="pieceCrackProgressTrack">
+                <div id="pieceCrackProgressFill"></div>
+                <span class="pieceCrackProgressNode">◇</span>
+                <span class="pieceCrackProgressNode">◇</span>
+                <span class="pieceCrackProgressNode final">◇</span>
+              </div>
+            </div>
+            <div class="mapPanelDivider"></div>
+            <div class="mapPanelLabel">獲得できるもの</div>
+            <div id="selectedPieceReward"></div>
+            <button id="selectMapSongButton" type="button">楽曲を選ぶ　→</button>
+          </div>
+        </aside>
+
+        <aside id="mapNextReward" aria-live="polite">
+          <div id="mapNextRewardHeader">
+            <span>MAP REWARD</span>
+            <strong id="mapNextRewardPercent">--%</strong>
+          </div>
+          <button id="mapRewardPrev" class="mapRewardArrow" type="button" aria-label="前の報酬">◁</button>
+          <div id="mapNextRewardBody">
+            <div id="mapNextRewardPreview" aria-hidden="true"><span id="mapNextRewardIcon">◆</span></div>
+            <div id="mapNextRewardInfo">
+              <div id="mapNextRewardType">REWARD</div>
+              <div id="mapNextRewardName">---</div>
+              <div id="mapNextRewardRemaining">次の報酬を確認中</div>
+            </div>
+          </div>
+          <button id="mapRewardNext" class="mapRewardArrow" type="button" aria-label="次の報酬">▷</button>
+          <div id="mapNextRewardTrack"><div id="mapNextRewardFill"></div></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="mapBottom">
+      <button id="storyBackButton" type="button">BACK</button>
+    </section>
+  </main>
+  <div id="mapRewardUnlockOverlay" aria-live="assertive" aria-hidden="true">
+    <div id="mapRewardUnlockContent">
+      <div id="mapRewardUnlockVisual"></div>
+      <div id="mapRewardUnlockLabel">REWARD UNLOCKED</div>
+      <div id="mapRewardUnlockName"></div>
+      <div id="mapRewardUnlockHint">クリックでスキップ</div>
+    </div>
+  </div>
+  <div id="mapTransitionOverlay" aria-hidden="true"></div>
+  <script src="map-stamina.js"></script>
+  <script src="unlock-map.js?v=20260827-1"></script>
+</body>
+</html>

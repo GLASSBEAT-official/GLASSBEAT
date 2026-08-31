@@ -12,6 +12,10 @@ const nextButton = document.getElementById("nextButton");
 let tutorialIndex = 0;
 
 const tutorials = [
+  { image:"images/tutorial4.png",
+    title: "このコンテンツでは、画像作成に生成AIを使用しています。",
+    text:"ご理解のうえで「次へ」を押してください。"
+  },
   {
     image: "images/tutorial1.png",
     title: "ノーツをタイミングよく叩こう",
@@ -86,6 +90,12 @@ nameNextButton.addEventListener("click", () => {
   const username = usernameInput.value.trim();
 
   if (!username) {
+    usernameInput.focus();
+    return;
+  }
+
+  if (["ガラスニキ", "がらすにき", "glassniki"].includes(username)) {
+    alert("この名前は使用できません");
     usernameInput.focus();
     return;
   }

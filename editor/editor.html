@@ -43,6 +43,15 @@
         <input type="number" id="measuresInput" value="50">
       </div>
 
+      <div class="controlGroup">
+        <label>ZOOM</label>
+        <div id="zoomControls">
+          <button id="zoomOutButton" type="button" aria-label="Zoom out">−</button>
+          <span id="zoomValue">100%</span>
+          <button id="zoomInButton" type="button" aria-label="Zoom in">＋</button>
+        </div>
+      </div>
+
       <div class="sectionLabel">BPM・拍子変化</div>
 
       <div id="tempoChangeList"></div>
@@ -67,6 +76,15 @@
         <button class="noteTypeBtn selected" data-type="tap">TAP</button>
         <button class="noteTypeBtn" data-type="long">LONG</button>
         <button class="noteTypeBtn" data-type="dual">DUAL</button>
+        <button class="noteTypeBtn damage" data-type="damageDiamond">◆</button>
+        <button class="noteTypeBtn damage" data-type="damageCircle">●</button>
+        <button class="noteTypeBtn damage" data-type="damageLong">DL</button>
+        <button class="noteTypeBtn damage" data-type="damagePoint">MID</button>
+      </div>
+
+      <div class="controlGroup" id="damageWidthGroup">
+        <label>Damage Width</label>
+        <input type="number" id="damageWidthInput" value="2" min="1" max="10">
       </div>
 
       <div class="controlGroup" id="dualLaneGroup" style="display:none;">
@@ -100,18 +118,39 @@
 </div>
 
 <button id="loadProjectButton">読み込み</button>
+<button id="restoreAutoSaveButton" type="button">自動保存データを復元</button>
 <button id="deleteProjectButton">保存データ削除</button>
 
       <div class="sectionLabel">操作</div>
+      <div class="controlGroup" id="clearMeasureGroup">
+        <label>指定小節のノーツを全消去</label>
+        <div id="clearMeasureControl">
+          <input id="clearMeasureInput" type="number" min="1" value="1" aria-label="消去する小節番号">
+          <span>小節目</span>
+          <button id="clearMeasureButton" type="button">消去</button>
+        </div>
+        <div id="clearMeasureMessage" aria-live="polite"></div>
+      </div>
       <input id="exportFileNameInput" type="text" placeholder="ファイル名" value="chart">
 <button id="exportButton">EXPORT</button>
       <button id="clearButton">全消去</button>
 
       <div id="noteCount">ノーツ数: 0</div>
+      <div id="noteOverlapWarning" role="alert" aria-live="polite" hidden>ノーツが重なっています</div>
     </div>
 
     <!-- 右側：エディター -->
     <div id="editorArea">
+      <button id="undoButton" type="button" disabled>UNDO</button>
+      <div id="copyPastePanel">
+        <div class="copyPasteTitle">コピペ</div>
+        <label>x <input id="copyStartMeasure" type="number" min="1" value="1"> 小節から</label>
+        <label>y <input id="copyEndMeasure" type="number" min="1" value="1"> 小節までを</label>
+        <label>z <input id="copyTargetMeasure" type="number" min="1" value="2"> 小節からコピー</label>
+        <button id="copyMeasuresButton" type="button">コピー</button>
+        <button id="mirrorCopyMeasuresButton" type="button">左右反転してコピー</button>
+        <div id="copyPasteMessage" aria-live="polite"></div>
+      </div>
       <div id="laneHeader">
         <div class="laneLabel">D</div>
         <div class="laneLabel">F</div>
@@ -127,6 +166,6 @@
 
   </div>
 
-  <script src="editor.js"></script>
+  <script src="editor.js?v=20260824-3"></script>
 </body>
 </html>

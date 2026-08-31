@@ -1,0 +1,171 @@
+{
+  "rateTitles": [
+    {
+      "id": "default:new-player",
+      "name": "新米プレイヤー",
+      "requiredRate": 0,
+      "background": "yellow",
+      "acquisitionText": "GLASSBEATをプレイ"
+    },
+    {
+      "id": "rate:rookie-performer",
+      "name": "駆け出しの奏者",
+      "requiredRate": 10,
+      "background": "yellow",
+      "acquisitionText": "RATE 10.0以上に到達"
+    },
+    {
+      "id": "rate:rhythm-seeker",
+      "name": "音律の探究者",
+      "requiredRate": 30,
+      "background": "yellow",
+      "acquisitionText": "RATE 30.0以上に到達"
+    },
+    {
+      "id": "rate:azure-performer",
+      "name": "蒼穹の演奏者",
+      "requiredRate": 60,
+      "background": "yellow",
+      "acquisitionText": "RATE 60.0以上に到達"
+    },
+    {
+      "id": "rate:violet-adventurer",
+      "name": "紫電の冒険者",
+      "requiredRate": 100,
+      "background": "yellow",
+      "acquisitionText": "RATE 100.0以上に到達"
+    },
+    {
+      "id": "rate:golden-conductor",
+      "name": "黄金の指揮者",
+      "requiredRate": 150,
+      "background": "yellow",
+      "acquisitionText": "RATE 150.0以上に到達"
+    },
+    {
+      "id": "rate:crimson-transcender",
+      "name": "紅蓮の超越者",
+      "requiredRate": 200,
+      "background": "yellow",
+      "acquisitionText": "RATE 200.0以上に到達"
+    },
+    {
+      "id": "rate:sakura-virtuoso",
+      "name": "桜華の極奏者",
+      "requiredRate": 225,
+      "background": "yellow",
+      "acquisitionText": "RATE 225.0以上に到達"
+    },
+    {
+      "id": "rate:realm-ruler",
+      "name": "音界の支配者",
+      "requiredRate": 250,
+      "background": "yellow",
+      "acquisitionText": "RATE 250.0以上に到達"
+    }
+  ],
+  "recordTitles": [
+    {
+      "id": "record:ultimate-perfect",
+      "name": "寸分違わぬ音色",
+      "condition": "anyUltimatePerfect",
+      "background": "red",
+      "acquisitionText": "任意の譜面でULTIMATE PERFECTを達成"
+    }
+  ],
+  "storyTitles": [
+    {
+      "id": "story:chapter1-episode6",
+      "name": "朝焼けに照らされて",
+      "storyId": "chapter1_episode6",
+      "background": "green",
+      "acquisitionText": "ストーリー1-6を読了"
+    },
+    {
+      "id": "story:chapter2-episode6",
+      "name": "ひとつめの救い",
+      "storyId": "chapter2_episode6",
+      "background": "green",
+      "acquisitionText": "ストーリー2-6を読了"
+    },
+    {
+      "id": "story:chapter3-episode13",
+      "name": "隠された痛みの傍らに",
+      "storyId": "chapter3_episode13",
+      "background": "green",
+      "acquisitionText": "ストーリー3-13を読了"
+    }
+  ],
+  "specialTitles": [
+    {
+      "id": "special:cannot-see",
+      "name": "見えませんよ～",
+      "condition": "jacketZoom:start",
+      "background": "purple",
+      "acquisitionText": "START!!のジャケットをズーム"
+    },
+    {
+      "id": "special:holy-beast-conqueror",
+      "name": "聖獣を蹂躙せし者",
+      "condition": "bulletNoDamage",
+      "background": "purple",
+      "acquisitionText": "弾幕避けをノーダメージでクリア"
+    },
+    {
+      "id": "special:never-give-up",
+      "name": "ネバーギブアップ",
+      "condition": "clearWithOneMiss",
+      "background": "purple",
+      "acquisitionText": "任意の譜面を1ミスでクリア"
+    },
+    {
+      "id": "special:tea-time",
+      "name": "ノーツが来るまでお茶でも",
+      "condition": "playSpeed:1",
+      "background": "purple",
+      "acquisitionText": "速度1で楽曲をプレイ"
+    },
+    {
+      "id": "special:reflex-game",
+      "name": "反射神経ゲーム",
+      "condition": "playSpeed:20",
+      "background": "purple",
+      "acquisitionText": "速度20で楽曲をプレイ"
+    },
+    {
+      "id": "special:audio-desync",
+      "name": "音ズレの訪れ",
+      "condition": "playOffset:99",
+      "background": "purple",
+      "acquisitionText": "オフセットを-99msまたは+99msに設定して楽曲をプレイ"
+    },
+    {
+      "id": "special:god-distorts-world",
+      "name": "神は運命を歪める",
+      "condition": "playCanonForbiddenSong",
+      "background": "purple",
+      "acquisitionText": "パートナー「カノン」を用いてbossまたはsong3をプレイ"
+    },
+    {
+      "id": "special:map-complete",
+      "name": "MAP COMPLETE",
+      "condition": "anyMapComplete",
+      "background": "blue",
+      "acquisitionText": "任意のマップを1つ完走"
+    }
+  ],
+  "mapTitles": [
+  {
+    "id": "map:first-title",
+    "name": "見習い聖歌隊員",
+    "background": "blue",
+    "acquisitionText": "「真夜中の聖堂」を30%完成"
+  },
+    {
+    "id": "map:second-title",
+    "name": "虚構に棲む者",
+    "background": "blue",
+    "acquisitionText": "「真と偽の狭間」を50%完成"
+  }
+]
+}

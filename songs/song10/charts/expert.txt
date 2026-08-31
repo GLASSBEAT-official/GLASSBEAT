@@ -1,6 +1,6 @@
 @bpm,152
 @timesig,4
-@offset,0
+@offset,45
 @tempo,1,608,4
 @tempo,2,152,4
 

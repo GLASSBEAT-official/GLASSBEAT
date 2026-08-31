@@ -1,6 +1,21 @@
-@font-face {
-  font-family: "GlassBeatJP";
-  src: url("fonts/gothic.otf") format("opentype");
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700&display=swap");
+
+html,
+body,
+body * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 button,
@@ -8,7 +23,7 @@ button,
 .episodeButton,
 #chapterTitle,
 #storyBackButton {
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
 }
 
 #storyIntroFade {
@@ -38,7 +53,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   color: white;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   overflow: hidden;
 }
 
@@ -103,6 +118,7 @@ body.readingMode #storyPage {
 #episodeArea {
   display: flex;
   align-items: flex-start;
+  justify-content: center;
   gap: 72px;
 }
 
@@ -117,17 +133,24 @@ body.readingMode #storyPage {
   position: relative;
   isolation: isolate;
   display: flex;
-  flex-direction: column;
-  gap: 34px;
+  flex-direction: row;
+  gap: 42px;
   align-items: flex-start;
-  margin-left: 450px;
+  margin-left: 0;
   padding-top: 8px;
 }
 
-#episodeList::before {
+.episodeColumn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.episodeColumn::before {
   content: "";
   position: absolute;
-  left: 83.5px;
+  left: 24px;
   top: 0;
   bottom: 0;
   width: 1px;
@@ -149,7 +172,7 @@ body.readingMode #storyPage {
   background-repeat: no-repeat;
   border: 1px solid rgba(120, 210, 255, 0.55);
   color: white;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 15px;
   font-weight: bold;
   text-align: center;
@@ -180,11 +203,12 @@ body.readingMode #storyPage {
 
 #storyBackButton {
   position: fixed;
-  left: -20px; 
+  isolation: isolate;
+  left: -22px;
   bottom: -10px; 
   width: 180px; 
   height: 60px; 
-  background: #00053a;
+  background: #79b8c9;
   color: white;
   font-size: 18px;
   font-weight: bold;
@@ -200,7 +224,19 @@ body.readingMode #storyPage {
     0% 50%
   );
 }
+#storyBackButton::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: #00053a;
+  clip-path: polygon(12% 0%, 88% 0%, 100% 50%, 88% 100%, 12% 100%, 0% 50%);
+  pointer-events: none;
+}
 #storyBackButton:hover {
+  background: #79b8c9;
+}
+#storyBackButton:hover::before {
   background: #0a0a5c;
 }
 #episodeList {
@@ -236,7 +272,7 @@ body.readingMode #storyPage {
   background: rgba(5, 10, 18, 0.82);
   border: 1px solid rgba(120, 210, 255, 0.55);
   color: white;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 13px;
   font-weight: bold;
   cursor: pointer;
@@ -266,7 +302,7 @@ body.readingMode #storyPage {
   background: #00053a;
   border: 1px solid rgba(120, 210, 255, 0.55);
   color: white;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
@@ -305,11 +341,71 @@ body.readingMode #storyPage {
   top: 72px;
   width: min(980px, calc(100vw - 128px));
   color: #dddddd;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 17px;
   line-height: 2.08;
   white-space: pre-wrap;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+#assetLoadingScreen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  padding: 0 clamp(20px, 3vw, 48px) clamp(18px, 3vh, 36px);
+  background: #05080d;
+  z-index: 10000;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+
+#assetLoadingScreen.loaded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#assetLoadingText {
+  color: white;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+#assetLoadingText span {
+  display: inline-block;
+  width: 1.9em;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: loadingDots 1.2s steps(6, end) infinite;
+}
+
+#assetLoadingTip {
+  position: absolute;
+  left: clamp(20px, 3vw, 48px);
+  bottom: clamp(18px, 3vh, 36px);
+  max-width: min(620px, 65vw);
+  color: rgba(255, 255, 255, 0.78);
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: clamp(11px, 1.15vw, 14px);
+  font-weight: 400;
+  line-height: 1.7;
+  text-align: left;
+}
+
+#assetLoadingTipLabel {
+  margin-right: 10px;
+  color: #66ddff;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+@keyframes loadingDots {
+  from { width: 0; }
+  to { width: 1.9em; }
 }
 
 .chapterButton {
@@ -336,14 +432,31 @@ body.readingMode #storyPage {
   color: #66ddff;
 }
 
-.chapterButton {
+.chapterButtonFrame {
   display: block;
   width: 220px;
   height: 44px;
   margin-bottom: 14px;
   margin-left: -20px; /* 左端にくっつける */
+  padding: 1px;
+  box-sizing: border-box;
+  background: rgba(120, 210, 255, 0.55);
+  clip-path: polygon(
+    0% 0%,
+    calc(100% - 20px) 0%,
+    calc(100% - 5px) 50%,
+    calc(100% - 20px) 100%,
+    0% 100%
+  );
+}
+
+.chapterButton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   background: rgba(12, 22, 34, 0.92);
-  border: 1px solid rgba(120, 210, 255, 0.55);
+  border: none;
   color: white;
   font-size: 17px;
   font-weight: bold;
@@ -369,10 +482,14 @@ body.readingMode #storyPage {
 }
 
 #lockedStoryMessage {
-  display: inline-block;
-  min-height: 0;
-  max-width: 80%;
-  margin-top: 18px;
+  position: fixed;
+  left: 58%;
+  bottom: 48px;
+  transform: translateX(-50%);
+  z-index: 120;
+
+  width: fit-content;
+  max-width: min(760px, calc(100vw - 80px));
   padding: 10px 18px;
 
   color: #ffdddd;
@@ -389,18 +506,8 @@ body.readingMode #storyPage {
     inset 0 0 12px rgba(255, 80, 80, 0.08);
 
   opacity: 0;
-  transition: opacity 0.25s ease;
   pointer-events: none;
-}
-
-#lockedStoryMessage {
-  display: block;
-  width: fit-content;
-  max-width: 80%;
-  margin: 18px auto 0;
-  padding: 10px 18px;
-
-  border-radius: 10px;
+  transition: opacity 0.25s ease;
 }
 
 #lockedStoryMessage.visible {
@@ -445,7 +552,7 @@ body.whiteFlashOut::after {
   gap: 28px;
   color: #111;
   text-align: center;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   z-index: 1;
 }
 
@@ -488,7 +595,7 @@ body.whiteFlashOut::after {
   height: 52px;
   border: 1px solid currentColor;
   background: transparent;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
@@ -534,6 +641,12 @@ body.whiteFlashOut::after {
 
 .episodeButtonSpecial {
   background-image: url("assets/bg/episode_button_2_4.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.episodeButtonSpecial310 {
+  background-image: url("assets/bg/episode_button_3_10.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -875,7 +988,7 @@ body.whiteFlashOut::after {
   gap: 28px;
   color: #111;
   text-align: center;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   z-index: 1;
 }
 
@@ -918,7 +1031,7 @@ body.whiteFlashOut::after {
   height: 52px;
   border: 1px solid currentColor;
   background: transparent;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;

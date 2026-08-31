@@ -1,0 +1,6 @@
+{
+  "title": "Seeker",
+  "artist": "Kyatto",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 3.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 8.8, "file": "expert.txt" }]
+}

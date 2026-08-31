@@ -1,0 +1,14 @@
+{
+  "title": "True End",
+  "artist": "リイカ",
+  "shardUnlockCost": 50,
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 2,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 6, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song25achieve",
+    "name": "泣いたっていいんだよ",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }]
+}

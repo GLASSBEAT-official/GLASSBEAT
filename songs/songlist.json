@@ -3,7 +3,7 @@
     {
       "name": "GLASSBEAT",
       "image": "assets/folders/glassbeat.png",
-      "songs": ["song6", "song4", "song7"]
+      "songs": ["song6","song22","song13","song23", "song24","song4","song7"]
     },
     {
       "name": "はじまりの歌",
@@ -14,6 +14,11 @@
     "name": "破砕の旋律",
       "image": "assets/folders/fukkatsu.jpg",
       "songs": ["song8","song10","song9","song11","boss2"]
+  },
+  {
+    "name": "沈黙の聖歌",
+      "image": "assets/folders/chinmoku.png",
+      "songs": ["song21","song14","song15","song25","song16","song18","song26","song19","boss3"]
   }
   ]
 }

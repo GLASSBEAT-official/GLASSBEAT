@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>GlassBeat</title>
-  <link rel="stylesheet" href="title.css">
+  <link rel="stylesheet" href="title.css?v=20260829-1">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -16,12 +16,26 @@
 
   <div id="endingDemoText"></div>
 
+  <section id="boss3DifficultySelector" aria-label="難易度を選択">
+    <button class="boss3DifficultyDiamond basic" type="button" data-difficulty="0" aria-label="BASIC"><span class="boss3DifficultyLabel"></span></button>
+    <button class="boss3DifficultyDiamond expert" type="button" data-difficulty="1" aria-label="EXPERT"><span class="boss3DifficultyLabel"></span></button>
+    <button class="boss3DifficultyDiamond fracture" type="button" data-difficulty="2" aria-label="FRACTURE"><span class="boss3DifficultyLabel"></span></button>
+  </section>
+
   <!-- ハンバーガーメニュー -->
 <button id="menuButton">☰</button>
 
 <!-- メニューポップアップ -->
 <div id="menuOverlay" class="hidden"></div>
 <div id="menuPopup" class="hidden">
+  <div id="playerNameSetting">
+    <label for="playerNameInput">PLAYER NAME</label>
+    <div id="playerNameEditRow">
+      <input id="playerNameInput" type="text" maxlength="12" autocomplete="off" placeholder="Player">
+      <button id="playerNameSaveButton" type="button">SAVE</button>
+    </div>
+    <div id="playerNameStatus" aria-live="polite"></div>
+  </div>
   <button id="creditButton">クレジット</button>
   <button id="resetButton">データのリセット</button>
 </div>
@@ -30,14 +44,12 @@
 <div id="creditOverlay" class="hidden"></div>
 <div id="creditPopup" class="hidden">
   <button id="creditClose">✕</button>
-  <div id="creditText">音源：DOVA-SYNDROME様<br>
-Tak_mfk様<br>UcchiiØ-うっちーぜろ-様<br>kuku様<br>さんうさぎ様<br>Peritune様<br>
-nons works様<br>
-イラスト：Chat GPT canva AI ほか<br>
-テストプレイ：かつらにき
+  <div id="creditText">音源：選曲画面記載の皆様<br>
+    マップ画面BGM：hitoshi by Senses Circuit<br>https://www.senses-circuit.com/<br>
+テストプレイ：かつらにき  いかっち
 <br>友人の皆様<br>開発：glassniki</div>
 </div>
 
-  <script src="title.js"></script>
+  <script src="title.js?v=20260830-11"></script>
 </body>
 </html>

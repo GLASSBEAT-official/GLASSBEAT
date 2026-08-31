@@ -10,6 +10,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div id="assetLoadingScreen" role="status" aria-live="polite">
+    <div id="assetLoadingTip">
+      <span id="assetLoadingTipLabel">TIPS</span>
+      <span id="assetLoadingTipText"></span>
+    </div>
+    <div id="assetLoadingText">ロード中<span>......</span></div>
+  </div>
+
   <div id="storyBackground"></div>
   <div id="storyPage">
 
@@ -79,6 +87,7 @@
   <div id="boss2WhiteDissolve"></div>
 </div>
 
-  <script src="story.js"></script>
+  <script src="loading-tips.js"></script>
+  <script src="story.js?v=20260830-6"></script>
 </body>
 </html>

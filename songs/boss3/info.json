@@ -1,0 +1,32 @@
+{
+  "title": "Uni/gnitΣ",
+  "artist": "O_koge",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 9.8,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.7, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.0, "file": "fracture.txt" }],
+  "achievementTitles": [
+  {
+    "id": "boss3achieve",
+    "name": "Sing as One",
+    "difficulty": ["BASIC", "EXPERT","FRACTURE"],
+    "condition": "play"
+  },
+  {
+    "id": "boss3achieve3",
+    "name": "Ignite the Night",
+    "difficulty": ["EXPERT","BASIC"],
+    "condition": "fc"
+  },
+  {
+    "id": "boss3achieve4",
+    "name": "共し火を掲げて",
+    "difficulty": "FRACTURE",
+    "condition": "fc"
+  },
+  {
+    "id": "boss3achieve4",
+    "name": "暁を焚べる双星",
+    "difficulty": "FRACTURE",
+    "condition": "ap"
+  }
+]
+}

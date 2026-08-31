@@ -1,0 +1,150 @@
+:root {
+  color-scheme: dark;
+  font-family: "M PLUS 1", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #020306;
+}
+
+#creditsBackdrop {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(44, 102, 128, .1), transparent 48%),
+    linear-gradient(rgba(0, 3, 8, .72), rgba(0, 2, 7, .82)),
+    center / cover no-repeat url("assets/bg/story_chapter3.png");
+}
+
+#creditsBackdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .24;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 3px,
+    rgba(144, 239, 255, .035) 4px
+  );
+}
+
+#creditsViewport {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(transparent 0%, #000 13%, #000 87%, transparent 100%);
+}
+
+#creditsTrack {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  padding: 12vh 24px 18vh;
+  text-align: center;
+  will-change: transform;
+  opacity: 0;
+}
+
+body.creditsRolling #creditsTrack {
+  opacity: 1;
+}
+
+.creditsSection {
+  margin: 0 0 14vh;
+}
+
+.creditsTitle {
+  margin: 0 0 24px;
+  color: #8deeff;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: clamp(13px, 1.65vw, 21px);
+  letter-spacing: .25em;
+  text-shadow: 0 0 12px rgba(90, 225, 255, .48);
+}
+
+.creditsName {
+  margin: 9px 0;
+  color: rgba(255, 255, 255, .92);
+  font-family: "M PLUS 1", sans-serif;
+  font-size: clamp(14px, 1.7vw, 21px);
+  letter-spacing: .08em;
+  line-height: 1.6;
+}
+
+.creditsLogoSection {
+  margin: 2vh 0 18vh;
+  text-align: center;
+}
+
+.creditsLogo {
+  display: block;
+  width: min(62vw, 460px);
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 0 18px rgba(118, 229, 255, .3));
+}
+
+#creditsStart {
+  display: none;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 5;
+  padding: 15px 24px;
+  border: 1px solid rgba(130, 234, 255, .72);
+  background: rgba(4, 12, 18, .88);
+  color: #a9f3ff;
+  font: 700 13px "M PLUS 1", sans-serif;
+  letter-spacing: .18em;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+body.awaitingStart #creditsStart {
+  display: block;
+}
+
+#creditsSkip {
+  position: fixed;
+  right: 22px;
+  top: 18px;
+  z-index: 5;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 255, 255, .35);
+  background: rgba(0, 0, 0, .3);
+  color: rgba(255, 255, 255, .65);
+  font: 11px "M PLUS 1", sans-serif;
+  letter-spacing: .15em;
+  cursor: pointer;
+}
+
+#creditsFade {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: #000;
+  opacity: 1;
+  transition: opacity 1.2s ease;
+}
+
+#creditsFade.visible {
+  opacity: 0;
+}
+
+#creditsFade.leaving {
+  opacity: 1;
+  transition-duration: 3.2s;
+  transition-timing-function: ease-in-out;
+}

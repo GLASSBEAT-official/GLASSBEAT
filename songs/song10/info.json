@@ -2,5 +2,5 @@
   "title": "Ancient Gust",
   "artist": "Peritune",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 5,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9, "file": "expert.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 6.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.3, "file": "expert.txt" }]
 }

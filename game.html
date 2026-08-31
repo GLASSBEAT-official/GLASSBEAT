@@ -6,7 +6,7 @@
   <title>Rhythm Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <link rel="stylesheet" href="game.css">
+  <link rel="stylesheet" href="game.css?v=20260831-35">
 
   <link
   rel="preconnect"
@@ -24,6 +24,14 @@
 </head>
 
 <body>
+
+  <div id="assetLoadingScreen" role="status" aria-live="polite">
+    <div id="assetLoadingTip">
+      <span id="assetLoadingTipLabel">TIPS</span>
+      <span id="assetLoadingTipText"></span>
+    </div>
+    <div id="assetLoadingText">ロード中<span>......</span></div>
+  </div>
 
   <div id="game">
 
@@ -50,18 +58,27 @@
     </div>
 
     <div id="judgeline"></div>
+    <div id="heartPlayer" class="hidden">❤</div>
 
     <div id="cover"></div>
 
     <h1 id="startText">
-  spaceを押してスタート
-</h1>
+      <span id="song19HardCondition">HARD:GOOD以下でライフが減少</span>
+      <span>SPACEを押してスタート</span>
+    </h1>
     <div id="scoreArea">
   <h2 id="score">0000000</h2>
   <h2 id="rank">-</h2>
 </div>
     <p id="fastLate"></p>
     <h2 id="combo">0 Combo</h2>
+    <div id="enemyLifeArea" class="hidden">
+      <div id="enemyMissionComplete" class="hidden">MISSION COMPLETE!</div>
+      <div id="enemyLifeBar">
+        <div id="enemyLifeFill"></div>
+      </div>
+      <div id="enemyLifeLabel">ENEMY'S LIFE</div>
+    </div>
     <button id="pauseButton">⏸</button>
 
     <div id="clearSplash">CLEAR!</div>
@@ -83,11 +100,23 @@
 
   </div>
 
-  <div id="judgeCounterPanel">
-  <span class="judgeCounter yellow">PERFECT <b id="yellowPerfectCounter">0</b></span>
-  <span class="judgeCounter white">PERFECT <b id="whitePerfectCounter">0</b></span>
-  <span class="judgeCounter good">GOOD <b id="goodCounter">0</b></span>
-  <span class="judgeCounter miss">MISS <b id="missCounter">0</b></span>
+<div id="judgeCounterPanel">
+  <span class="judgeCounter yellow">
+    <span class="judgeCounterLabel">PERFECT</span>
+    <b class="judgeCounterNumber" id="yellowPerfectCounter">0</b>
+  </span>
+  <span class="judgeCounter white">
+    <span class="judgeCounterLabel">PERFECT</span>
+    <b class="judgeCounterNumber" id="whitePerfectCounter">0</b>
+  </span>
+  <span class="judgeCounter good">
+    <span class="judgeCounterLabel">GOOD</span>
+    <b class="judgeCounterNumber" id="goodCounter">0</b>
+  </span>
+  <span class="judgeCounter miss">
+    <span class="judgeCounterLabel">MISS</span>
+    <b class="judgeCounterNumber" id="missCounter">0</b>
+  </span>
 </div>
 
   <h1 id="result"></h1>
@@ -107,21 +136,6 @@
   <div id="resultPartnerArea">
   <img id="resultPartnerImage" src="images/partners/breaka_full.png" alt="">
   </div>
-
-  <div id="profileArea">
-  <button id="partnerIconButton">
-    <img id="partnerIcon" src="images/partners/breaka_icon.png" alt="">
-  </button>
-
-  <div id="profilePanel">
-    <div id="profileName">Player</div>
-    <div>
-      <span id="rateGain"></span>
-      <span id="profileRate">RATE 0.0</span>
-    </div>
-  </div>
-
-</div>
 
   <!-- 帯 -->
   <div id="resultBanner">
@@ -159,6 +173,16 @@
         <div id="resultLate"></div>
       </div>
 
+      <div id="resultAchievement">
+        <div id="resultAchievementGauge" role="meter" aria-label="達成率" aria-valuemin="0" aria-valuemax="100">
+          <div id="resultAchievementTrack">
+            <div id="resultAchievementFill"></div>
+            <div id="resultAchievementMarker"></div>
+          </div>
+          <div id="resultAchievementRate"></div>
+        </div>
+      </div>
+
       <div id="partnerExpNotify"></div>
 
     </div>
@@ -166,6 +190,13 @@
     <!-- 右半分 -->
     <div id="resultRight">
       <img id="resultJacket" src="" alt="jacket">
+      <div id="resultPlayReward" aria-label="プレイ報酬">
+        <span id="resultPlayRewardLabel">Reward:</span>
+        <span id="resultPlayRewardRate">0%</span>
+        <span id="resultPlayRewardArrow">▷▷</span>
+        <span id="resultPlayRewardShard" aria-hidden="true"></span>
+        <span id="resultPlayRewardAmount">×0</span>
+      </div>
     </div>
 
   </div>
@@ -181,10 +212,52 @@
 
 </div>
 
+<div id="mapPieceRestoreOverlay" aria-hidden="true">
+  <div id="mapPieceRestoreContent">
+    <div id="mapPieceRestoreLabel">PIECE RESTORED</div>
+    <svg id="mapPieceRestoreSvg" aria-hidden="true"></svg>
+    <div id="mapPieceRestoreReward"><span class="mapRestoreShard"></span><span id="mapPieceRestoreRewardValue">+0</span></div>
+  </div>
+</div>
+
+<div id="mapAttemptFailureOverlay" aria-hidden="true">
+  <div id="mapAttemptFailureContent">
+    <div id="mapAttemptFailureTitle">FAILED</div>
+    <div id="mapAttemptFailureText">失敗</div>
+    <div id="mapAttemptFailureReasons"></div>
+  </div>
+</div>
+
 <div id="pauseScreen">
   <button id="pauseRetry">RETRY</button>
   <button id="pauseBack">BACK</button>
   <button id="pauseContinue">CONTINUE</button>
+</div>
+
+<div id="bulletEnemyFailure" class="hidden">
+  <div id="bulletEnemyFailureMessage">失敗 : 敵のライフが0になっていません</div>
+  <div id="bulletEnemyFailureButtons">
+    <button id="bulletEnemyRetry">RETRY</button>
+    <button id="bulletEnemyBack">BACK</button>
+  </div>
+</div>
+
+<div id="bulletTutorialOverlay" class="hidden">
+  <img id="bulletTutorialImage" src="images/bullettutorial.png" alt="Bullet Challengeの操作説明">
+  <div id="bulletTutorialText">左右キーまたはカーソル移動で弾幕を避けて、デュアルノーツを叩いて攻撃！<br>相手のHPを削り切ろう！</div>
+  <div id="bulletTutorialContinue">クリックまたはSPACEで続ける</div>
+</div>
+
+<div id="boss3IntroOverlay" class="hidden">
+  <div id="boss3IntroScene" aria-hidden="true"></div>
+  <img id="boss3IntroCharacterA" class="boss3IntroCharacter" src="images/events/boss3introA.png" alt="" aria-hidden="true">
+  <img id="boss3IntroCharacterB" class="boss3IntroCharacter" src="images/events/boss3introB.png" alt="" aria-hidden="true">
+  <img id="boss3IntroArcA" class="boss3IntroArc" src="images/events/arcA.png" alt="" aria-hidden="true">
+  <img id="boss3IntroArcB" class="boss3IntroArc" src="images/events/arcB.png" alt="" aria-hidden="true">
+  <div id="boss3IntroWhiteMist" aria-hidden="true"></div>
+  <div id="boss3TapToStart">TAP TO START</div>
+  <svg id="boss3CrackLayer" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+  <div id="boss3ShardLayer"></div>
 </div>
 
 <div id="fadeOverlay"></div>
@@ -207,8 +280,14 @@
   </div>
 
   <div id="playProfilePanel">
-    <div id="playProfileName">Player</div>
-    <div id="playProfileRate">RATE 0.0</div>
+    <div id="playProfileIdentity">
+      <div id="playProfileName">Player</div>
+      <div id="playProfileRateRow">
+        <span id="playProfileRate">RATE 0.0</span>
+        <span id="playRateGain" aria-live="polite"></span>
+      </div>
+    </div>
+    <div id="playProfileTitle" class="titleBackground-yellow">新米プレイヤー</div>
   </div>
 </div>
 
@@ -225,8 +304,11 @@
 </div>
 
 <div id="song11WhiteFlash"></div>
+<div id="boss3TempoWarp" aria-hidden="true"></div>
+<div id="boss3FinalWhiteMist" aria-hidden="true"></div>
 
- <script src="game.js"></script>
+ <script src="loading-tips.js"></script>
+  <script src="game.js?v=20260831-51"></script>
 
 </body>
 

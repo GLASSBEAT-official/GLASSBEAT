@@ -1,0 +1,177 @@
+
+{
+  "version": 1,
+  "id": "map01",
+  "title": "真夜中の聖堂",
+  "gridSize": 4,
+  "completedImage": "map/images/map1.png",
+  "iconImage": "map/images/map1icon.png",
+  "completionRewards": [{
+    "percent": 30,
+    "type": "title",
+    "id": "map:first-title"
+  },
+  {
+    "percent": 70,
+    "type": "song",
+    "id": "song13"
+  },
+  {
+    "percent": 100,
+    "type": "background",
+    "file": "map1_bg.png"
+  }],
+  "pieces": [
+    {
+      "id": "piece01",
+      "cells": [1],
+      "type": "normal",
+      "conditions": {},
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece02",
+      "cells": [2],
+      "type": "random",
+      "conditions": {},
+      "songSelection": {
+        "mode": "random",
+        "songs": "all"
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece03",
+      "cells": [3,4],
+      "type": "bonus",
+      "conditions": {},
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 120, "stamina": 1 }
+    },
+  
+    {
+      "id": "piece05",
+      "cells": [5],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": "song6", "difficulties": ["expert"] }
+        ]
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece06",
+      "cells": [6],
+      "type": "mission",
+      "conditions": { "fullCombo": true },
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece07",
+      "cells": [7],
+      "type": "normal",
+      "conditions": {},
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece08",
+      "cells": [8],
+      "type": "random",
+      "conditions": {},
+      "songSelection": {
+        "mode": "random",
+        "songs": "all"
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece09",
+      "cells": [9],
+      "type": "random",
+      "conditions": {},
+      "songSelection": {
+        "mode": "random",
+        "songs": "all"
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece10_11",
+      "cells": [10, 11],
+      "type": "mission",
+      "conditions": { "allPerfect": true },
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece12",
+      "cells": [12],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": "song13", "difficulties": ["expert"] }
+        ]
+      },
+      "reward": { "shards": 90 }
+    },
+    {
+      "id": "piece13_14",
+      "cells": [13, 14],
+      "type": "bonus",
+      "conditions": {},
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 120, "stamina": 1 }
+    },
+    {
+      "id": "piece15",
+      "cells": [15],
+      "type": "normal",
+      "conditions": {},
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 30 }
+    },
+    {
+      "id": "piece16",
+      "cells": [16],
+      "type": "mission",
+      "conditions": { "maxMisses": 10, "maxCombo": 100 },
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+  { "songId": "song18", "difficulties": "all" },
+  { "songId": "boss", "difficulties": "all" }
+]
+      },
+      "reward": { "shards": 50 }
+    }
+  ]
+}

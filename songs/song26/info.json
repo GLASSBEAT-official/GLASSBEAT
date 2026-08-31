@@ -1,0 +1,8 @@
+{
+  "title": "Coolness",
+  "artist": "Fukagawa",
+  "shardUnlockCost": 100,
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 4,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 8.4, "file": "expert.txt" }]
+  
+}

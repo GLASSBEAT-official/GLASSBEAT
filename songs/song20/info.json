@@ -1,0 +1,6 @@
+{
+  "title": "Extreme Player",
+  "artist": "TAKIO feat.はらもりよしな",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 8.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.0, "file": "expert.txt" },{ "difficulty": "FRACTURE", "level": 14.0, "file": "fracture.txt" }]
+}

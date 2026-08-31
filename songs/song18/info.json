@@ -1,0 +1,19 @@
+{
+  "title": "動き出す歯車",
+  "artist": "Tak_mfk",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 8.3,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 13.5, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song18achieve",
+    "name": "牙を剥く獣",
+    "difficulty": "BASIC",
+    "condition": "fc"
+  },
+  {
+    "id": "boss1achieve",
+    "name": "歌なき戦場",
+    "difficulty":"EXPERT",
+    "condition": "fc"
+  }]
+}

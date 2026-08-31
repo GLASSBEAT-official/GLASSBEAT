@@ -3,12 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Select</title>
-  <link rel="stylesheet" href="select.css">
+  <link rel="stylesheet" href="select.css?v=20260830-11">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+  <div id="assetLoadingScreen" role="status" aria-live="polite">
+    <div id="assetLoadingTip">
+      <span id="assetLoadingTipLabel">TIPS</span>
+      <span id="assetLoadingTipText"></span>
+    </div>
+    <div id="assetLoadingText">ロード中<span>......</span></div>
+  </div>
 
   <div id="selectScreen">
 
@@ -25,9 +33,14 @@
         <span id="detailBest">BEST : 0000000</span>
       </div>
 
-      <div id="jacketArea">
-        <img id="jacketImage" src="" alt="jacket">
-      </div>
+      <div id="jacketStack">
+  <div id="difficultyColorPlate"></div>
+
+  <div id="jacketArea">
+    <img id="jacketImage" src="" alt="jacket">
+    <div id="jacketShardLock" class="whiteLockIcon" aria-hidden="true"></div>
+  </div>
+</div>
 
       <div id="detailInfo">
         <div id="detailTitle"></div>
@@ -36,7 +49,8 @@
 
       <div id="difficultyButtons"></div>
 
-      <div id="playButtonArea">
+  <div id="playButtonArea">
+  <button id="unlockSongButton" type="button"><span>UNLOCK</span><span class="unlockShardIcon"></span><span id="unlockSongCost">0</span></button>
   <button id="startButton">START</button>
   <button id="storyButton">STORY▶</button>
 
@@ -44,7 +58,7 @@
   <label>オフセット [ms]</label>
   <div id="userOffsetControl">
     <button id="userOffsetMinus">－</button>
-    <input type="number" id="userOffsetInput" min="-50" max="50" step="1" value="0">
+    <input type="number" id="userOffsetInput" min="-99" max="99" step="1" value="0">
     <button id="userOffsetPlus">＋</button>
   </div>
 </div>
@@ -60,29 +74,57 @@
   <div id="selectFadeOverlay"></div>
 
   <!-- 歯車ボタン -->
+<div id="selectShardDisplay" aria-label="所持シャード">
+  <span class="mapPointIcon"></span>
+  <span id="selectShardValue">0</span>
+</div>
 <button id="settingsButton">⚙</button>
+<div id="titleUnlockToast" aria-live="polite" aria-hidden="true">
+  <div id="titleUnlockToastLabel">称号を獲得しました！</div>
+  <div id="titleUnlockToastBadge"></div>
+</div>
+<button id="unlockMapButton" type="button">▼MAP▼</button>
 
 <!-- 設定ポップアップ -->
 <div id="settingsOverlay"></div>
 <div id="settingsPopup">
   <h2>SETTINGS</h2>
 
-  <div class="settingGroup">
-    <label>ノーツ速度</label>
-    <div id="speedControl">
-      <button id="speedMinus">－</button>
-      <input type="number" id="speedInput" min="1" max="20" step="0.1">
-      <button id="speedPlus">＋</button>
-    </div>
-  </div>
+  <div id="settingsColumns">
+    <section id="generalSettingsPanel" aria-label="ゲーム設定">
+      <div class="settingsSectionTitle">ゲーム設定</div>
 
-  <div class="settingGroup">
-    <label>キー配置</label>
-    <div id="keyLayoutButtons">
-      <button class="keyLayoutBtn selected" data-layout="default">D F Space J K</button>
-      <button class="keyLayoutBtn" data-layout="alt">G H J K L</button>
-      <button class="keyLayoutBtn" data-layout="num">4 5 7 8 9</button>
-    </div>
+      <div class="settingGroup">
+        <label>ノーツ速度</label>
+        <div id="speedControl">
+          <button id="speedMinus">－</button>
+          <input type="number" id="speedInput" min="1" max="20" step="0.1">
+          <button id="speedPlus">＋</button>
+        </div>
+      </div>
+
+      <div class="settingGroup">
+        <label>キー配置</label>
+        <div id="keyLayoutButtons">
+          <button class="keyLayoutBtn selected" data-layout="default">G H J K L</button>
+          <button class="keyLayoutBtn" data-layout="alt">D F Space J K</button>
+          <button class="keyLayoutBtn" data-layout="num">4 5 7 8 9</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="backgroundSettingsPanel" aria-label="背景設定画面">
+      <div class="settingsSectionTitle">背景設定</div>
+      <div id="backgroundCarousel">
+        <button id="backgroundPrev" class="backgroundArrow" type="button" aria-label="前の背景">‹</button>
+        <div id="backgroundCurrent">
+          <div id="backgroundPreview" aria-hidden="true"></div>
+          <div id="backgroundOptionName">DEFAULT</div>
+          <div id="backgroundSelectedLabel">選択中</div>
+        </div>
+        <button id="backgroundNext" class="backgroundArrow" type="button" aria-label="次の背景">›</button>
+      </div>
+    </section>
   </div>
 
   <button id="settingsClose">閉じる</button>
@@ -94,16 +136,73 @@
   </button>
 
   <div id="profilePanel">
-    <div id="profileName">Player</div>
-    <div id="profileRate">RATE 0.00</div>
+    <div id="profileIdentity">
+      <div id="profileName">Player</div>
+      <div id="profileRate">RATE 0.00</div>
+    </div>
+    <div id="profileTitle">新米プレイヤー</div>
   </div>
+</div>
+
+<div id="profileDetailModal" class="hidden" aria-hidden="true">
+  <div id="profileDetailBackdrop"></div>
+  <section id="profileDetailPanel" aria-label="プロフィール詳細">
+    <header id="profileDetailHeader">
+      <div>
+        <div id="profileDetailLabel">PROFILE</div>
+        <h2 id="profileDetailTitle">SCOREBOARD</h2>
+      </div>
+      <div id="profileDetailSummary" aria-label="プロフィール概要">
+        <div id="profileDetailIconFrame">
+          <img id="profileDetailIcon" src="images/partners/breaka_icon.png" alt="">
+        </div>
+        <div id="profileDetailSummaryPanel">
+          <div id="profileDetailIdentity">
+            <div id="profileDetailName">Player</div>
+            <div id="profileDetailRate">RATE 0.0</div>
+          </div>
+          <div id="profileDetailTitleBadge" class="titleBackground-yellow">新米プレイヤー</div>
+        </div>
+      </div>
+      <div id="profileClearStats">
+        <button id="profileStatsDifficulty" class="diff-expert" type="button">EX</button>
+        <div class="profileClearStat">
+          <span class="profileClearStatLabel">CLEAR</span>
+          <span class="profileClearStatValue" id="profileClearCount">0<span class="profileClearStatTotal">/0</span></span>
+        </div>
+        <div class="profileClearStat">
+          <span class="profileClearStatLabel">FC</span>
+          <span class="profileClearStatValue" id="profileFullComboCount">0<span class="profileClearStatTotal">/0</span></span>
+        </div>
+        <div class="profileClearStat">
+          <span class="profileClearStatLabel">AP</span>
+          <span class="profileClearStatValue" id="profileAllPerfectCount">0<span class="profileClearStatTotal">/0</span></span>
+        </div>
+        <div class="profileClearStat">
+          <span class="profileClearStatLabel">UP</span>
+          <span class="profileClearStatValue" id="profileUltimatePerfectCount">0<span class="profileClearStatTotal">/0</span></span>
+        </div>
+      </div>
+      <button id="profileDetailClose" type="button" aria-label="閉じる">×</button>
+    </header>
+    <div id="profileDetailContent">
+      <div id="profileScoreboard"></div>
+      <aside id="profileTitlesPanel" aria-label="獲得済み称号">
+        <div id="profileTitlesHeader">
+          <span>獲得済み称号</span>
+          <span id="profileTitlesCount">0</span>
+        </div>
+        <div id="profileTitlesList"></div>
+      </aside>
+    </div>
+  </section>
 </div>
 
 <div id="partnerModal" class="hidden">
   <div id="partnerModalBg"></div>
   <div id="partnerModalInner">
 
-    <button id="partnerCloseButton">×</button>
+    <button id="partnerCloseButton">&times;</button>
 
     <button id="partnerPrev">‹</button>
     <button id="partnerNext">›</button>
@@ -131,6 +230,8 @@
 
 <div id="storyFadeOverlay"></div>
 
-  <script src="select.js"></script>
+  <script src="loading-tips.js"></script>
+  <script src="map-stamina.js"></script>
+  <script src="select.js?v=20260830-12"></script>
 </body>
 </html>

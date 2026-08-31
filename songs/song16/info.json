@@ -1,0 +1,6 @@
+{
+  "title": "Case:Theophilos",
+  "artist": "zippy",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 6.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.5, "file": "expert.txt" }]
+}

@@ -2,5 +2,13 @@
   "title": "Starlight Adventure",
   "artist": "UcchiiØ-うっちーぜろ-",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 8,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12, "file": "expert.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 8.8,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.6, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song3achieve",
+    "name": "Dawn of the Origin",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }
+]
 }

@@ -1,9 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700&display=swap");
+
+html,
+body,
+body * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
   background: #090b10;
   color: white;
-  font-family: sans-serif;
+  font-family: "M PLUS 1", sans-serif;
   display: grid;
   place-items: center;
 }
@@ -63,7 +83,7 @@ button.disabled {
 #tutorialImage {
   width: min(520px, 100%);
   aspect-ratio: 16 / 9;
-  object-fit: cover;
+  object-fit: contain;
   background: #151b26;
 }
 

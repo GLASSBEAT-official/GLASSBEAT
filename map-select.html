@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAP SELECT</title>
+  <link rel="stylesheet" href="map-select.css?v=20260824-11">
+</head>
+<body>
+  <div id="mapSelectBackground" aria-hidden="true"></div>
+  <div id="mapSelectFade" aria-hidden="true"></div>
+  <div id="mapSelectBlackOverlay" aria-hidden="true"></div>
+  <div id="mapSelectImageOverlay" aria-hidden="true"></div>
+
+  <main id="mapSelectScreen">
+    <header id="mapSelectHeader">
+      <div>
+        <h1>MAP SELECT</h1>
+        <p>攻略するマップを選択してください</p>
+      </div>
+      <div id="mapSelectShard" aria-label="所持シャード">
+        <img src="images/shard.png" alt="">
+        <span id="mapSelectShardValue">0</span>
+      </div>
+    </header>
+
+    <section id="mapCardList" aria-label="マップ一覧"></section>
+
+    <div id="mapSelectGuide">マップを進めることで、新たな楽曲やアイテムを獲得できます</div>
+
+    <button id="mapSelectBack" type="button">BACK</button>
+  </main>
+
+  <script src="map-select.js?v=20260824-9"></script>
+</body>
+</html>

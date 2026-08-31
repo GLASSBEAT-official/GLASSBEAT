@@ -1,3 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700&display=swap");
+
+html,
+body,
+body * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -9,7 +29,7 @@ body {
   color: white;
   height: 100vh;
   overflow: hidden;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
 }
 
 #selectScreen {
@@ -35,7 +55,7 @@ body {
   background-color: rgba(12, 22, 34, 0.92);
   border: none;
   color: white;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
@@ -90,20 +110,99 @@ body {
 #songList {
   width: 40%;
   height: 100%;
-  overflow-y: auto;
+  min-height: 0;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
 }
 
+#songList.scrollable {
+  overflow-y: auto;
+  padding-bottom: 104px;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+#songList::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.songSortRow {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 4px 0 24px;
+}
+
+.songSortRow.randomSelectionRow {
+  height: 38px;
+}
+
+#songSortButton {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  width: auto;
+  height: 38px;
+  margin: 0;
+  padding: 0 2px 0 4px;
+  border: none;
+  background: transparent;
+  color: #bfefff;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.songRestrictionNotice {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  color: #ff4b5f;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1;
+  white-space: nowrap;
+  text-shadow: 0 0 7px rgba(255, 45, 70, 0.45);
+}
+
+#songSortButton:hover,
+#songSortButton:active {
+  background: transparent;
+  color: #bfefff;
+}
+
+.songSortIcon {
+  font-size: 22px;
+  line-height: 1;
+}
+
 .songItem {
   position: relative;
+  flex: 0 0 auto;
   height: 80px;
+  min-height: 80px;
   cursor: pointer;
   display: flex;
   align-items: center;
   padding-left: 20px;
   overflow: hidden;
-  border-bottom: 5px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 5px solid transparent;
   transition: border-left 0.2s;
   clip-path: polygon(
     0 0,
@@ -169,6 +268,70 @@ display: flex;
   min-width: 64px;
 }
 
+#assetLoadingScreen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  box-sizing: border-box;
+  padding: 0 clamp(20px, 3vw, 48px) clamp(18px, 3vh, 36px);
+  background: #05080d;
+  z-index: 10000;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+
+#assetLoadingScreen.loaded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#assetLoadingText {
+  color: white;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+#assetLoadingText span {
+  display: inline-block;
+  width: 1.9em;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: loadingDots 1.2s steps(6, end) infinite;
+}
+
+#assetLoadingTip {
+  position: absolute;
+  left: clamp(20px, 3vw, 48px);
+  bottom: clamp(18px, 3vh, 36px);
+  max-width: min(620px, 65vw);
+  color: rgba(255, 255, 255, 0.78);
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: clamp(11px, 1.15vw, 14px);
+  font-weight: 400;
+  line-height: 1.7;
+  text-align: left;
+}
+
+#assetLoadingTipLabel {
+  margin-right: 10px;
+  color: #66ddff;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+@keyframes loadingDots {
+  from { width: 0; }
+  to { width: 1.9em; }
+}
+
+.songItemLevelPlaceholder {
+  visibility: hidden;
+}
+
 .songItemArtist {
   font-size: 12px;
   color: #cccccc;
@@ -181,9 +344,11 @@ display: flex;
 #songDetail {
   width: 55%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 43px 360px 64px 40px 112px;
   align-items: center;
+  justify-items: center;
   justify-content: center;
   gap: 16px;
   padding: 20px;
@@ -195,11 +360,14 @@ display: flex;
   display: flex;
   gap: 20px;
   align-items: center;
+  justify-self: center;
+  height: 43px;
   font-size: 18px;
 }
 
 #detailRank {
   font-size: 36px;
+  line-height: 1;
   color: cyan;
 }
 
@@ -209,16 +377,45 @@ display: flex;
   text-shadow: 0 0 10px cyan;
 }
 
-#jacketArea {
+#jacketStack {
+  position: relative;
   width: 360px;
   height: 360px;
   margin-left: 15px;
   flex-shrink: 0;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+#difficultyColorPlate {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: cyan;
+  transform: translate(5px, 5px) rotate(5deg);
+  transform-origin: center;
+  opacity: 0.85;
+  transition: background-color 0.18s ease;
+}
+
+#jacketArea {
+  position: relative;
+  z-index: 2;
+  width: 360px;
+  height: 360px;
+  margin-left: 0;
+  flex-shrink: 0;
   overflow: hidden;
   transform: rotate(5deg);
   box-shadow: 8px 8px 24px rgba(0, 0, 0, 0.6);
-  position: relative;
+}
+
+#jacketArea::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  box-sizing: border-box;
+  z-index: 5;
 }
 
 #jacketImage {
@@ -233,8 +430,57 @@ display: flex;
   filter: grayscale(1) brightness(0.65);
 }
 
+#jacketArea.shardLockedJacket #jacketImage {
+  filter: grayscale(0.45) saturate(0.62) brightness(0.68);
+}
+
+#jacketShardLock {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  place-items: center;
+  --lock-body-width: 38px;
+  --lock-body-height: 29px;
+  --lock-stroke: 4px;
+  pointer-events: none;
+}
+
+#jacketArea.shardLockedJacket #jacketShardLock { display: grid; }
+
+.whiteLockIcon::before,
+.whiteLockIcon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  box-sizing: border-box;
+  border: var(--lock-stroke) solid white;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 8px rgba(205, 220, 255, 0.55));
+}
+
+.whiteLockIcon::before {
+  top: 50%;
+  width: var(--lock-body-width);
+  height: var(--lock-body-height);
+  border-radius: 4px;
+  background: rgba(4, 8, 18, 0.34);
+  transform: translate(-50%, -18%);
+}
+
+.whiteLockIcon::after {
+  top: calc(50% - 2px);
+  width: calc(var(--lock-body-width) * 0.62);
+  height: calc(var(--lock-body-height) * 0.72);
+  border-bottom: 0;
+  border-radius: 14px 14px 0 0;
+  transform: translate(-50%, -94%);
+}
+
 #detailInfo {
+  width: 100%;
+  height: 64px;
   text-align: center;
+  margin-top: 5px;
 }
 
 #detailTitle {
@@ -329,7 +575,7 @@ display: flex;
   flex: 0;
   margin: 0 6px;
   text-align: center;
-  font-family: "Orbitron", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 11px;
   font-weight: bold;
   letter-spacing: 0.5px;
@@ -339,7 +585,7 @@ display: flex;
 
 .diffLevel {
   min-width: 42px;
-  font-family: "Orbitron", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 35px;
   font-weight: bold;
   line-height: 1;
@@ -351,6 +597,17 @@ display: flex;
 .diffBtn.diff-basic  { color: cyan; }
 .diffBtn.diff-expert { color: #ff4444; }
 .diffBtn.diff-fracture { color: #ffb7c5; }
+.diffBtn.diff-fracture::after { background: linear-gradient(90deg, #ffabc9 0%, #ffc1d7 64%, #bfeaff 100%); }
+.diffBtn.diff-fracture .diffFrame { border-color: #e8c9df; }
+.diffBtn.diff-fracture .diffBar { background: linear-gradient(90deg, #ffabc9 0%, #ffc1d7 64%, #bfeaff 100%); }
+.diffBtn.diff-fracture .diffName,
+.diffBtn.diff-fracture .diffLevel {
+  color: transparent;
+  background: linear-gradient(90deg, #ffabc9 0%, #ffc1d7 64%, #bfeaff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 .diffBtn .diffFrame,
 .diffBtn .diffName,
@@ -375,8 +632,15 @@ display: flex;
 
 .diffBtn.diff-fracture.selected,
 .diffBtn.diff-fracture.selected * {
-  color: #ffb7c5 !important;
-  -webkit-text-fill-color: #ffb7c5 !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+.diffBtn.diff-fracture.selected .diffName,
+.diffBtn.diff-fracture.selected .diffLevel {
+  background: linear-gradient(90deg, #ffe0ea 0%, #ffd4e3 64%, #dff5ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .diffBtn.diff-basic .diffLevel {
@@ -388,7 +652,15 @@ display: flex;
 }
 
 .diffBtn.diff-fracture .diffLevel {
-  color: #ffb7c5;
+  color: transparent;
+}
+
+.diffBtn.challengeLocked,
+.diffBtn.challengeLocked:hover,
+.diffBtn.challengeLocked:focus {
+  opacity: .62;
+  filter: grayscale(.3) brightness(.82);
+  cursor: pointer;
 }
 
 .diffBtn.selected .diffFrame {
@@ -409,6 +681,17 @@ display: flex;
   filter: brightness(1.8); 
 }
 
+.diffBtn.diff-fracture.selected .diffFrame {
+  border-color: #f5d8e8;
+  background: linear-gradient(90deg, rgba(255, 171, 201, 0.3) 0%, rgba(255, 193, 215, 0.24) 68%, rgba(191, 234, 255, 0.18) 100%);
+  filter: brightness(1.12);
+}
+
+.diffBtn.diff-fracture.selected .diffName,
+.diffBtn.diff-fracture.selected .diffLevel {
+  filter: brightness(1.08);
+}
+
 .diffBtn.selected,
 .diffBtn.selected:hover,
 .diffBtn.selected:focus,
@@ -419,7 +702,11 @@ display: flex;
 }
 
 #startButton {
-  font-family: 'Orbitron', sans-serif;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 20px;
   padding: 12px 60px;
   background: cyan;
@@ -434,6 +721,47 @@ display: flex;
   background: #00dddd;
 }
 
+#unlockSongButton {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 236px;
+  height: 48px;
+  padding: 0 34px;
+  border: none;
+  color: #2a1022;
+  background: #ff82b8;
+  font: 700 17px "Orbitron", "M PLUS 1", sans-serif;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  clip-path: polygon(12px 0%, calc(100% - 12px) 0%, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0% 50%);
+  transform: translateX(-50%);
+  transition: opacity 0.18s ease, filter 0.18s ease;
+}
+
+#unlockSongButton:hover:not(:disabled) { filter: brightness(1.12); }
+#unlockSongButton:disabled { opacity: 0.48; cursor: not-allowed; }
+#unlockSongButton.shardShortage { font-size: 15px; }
+#unlockSongButton.unlocking { opacity: 0; pointer-events: none; }
+
+.unlockShardIcon {
+  width: 17px;
+  height: 26px;
+  flex: 0 0 auto;
+  background: url("images/shard.png") center / contain no-repeat;
+  clip-path: none;
+  filter: none;
+}
+
+#startButton.quickReveal { animation: quickStartReveal 0.2s ease-out both; }
+@keyframes quickStartReveal {
+  from { opacity: 0; transform: translateX(-50%) scale(0.94); }
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
 
 .startText {
   display: inline-block;
@@ -549,6 +877,182 @@ display: flex;
   transform: rotate(45deg);
 }
 
+#titleUnlockToast {
+  position: fixed;
+  top: 72px;
+  right: 0;
+  z-index: 260;
+  width: 340px;
+  scale: 0.9;
+  transform-origin: right top;
+  box-sizing: border-box;
+  padding: 12px 30px 13px 24px;
+  border: 0;
+  border-radius: 36px 0 0 36px;
+  background: linear-gradient(90deg, rgba(8, 20, 39, 0.72), rgba(9, 15, 31, 0.66));
+  box-shadow: -5px 0 22px rgba(87, 190, 255, 0.2), inset 0 0 18px rgba(126, 199, 255, 0.05);
+  transform: translateX(calc(100% + 24px));
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.48s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease;
+}
+
+#titleUnlockToast.visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+#titleUnlockToastLabel {
+  margin-bottom: 8px;
+  color: #dff7ff;
+  font: 700 13px "M PLUS 1", sans-serif;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(98, 222, 255, 0.7);
+}
+
+#titleUnlockToastBadge {
+  width: 86%;
+  height: 34px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font: 500 14px "M PLUS 1", sans-serif;
+  white-space: nowrap;
+}
+
+#titleUnlockToastBadge.profileTitleMarqueeActive .profileTitleMarqueeText {
+  min-width: 0;
+  text-align: left;
+  animation: profileTitleMarquee 7s linear infinite;
+}
+
+#titleUnlockToastBadge.titleBackground-green { background: rgba(72, 190, 116, 0.28); border-color: rgba(119, 235, 157, 0.58); }
+#titleUnlockToastBadge.titleBackground-yellow { background: rgba(255, 239, 146, 0.18); border-color: rgba(255, 244, 164, 0.42); }
+#titleUnlockToastBadge.titleBackground-blue { background: rgba(70, 153, 235, 0.28); border-color: rgba(125, 197, 255, 0.58); }
+#titleUnlockToastBadge.titleBackground-purple { background: rgba(163, 91, 224, 0.28); border-color: rgba(205, 145, 255, 0.58); }
+#titleUnlockToastBadge.titleBackground-red { background: rgba(214, 62, 76, 0.3); border-color: rgba(255, 112, 124, 0.6); }
+
+#selectShardDisplay {
+  position: fixed;
+  top: 16px;
+  right: 88px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  min-width: 88px;
+  padding: 0 14px;
+  border: 1px solid rgba(148, 170, 210, 0.45);
+  border-radius: 24px;
+  color: #eaf0ff;
+  background: rgba(4, 10, 25, 0.68);
+  font: 500 18px "Orbitron", sans-serif;
+  letter-spacing: 1px;
+}
+
+#jacketArea.shardUnlockFlash #jacketImage {
+  animation: shardJacketUnlockFlash 0.44s ease-out both;
+}
+
+.songItem.shardJustUnlocked .songItemBg {
+  animation: shardListUnlockFlash 0.44s ease-out both;
+}
+
+@keyframes shardJacketUnlockFlash {
+  0% { filter: brightness(1.9) saturate(0.75); }
+  38% { filter: brightness(1.55) saturate(1.12); }
+  100% { filter: brightness(1) saturate(1); }
+}
+
+@keyframes shardListUnlockFlash {
+  0% { filter: brightness(1.4) saturate(0.8); }
+  42% { filter: brightness(0.9) saturate(1.1); }
+  100% { filter: brightness(0.4) saturate(1); }
+}
+
+#selectShardDisplay .mapPointIcon {
+  display: inline-block;
+  width: 20px;
+  height: 31px;
+  flex: 0 0 auto;
+  background: url("images/shard.png") center / contain no-repeat;
+  clip-path: none;
+  filter: none;
+}
+
+body.mapSelectMode:not(.mapAllSongs) #folderButtons {
+  display: none;
+}
+
+body.mapSelectMode #storyButton {
+  display: none;
+}
+
+#unlockMapButton {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 50;
+  width: 220px;
+  height: 64px;
+  border: none;
+  background-color: #57258f;
+  background-image: url("assets/bg/purple.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: white;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.55);
+  box-shadow: 0 0 16px rgba(150, 80, 255, 0.4);
+  clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
+  cursor: pointer;
+  transform: translateX(-50%);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+#unlockMapButton:hover {
+  background-color: #7136ad;
+  box-shadow: 0 0 22px rgba(178, 112, 255, 0.65);
+  transform: translateX(-50%);
+}
+
+body.mapSelectMode #unlockMapButton {
+  isolation: isolate;
+  background-color: #79b8c9;
+  background-image: none;
+}
+
+body.mapSelectMode #unlockMapButton::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px -1px;
+  z-index: -1;
+  background: #00053a;
+  clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
+  pointer-events: none;
+}
+
+body.mapSelectMode #unlockMapButton:hover {
+  background-color: #79b8c9;
+}
+
+body.mapSelectMode #unlockMapButton:hover::before {
+  background: #0a0a5c;
+}
+
 #settingsOverlay {
   display: none;
   position: fixed;
@@ -574,11 +1078,13 @@ display: flex;
   border: 1px solid #444;
   padding: 30px;
   z-index: 201;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   color: white;
   flex-direction: column;
   gap: 20px;
-  min-width: 360px;
+  width: min(760px, calc(100vw - 80px));
+  min-width: 680px;
+  box-sizing: border-box;
 }
 
 #settingsPopup.visible {
@@ -609,7 +1115,7 @@ display: flex;
 }
 
 #speedMinus, #speedPlus {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 18px;
   width: 36px;
   height: 36px;
@@ -629,7 +1135,7 @@ display: flex;
   border: 1px solid #555;
   color: white;
   padding: 6px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 16px;
   width: 80px;
   text-align: center;
@@ -642,7 +1148,7 @@ display: flex;
 }
 
 .keyLayoutBtn {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   padding: 10px;
   background: transparent;
@@ -669,7 +1175,7 @@ display: flex;
 }
 
 .sfxToggleBtn {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   padding: 8px 20px;
   background: transparent;
@@ -687,7 +1193,7 @@ display: flex;
 }
 
 #settingsClose {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 14px;
   padding: 10px;
   background: transparent;
@@ -734,6 +1240,17 @@ display: flex;
   background: #FFB7C5;
 }
 
+.songItemLamp.ultimatePerfect {
+  background: linear-gradient(
+    135deg,
+    #ff5b9b 0%,
+    #ffd5e8 42%,
+    #ffffff 55%,
+    #21c9f3 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
 #profileArea {
   position: fixed;
   left: 18px;
@@ -745,8 +1262,15 @@ display: flex;
 }
 
 #profilePanel {
-  min-width: 130px;
-  padding: 8px 10px;
+  position: relative;
+  width: auto;
+  min-width: 0;
+  min-height: 59px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 7px 34px 7px 12px;
+  box-sizing: border-box;
   background: rgba(5, 10, 18, 0.72);
   border: 1px solid rgba(120, 210, 255, 0.35);
   border-right: none;
@@ -754,12 +1278,728 @@ display: flex;
   text-align: left;
   clip-path: polygon(
     0% 0%,
-    calc(100% - 12px) 0%,
+    calc(100% - 22px) 0%,
     100% 50%,
-    calc(100% - 12px) 100%,
+    calc(100% - 22px) 100%,
     0% 100%
   ); 
   margin-left: -1px;
+  cursor: pointer;
+}
+
+#profileIdentity {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 190px;
+}
+
+#profileTitle {
+  flex: 0 0 138px;
+  width: 138px;
+  min-width: 138px;
+  margin-left: 6px;
+  box-sizing: border-box;
+  padding: 7px 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 244, 164, 0.34);
+  border-radius: 999px;
+  background: rgba(255, 239, 146, 0.16);
+  box-shadow: 0 0 10px rgba(255, 232, 112, 0.1);
+  color: #ffffff;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profileTitleMarqueeText {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.profileTitleMarqueeActive .profileTitleMarqueeText {
+  min-width: 0;
+  text-align: left;
+  animation: profileTitleMarquee 7s linear infinite;
+}
+
+@keyframes profileTitleMarquee {
+  0%, 14% {
+    transform: translateX(0);
+  }
+  86%, 100% {
+    transform: translateX(calc(-1 * var(--profile-title-scroll-distance, 0px)));
+  }
+}
+
+#profilePanel::before,
+#profilePanel::after {
+  content: "";
+  position: absolute;
+  left: calc(100% - 22px);
+  right: auto;
+  z-index: 2;
+  width: 37px;
+  height: 1px;
+  background: rgba(120, 210, 255, 0.35);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+#profilePanel::before {
+  top: -1px;
+  transform: rotate(53.3deg);
+}
+
+#profilePanel::after {
+  bottom: -1px;
+  transform: rotate(-53.3deg);
+}
+
+#profileDetailModal {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#profileDetailModal.hidden {
+  display: none;
+}
+
+#profileDetailBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 4, 10, 0.82);
+  backdrop-filter: blur(5px);
+}
+
+#profileDetailPanel {
+  position: relative;
+  z-index: 1;
+  width: min(1280px, calc(100vw - 80px));
+  height: min(900px, calc(100vh - 54px));
+  display: grid;
+  grid-template-rows: 62px minmax(0, 1fr);
+  gap: 12px;
+  color: white;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+}
+
+#profileDetailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 8px 14px;
+  border-bottom: 1px solid rgba(102, 221, 255, 0.55);
+}
+
+#profileDetailLabel {
+  color: #66ddff;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+
+#profileDetailTitle {
+  margin: 2px 0 0;
+  color: white;
+  font-size: 24px;
+  letter-spacing: 2px;
+}
+
+#profileDetailSummary {
+  display: flex;
+  align-items: center;
+  margin-left: 28px;
+  margin-right: auto;
+  transform: scale(0.95);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+#profileDetailIconFrame {
+  position: relative;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  overflow: visible;
+  border: 1px solid rgba(120, 210, 255, 0.45);
+  background: rgba(5, 10, 18, 0.9);
+}
+
+#profileDetailIcon {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  transform: translateX(-50%);
+}
+
+#profileDetailSummaryPanel {
+  position: relative;
+  width: auto;
+  min-width: 0;
+  min-height: 59px;
+  /* 59px基準のパネルを48pxのアイコン枠へ縦横同倍率で合わせる。 */
+  zoom: 0.813559322;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: -1px;
+  padding: 7px 34px 7px 12px;
+  box-sizing: border-box;
+  border: 1.23px solid rgba(120, 210, 255, 0.35);
+  border-right: none;
+  background: rgba(5, 10, 18, 0.84);
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+}
+
+#profileDetailIdentity {
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 190px;
+}
+
+#profileDetailTitleBadge {
+  width: 138px;
+  min-width: 138px;
+  flex: 0 0 138px;
+  margin-left: 6px;
+  padding: 7px 14px;
+  overflow: hidden;
+  border: 1.23px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+  box-sizing: border-box;
+  color: white;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#profileDetailSummaryPanel::before,
+#profileDetailSummaryPanel::after {
+  content: "";
+  position: absolute;
+  left: calc(100% - 22px);
+  right: auto;
+  z-index: 2;
+  width: 37px;
+  height: 1.23px;
+  background: rgba(120, 210, 255, 0.35);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+#profileDetailSummaryPanel::before {
+  top: -1.23px;
+  transform: rotate(53.3deg);
+}
+
+#profileDetailSummaryPanel::after {
+  bottom: -1.23px;
+  transform: rotate(-53.3deg);
+}
+
+#profileDetailName {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#profileDetailRate {
+  margin-top: 3px;
+  color: #66ddff;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+#profileClearStats {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: auto;
+  margin-right: 12px;
+}
+
+#profileStatsDifficulty {
+  position: relative;
+  isolation: isolate;
+  width: 62px;
+  height: 38px;
+  flex-shrink: 0;
+  border: none;
+  background: currentColor;
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%);
+  color: #ff5b69;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#profileStatsDifficulty::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: rgba(5, 12, 20, 0.96);
+  clip-path: inherit;
+}
+
+#profileStatsDifficulty.diff-basic {
+  color: #27dcf2;
+}
+
+#profileStatsDifficulty.diff-expert {
+  color: #ff5b69;
+}
+
+#profileStatsDifficulty.diff-fracture {
+  color: #ff83c7;
+}
+
+.profileClearStat {
+  min-width: 47px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.profileClearStatLabel {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.8px;
+}
+
+.profileClearStatValue {
+  margin-top: 5px;
+  color: white;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.profileClearStatTotal {
+  margin-left: 1px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 8px;
+  font-weight: 400;
+}
+
+#profileDetailClose {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  color: white;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+#profileDetailClose:hover {
+  background: transparent;
+  color: #66ddff;
+}
+
+#profileScoreboard {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#profileDetailContent {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 286px;
+  gap: 18px;
+}
+
+#profileTitlesPanel {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 42px minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgba(120, 210, 255, 0.34);
+  background: rgba(4, 10, 18, 0.88);
+}
+
+#profileTitlesHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(120, 210, 255, 0.25);
+  color: #dffaff;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+#profileTitlesCount {
+  color: #66ddff;
+  font-size: 11px;
+}
+
+#profileTitlesList {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 12px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+#profileTitlesList::-webkit-scrollbar {
+  display: none;
+}
+
+.profileTitleChoice {
+  position: relative;
+  width: 100%;
+  min-height: 42px;
+  padding: 7px 13px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  color: white;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.16s, filter 0.16s, box-shadow 0.16s;
+}
+
+.profileTitleChoice:hover {
+  filter: brightness(1.3);
+}
+
+.profileTitleChoice.selected {
+  border-color: white;
+  box-shadow: 0 0 11px rgba(255, 255, 255, 0.3);
+}
+
+.profileTitleEntry.selected::after {
+  content: "装備中";
+  position: absolute;
+  top: -5px;
+  right: 12px;
+  z-index: 5;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: rgba(4, 10, 18, 0.92);
+  color: white;
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.profileTitleEntry.new::before {
+  content: "NEW";
+  position: absolute;
+  top: -5px;
+  left: 12px;
+  z-index: 6;
+  color: #74efff;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 5px rgba(92, 231, 255, 0.95), 0 0 10px rgba(92, 231, 255, 0.65);
+  pointer-events: none;
+  animation: profileTitleNewBlink 0.85s ease-in-out infinite alternate;
+}
+
+@keyframes profileTitleNewBlink {
+  from {
+    opacity: 1;
+    filter: brightness(1.2);
+  }
+  to {
+    opacity: 0.7;
+    filter: brightness(0.75);
+  }
+}
+
+.profileTitleEntry {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.profileTitleCondition {
+  display: none;
+  padding: 0 10px 3px;
+  color: rgba(230, 242, 250, 0.7);
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 9px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.profileTitleEntry.selected .profileTitleCondition {
+  display: block;
+}
+
+#profileTitle.titleBackground-green,
+#profileDetailTitleBadge.titleBackground-green,
+.profileTitleChoice.titleBackground-green {
+  background: rgba(72, 190, 116, 0.22);
+  border-color: rgba(119, 235, 157, 0.5);
+}
+
+#profileTitle.titleBackground-yellow,
+#profileDetailTitleBadge.titleBackground-yellow,
+.profileTitleChoice.titleBackground-yellow {
+  background: rgba(255, 239, 146, 0.16);
+  border-color: rgba(255, 244, 164, 0.34);
+}
+
+#profileTitle.titleBackground-blue,
+#profileDetailTitleBadge.titleBackground-blue,
+.profileTitleChoice.titleBackground-blue {
+  background: rgba(70, 153, 235, 0.22);
+  border-color: rgba(125, 197, 255, 0.5);
+}
+
+#profileTitle.titleBackground-purple,
+#profileDetailTitleBadge.titleBackground-purple,
+.profileTitleChoice.titleBackground-purple {
+  background: rgba(163, 91, 224, 0.22);
+  border-color: rgba(205, 145, 255, 0.5);
+}
+
+#profileTitle.titleBackground-red,
+#profileDetailTitleBadge.titleBackground-red,
+.profileTitleChoice.titleBackground-red {
+  background: rgba(214, 62, 76, 0.24);
+  border-color: rgba(255, 112, 124, 0.52);
+}
+
+.scoreboardCard {
+  --card-accent: #66ddff;
+  --card-deep: rgba(24, 104, 126, 0.92);
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 35% 65%;
+  grid-template-rows: minmax(0, 1fr) 30px;
+  overflow: hidden;
+  border: 1px solid var(--card-accent);
+  background: rgba(4, 10, 17, 0.96);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 13px 100%, 0 calc(100% - 13px));
+}
+
+.scoreboardCard::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  bottom: 12px;
+  z-index: 5;
+  width: 18.4px;
+  height: 1px;
+  background: var(--card-accent);
+  transform: rotate(45deg);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+.scoreboardCard.diff-basic {
+  --card-accent: #27dcf2;
+  --card-deep: rgba(8, 92, 112, 0.94);
+}
+
+.scoreboardCard.diff-expert {
+  --card-accent: #ff5b69;
+  --card-deep: rgba(112, 22, 37, 0.94);
+}
+
+.scoreboardCard.diff-fracture {
+  --card-accent: #ff83c7;
+  --card-deep: rgba(108, 28, 78, 0.94);
+}
+
+.scoreboardCardMeta {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 5px 13px;
+  background: linear-gradient(165deg, var(--card-deep), rgba(5, 12, 19, 0.98));
+  border-right: 1px solid var(--card-accent);
+}
+
+.scoreboardCardDifficulty {
+  color: white;
+  font-size: clamp(12px, 1vw, 16px);
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.scoreboardCardDecoration {
+  position: relative;
+  width: 24px;
+  height: 22px;
+}
+
+.scoreboardCardDecoration::before,
+.scoreboardCardDecoration::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+}
+
+.scoreboardCardDecoration::before {
+  top: 0;
+  border-top: 9px solid var(--card-accent);
+}
+
+.scoreboardCardDecoration::after {
+  bottom: 0;
+  border-top: 9px solid var(--card-accent);
+}
+
+.scoreboardCardRateLabel {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: clamp(8px, 0.72vw, 10px);
+  letter-spacing: 1px;
+}
+
+.scoreboardCardRate {
+  margin-top: 2px;
+  color: white;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: clamp(13px, 1.05vw, 17px);
+  font-weight: 500;
+}
+
+.scoreboardCardJacketArea {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--card-accent);
+}
+
+.scoreboardCardJacket {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+}
+
+.scoreboardCardLamp {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  width: 10px;
+  height: 10px;
+  box-sizing: border-box;
+  transform: rotate(45deg);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: #27dcf2;
+}
+
+.scoreboardCardLamp.fullCombo {
+  background: #ffe36e;
+}
+
+.scoreboardCardLamp.allPerfect {
+  background: #ff9fbd;
+}
+
+.scoreboardCardLamp.ultimatePerfect {
+  background: linear-gradient(
+    135deg,
+    #ff5b9b 0%,
+    #ffd5e8 42%,
+    #ffffff 55%,
+    #21c9f3 100%
+  );
+}
+
+.scoreboardCardResult {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 10px;
+  background: rgba(7, 15, 24, 0.98);
+}
+
+.scoreboardCardScore {
+  min-width: 0;
+  overflow: hidden;
+  color: white;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: clamp(11px, 0.92vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scoreboardCardRank {
+  flex-shrink: 0;
+  color: var(--card-accent);
+  font-size: clamp(16px, 1.25vw, 20px);
+  font-weight: 700;
+}
+
+.scoreboardCard.empty {
+  display: block;
+  border-color: rgba(112, 145, 158, 0.38);
+  background: rgba(5, 10, 16, 0.76);
+  clip-path: none;
+}
+
+.scoreboardCard.empty::before {
+  display: none;
 }
 
 #partnerIconButton {
@@ -785,13 +2025,18 @@ display: flex;
 }
 
 #profileName {
+  overflow: hidden;
   font-size: 14px;
   font-weight: bold;
   line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #profileRate {
   margin-top: 3px;
+  font-family: "M PLUS 1", sans-serif;
+  font-weight: 500;
   font-size: 11px;
   color: #66ddff;
   letter-spacing: 0.5px;
@@ -842,7 +2087,7 @@ display: flex;
   font-size: 28px;
   cursor: pointer;
   z-index: 10;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'M PLUS 1', sans-serif;
 }
 
 #partnerPrev, #partnerNext {
@@ -856,7 +2101,7 @@ display: flex;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   z-index: 10;
-  font-family: sans-serif;
+  font-family: "M PLUS 1", sans-serif;
   transition: color 0.2s;
   user-select: none;
 }
@@ -895,7 +2140,7 @@ display: flex;
   flex-direction: column;
   gap: 16px;
   color: white;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   min-width: 240px;
 }
 
@@ -994,7 +2239,108 @@ display: flex;
 
 #playButtonArea {
   position: relative;
-  display: inline-block;
+  width: 260px;
+  height: 112px;
+  display: grid;
+  grid-template-rows: 48px 1fr;
+  justify-items: center;
+  align-content: start;
+}
+
+#settingsColumns {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+#generalSettingsPanel,
+#backgroundSettingsPanel {
+  min-width: 0;
+}
+
+#generalSettingsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-right: 28px;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.settingsSectionTitle {
+  margin-bottom: 14px;
+  color: #d8faff;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+#backgroundCarousel {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) 42px;
+  gap: 10px;
+  align-items: center;
+}
+
+.backgroundArrow {
+  width: 42px;
+  height: 78px;
+  padding: 0 0 8px;
+  background: transparent;
+  border: 1px solid rgba(170, 245, 255, 0.45);
+  color: cyan;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 44px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s, opacity 0.18s;
+}
+
+.backgroundArrow:not(:disabled):hover {
+  background: rgba(0, 255, 255, 0.08);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.22);
+}
+
+.backgroundArrow:disabled {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #666;
+  cursor: default;
+  opacity: 0.45;
+}
+
+#backgroundCurrent {
+  position: relative;
+  min-width: 0;
+  padding: 8px;
+  background: rgba(0, 255, 255, 0.045);
+  border: 1px solid cyan;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.14);
+  box-sizing: border-box;
+}
+
+#backgroundPreview {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: url("assets/bg/select_bg.jpg") center / cover no-repeat;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-sizing: border-box;
+}
+
+#backgroundOptionName {
+  margin-top: 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+#backgroundSelectedLabel {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  padding: 3px 6px;
+  background: rgba(0, 10, 20, 0.78);
+  color: cyan;
+  font-family: 'M PLUS 1', sans-serif;
+  font-size: 10px;
 }
 
 #storyButton {
@@ -1006,7 +2352,7 @@ display: flex;
   background: #008db7;
   color: white;
   text-shadow: 0 0 6px white, 0 0 12px white;
-  font-family: "Orbitron", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   font-size: 22px;
   font-weight: bold;
   letter-spacing: 1px;
@@ -1018,6 +2364,7 @@ display: flex;
     calc(100% - 26px) 100%,
     0% 100%
   );
+  border:none;
 }
 
 #storyFadeOverlay {
@@ -1038,7 +2385,32 @@ display: flex;
   filter: grayscale(1) brightness(0.55);
 }
 
+.songItemBg.shardLockedSongBg {
+  filter: grayscale(0.45) saturate(0.58) brightness(0.3);
+}
+
+.songItemShardLock {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  --lock-body-width: 25px;
+  --lock-body-height: 19px;
+  --lock-stroke: 3px;
+  pointer-events: none;
+}
+
 #unlockText {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: max-content;
+  min-width: 220px;
+  max-width: none;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  white-space: nowrap;
   font-size: 13px;
   color: #aaaaaa;
   text-align: center;
@@ -1046,6 +2418,12 @@ display: flex;
   border: 1px solid #444;
   line-height: 1.6;
    pointer-events: none;
+}
+
+#unlockText.challengePrompt {
+  top: -7px;
+  min-width: 180px;
+  padding: 7px 14px;
 }
 
 #partnerFullImage {
@@ -1066,11 +2444,12 @@ display: flex;
 }
 
 #userOffsetArea {
+  grid-row: 2;
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-top: 6px;
-  margin-left: 35px;
+  margin-left: 0;
 }
 
 #userOffsetArea label {
@@ -1085,7 +2464,7 @@ display: flex;
 }
 
 #userOffsetMinus, #userOffsetPlus {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 13px;
   width: 26px;
   height: 26px;
@@ -1105,7 +2484,7 @@ display: flex;
   border: 1px solid #555;
   color: white;
   padding: 4.75px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   width: 60px;
   text-align: center;
@@ -1122,3 +2501,30 @@ display: flex;
   margin: 0 auto;
   object-fit: contain;
 }
+
+.rateMarkRed::before,
+.rateMarkPink::before,
+.rateMarkPurple::before,
+.rateMarkDeveloper::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 3px;
+  background: currentColor;
+  clip-path: polygon(
+    50% 0%,
+    61% 37%,
+    100% 50%,
+    61% 63%,
+    50% 100%,
+    39% 63%,
+    0% 50%,
+    39% 37%
+  );
+}
+
+.rateMarkRed::before { color: #FF1744; }
+.rateMarkPink::before { color: #FF8EDB; }
+.rateMarkPurple::before { color: #B875FF; }
+.rateMarkDeveloper::before { color: #B7FF2A; }

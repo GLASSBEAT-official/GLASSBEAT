@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -7,7 +9,7 @@
 body {
   background: #111;
   color: white;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   height: 100vh;
   overflow: hidden;
 }
@@ -63,7 +65,7 @@ body {
   border: 1px solid #555;
   color: white;
   padding: 5px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 13px;
   width: 100%;
 }
@@ -84,7 +86,7 @@ body {
 }
 
 .noteTypeBtn {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 10px;
   padding: 6px 4px;
   background: transparent;
@@ -101,13 +103,24 @@ body {
   border-color: cyan;
 }
 
+.noteTypeBtn.damage {
+  color: #e9b8ff;
+  border-color: rgba(210, 105, 255, 0.65);
+}
+
+.noteTypeBtn.damage.selected {
+  background: #d26dff;
+  color: black;
+  border-color: #d26dff;
+}
+
 #dualLaneButtons {
   display: flex;
   gap: 3px;
 }
 
 .dualLaneBtn {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 9px;
   padding: 4px 2px;
   background: transparent;
@@ -125,7 +138,7 @@ body {
 }
 
 #addTempoChange {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 11px;
   padding: 6px;
   background: transparent;
@@ -148,7 +161,7 @@ body {
 }
 
 #playButton {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   padding: 8px;
   background: #00aa00;
@@ -163,7 +176,7 @@ body {
 }
 
 #stopButton {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   padding: 8px;
   background: #aa0000;
@@ -184,7 +197,7 @@ body {
 }
 
 #exportButton {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   padding: 10px;
   background: cyan;
@@ -199,7 +212,7 @@ body {
 }
 
 #clearButton {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   padding: 10px;
   background: transparent;
@@ -214,10 +227,65 @@ body {
   color: white;
 }
 
+#clearMeasureControl {
+  display: grid;
+  grid-template-columns: 52px auto 1fr;
+  align-items: center;
+  gap: 5px;
+}
+
+#clearMeasureControl input {
+  width: 52px;
+  padding: 5px;
+  background: #333;
+  border: 1px solid #555;
+  color: white;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  font-size: 12px;
+}
+
+#clearMeasureControl span {
+  color: #aaa;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+#clearMeasureButton {
+  padding: 6px;
+  background: transparent;
+  border: 1px solid #FF4444;
+  color: #FF6666;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+#clearMeasureButton:hover {
+  background: #FF4444;
+  color: white;
+}
+
+#clearMeasureMessage {
+  min-height: 12px;
+  color: #9fb1b8;
+  font-size: 9px;
+  line-height: 1.35;
+}
+
 #noteCount {
   font-size: 11px;
   color: #666;
   text-align: center;
+}
+
+#noteOverlapWarning {
+  margin-top: 6px;
+  color: #ff6666;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.5;
+  text-align: center;
+  white-space: pre-line;
 }
 
 /* 右側：エディター */
@@ -226,6 +294,99 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
+}
+
+#undoButton {
+  position: absolute;
+  top: 42px;
+  right: 18px;
+  z-index: 220;
+  min-width: 78px;
+  padding: 8px 12px;
+  border: 1px solid cyan;
+  background: rgba(10, 24, 28, 0.92);
+  color: cyan;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+}
+
+#undoButton:hover:not(:disabled) {
+  background: cyan;
+  color: #071018;
+}
+
+#undoButton:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+#copyPastePanel {
+  position: absolute;
+  top: 82px;
+  right: 18px;
+  z-index: 220;
+  width: 174px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border: 1px solid #3f6870;
+  background: rgba(10, 19, 24, 0.94);
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.18);
+}
+
+.copyPasteTitle {
+  color: cyan;
+  font-size: 12px;
+  text-align: center;
+}
+
+#copyPastePanel label {
+  display: grid;
+  grid-template-columns: 14px 48px 1fr;
+  align-items: center;
+  gap: 4px;
+  color: #c7d4da;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+#copyPastePanel input {
+  width: 48px;
+  padding: 3px;
+  border: 1px solid #4e646b;
+  background: #17232a;
+  color: white;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  font-size: 10px;
+}
+
+#copyMeasuresButton,
+#mirrorCopyMeasuresButton {
+  padding: 6px;
+  border: 1px solid cyan;
+  background: transparent;
+  color: cyan;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+#copyMeasuresButton:hover,
+#mirrorCopyMeasuresButton:hover {
+  background: cyan;
+  color: #071018;
+}
+
+#copyPasteMessage {
+  min-height: 12px;
+  color: #9fb1b8;
+  font-size: 9px;
+  line-height: 1.35;
+  text-align: center;
 }
 
 #laneHeader {
@@ -333,9 +494,130 @@ body {
   border-radius: 4px;
 }
 
+.editorLongEndpoint {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: #ffc266;
+  border: 2px solid #fff0c9;
+  box-shadow: 0 0 6px rgba(255, 170, 60, 0.9);
+  cursor: ns-resize;
+}
+
+.editorLongEndpoint.end {
+  top: 0;
+}
+
+.editorLongEndpoint.start {
+  bottom: 0;
+}
+
 .editorNote.dual {
   background: cyan;
   border-radius: 2px;
+}
+
+.editorNote.damageCircle,
+.editorNote.damageDiamond {
+  width: 34px;
+  height: 34px;
+  background:
+    radial-gradient(circle at 48% 43%, rgba(255, 245, 255, 0.95) 0 7%, rgba(224, 139, 255, 0.82) 18%, transparent 42%),
+    radial-gradient(circle at 38% 30%, #d36cff 0%, #8e2be2 46%, #47106f 76%, rgba(30, 2, 52, 0.9) 100%);
+  background-size: 125% 125%, 115% 115%;
+  border: 1px solid rgba(245, 210, 255, 0.9);
+  box-shadow: 0 0 8px rgba(215, 105, 255, 0.85), 0 0 18px rgba(149, 37, 255, 0.55);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.editorNote.damageDiamond {
+  height: 44px;
+  border-radius: 3px;
+  clip-path: polygon(50% 0%, 96% 38%, 58% 84%, 50% 100%, 42% 84%, 4% 38%);
+}
+
+.editorDamageLongShape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  cursor: pointer;
+  z-index: 1;
+  overflow: visible;
+}
+
+.editorDamageLongShape polygon {
+  fill: rgba(145, 35, 218, 0.7);
+  stroke: none;
+}
+
+.editorDamageLongPoint {
+  position: absolute;
+  min-width: 10px;
+  height: 12px;
+  border-radius: 0;
+  background: #efd3ff;
+  border: 2px solid #9f42df;
+  box-shadow: 0 0 8px rgba(180, 75, 255, 0.85);
+  cursor: move;
+  z-index: 2;
+}
+
+.editorDamageCurveMenu {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  display: flex;
+  gap: 4px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 230;
+}
+
+.editorDamageLongPoint.menuOpen {
+  z-index: 225;
+}
+
+.editorDamageCurveMenu button {
+  font-size: 10px;
+  padding: 3px 6px;
+  background: rgba(25, 12, 36, 0.95);
+  border: 1px solid rgba(235, 185, 255, 0.75);
+  color: #efd3ff;
+  cursor: pointer;
+}
+
+#zoomControls {
+  display: grid;
+  grid-template-columns: 34px 1fr 34px;
+  align-items: center;
+  gap: 6px;
+}
+
+#zoomControls button {
+  height: 28px;
+  border: 1px solid #555;
+  background: #292929;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+#zoomControls button:hover {
+  border-color: cyan;
+  color: cyan;
+}
+
+#zoomValue {
+  color: #d8faff;
+  font-size: 12px;
+  text-align: center;
+}
+
+.editorDamageCurveMenu button.selected {
+  background: #d26dff;
+  color: black;
 }
 
 /* テンポ変化アイテム */
@@ -368,7 +650,7 @@ body {
   color: white;
   padding: 2px 4px;
   font-size: 11px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
 }
 
 .tempoDeleteBtn {
@@ -379,7 +661,7 @@ body {
   cursor: pointer;
   font-size: 10px;
   padding: 2px 6px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
 }
 
 .tempoDeleteBtn:hover {
@@ -397,15 +679,16 @@ body {
   border: 1px solid #555;
   color: white;
   padding: 5px;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 13px;
   width: 100%;
 }
 
 #saveProjectButton,
 #loadProjectButton,
+#restoreAutoSaveButton,
 #deleteProjectButton {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 12px;
   padding: 8px;
   background: transparent;
@@ -416,10 +699,16 @@ body {
 }
 
 #saveProjectButton:hover,
-#loadProjectButton:hover {
+#loadProjectButton:hover,
+#restoreAutoSaveButton:hover:not(:disabled) {
   background: cyan;
   color: black;
   border-color: cyan;
+}
+
+#restoreAutoSaveButton:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 #deleteProjectButton {

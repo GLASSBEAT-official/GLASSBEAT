@@ -1,0 +1,12 @@
+{
+  "backgrounds": [
+    {
+      "file": "map1_bg.png",
+      "name": "真夜中の聖堂"
+    },
+    {
+      "file": "map2_bg.png",
+      "name": "真と偽の狭間"
+    }
+  ]
+}

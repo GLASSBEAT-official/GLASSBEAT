@@ -2,5 +2,12 @@
   "title": "Maverick",
   "artist": "nons works",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11, "file": "expert.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 6.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.8, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song9achieve",
+    "name": "歌は、君を選んだ",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "clear"
+  }]
 }

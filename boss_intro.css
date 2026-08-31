@@ -1,3 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700&display=swap");
+
+html,
+body,
+body * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -8,7 +28,7 @@ body {
   overflow: hidden;
   background: #000;
   color: white;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
 }
 
 #introBg {
@@ -208,6 +228,17 @@ body {
 #bossDifficultyButtons .diffBtn.diff-basic  { color: cyan; }
 #bossDifficultyButtons .diffBtn.diff-expert { color: #ff4444; }
 #bossDifficultyButtons .diffBtn.diff-fracture { color: #ffb7c5; }
+#bossDifficultyButtons .diffBtn.diff-fracture::after { background: linear-gradient(90deg, #ffabc9 0%, #ffc1d7 64%, #bfeaff 100%); }
+#bossDifficultyButtons .diffBtn.diff-fracture .diffFrame { border-color: #e8c9df; }
+#bossDifficultyButtons .diffBtn.diff-fracture .diffBar { background: linear-gradient(90deg, #ffabc9 0%, #ffc1d7 64%, #bfeaff 100%); }
+#bossDifficultyButtons .diffBtn.diff-fracture .diffName,
+#bossDifficultyButtons .diffBtn.diff-fracture .diffLevel {
+  color: transparent;
+  background: linear-gradient(90deg, #ffabc9 0%, #ffc1d7 64%, #bfeaff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 #bossDifficultyButtons .diffBtn.diff-basic.selected,
 #bossDifficultyButtons .diffBtn.diff-basic.selected * {
@@ -223,8 +254,15 @@ body {
 
 #bossDifficultyButtons .diffBtn.diff-fracture.selected,
 #bossDifficultyButtons .diffBtn.diff-fracture.selected * {
-  color: #ffb7c5 !important;
-  -webkit-text-fill-color: #ffb7c5 !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+#bossDifficultyButtons .diffBtn.diff-fracture.selected .diffName,
+#bossDifficultyButtons .diffBtn.diff-fracture.selected .diffLevel {
+  background: linear-gradient(90deg, #ffe0ea 0%, #ffd4e3 64%, #dff5ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 #bossDifficultyButtons .diffBtn.selected .diffFrame {
@@ -245,8 +283,19 @@ body {
   filter: brightness(1.8); 
 }
 
+#bossDifficultyButtons .diffBtn.diff-fracture.selected .diffFrame {
+  border-color: #f5d8e8;
+  background: linear-gradient(90deg, rgba(255, 171, 201, 0.3) 0%, rgba(255, 193, 215, 0.24) 68%, rgba(191, 234, 255, 0.18) 100%);
+  filter: brightness(1.12);
+}
+
+#bossDifficultyButtons .diffBtn.diff-fracture.selected .diffName,
+#bossDifficultyButtons .diffBtn.diff-fracture.selected .diffLevel {
+  filter: brightness(1.08);
+}
+
 #bossDifficultyButtons .diffName {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   flex: 1;
   text-align: center;
   font-size: 11px;
@@ -256,7 +305,7 @@ body {
 }
 
 #bossDifficultyButtons .diffLevel {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   min-width: 42px;
   font-size: 35px;
   font-weight: bold;

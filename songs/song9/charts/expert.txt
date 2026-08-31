@@ -1,6 +1,6 @@
 @bpm,142
 @timesig,4
-@offset,0
+@offset,33
 @rush,42,0/1,on
 @rush,43,0/1,off
 @rush,55,0/1,on

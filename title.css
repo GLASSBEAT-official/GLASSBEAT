@@ -1,3 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700&display=swap");
+
+html,
+body,
+body * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -6,7 +26,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   color: white;
-  font-family: "Orbitron", "GlassBeatJP", sans-serif;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
   user-select: none;
 }
 
@@ -36,7 +56,7 @@ body {
   font-weight: bold;
   letter-spacing: 2px;
   opacity: 0;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   animation: startTextFade 1.2s ease forwards 1.1s,
              startTextBlink 1.6s ease-in-out infinite 2.3s;
 }
@@ -58,6 +78,179 @@ body {
 
 #titleFadeOverlay.fadeOut {
   opacity: 1;
+}
+
+#boss3DifficultySelector {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 130;
+  display: flex;
+  gap: 54px;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#boss3DifficultySelector.visible {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#boss3DifficultySelector.visible.leaving {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .28s ease;
+}
+
+.boss3DifficultyDiamond {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .92);
+  border-radius: 2px;
+  opacity: 0;
+  cursor: pointer;
+  transform: rotate(45deg) scale(.35);
+  transition: filter .18s ease, box-shadow .18s ease;
+}
+
+.boss3DifficultyDiamond::before,
+.boss3DifficultyDiamond::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boss3DifficultyDiamond::before {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 2px,
+    rgba(255, 255, 255, .72) 3px,
+    transparent 4px 6px
+  );
+  mix-blend-mode: screen;
+}
+
+.boss3DifficultyDiamond::after {
+  border-left: 3px solid currentColor;
+  border-right: 2px solid rgba(255, 255, 255, .85);
+  filter: blur(.3px);
+}
+
+#boss3DifficultySelector.visible .boss3DifficultyDiamond {
+  animation: boss3DifficultyFadeIn .72s cubic-bezier(.18,.82,.22,1) forwards;
+}
+
+#boss3DifficultySelector.visible .boss3DifficultyDiamond::before,
+#boss3DifficultySelector.visible .boss3DifficultyDiamond::after {
+  animation: boss3DifficultyNoise .5s steps(2, end) both;
+}
+
+#boss3DifficultySelector.visible .boss3DifficultyDiamond:nth-child(2) { animation-delay: .32s; }
+#boss3DifficultySelector.visible .boss3DifficultyDiamond:nth-child(3) { animation-delay: .64s; }
+#boss3DifficultySelector.visible .boss3DifficultyDiamond:nth-child(2)::before,
+#boss3DifficultySelector.visible .boss3DifficultyDiamond:nth-child(2)::after { animation-delay: .32s; }
+#boss3DifficultySelector.visible .boss3DifficultyDiamond:nth-child(3)::before,
+#boss3DifficultySelector.visible .boss3DifficultyDiamond:nth-child(3)::after { animation-delay: .64s; }
+
+.boss3DifficultyDiamond.basic {
+  background: #42eaff;
+  box-shadow: 0 0 12px rgba(66, 234, 255, .9), 0 0 28px rgba(36, 181, 255, .48);
+}
+
+.boss3DifficultyDiamond.expert {
+  background: #ff3f52;
+  box-shadow: 0 0 12px rgba(255, 63, 82, .92), 0 0 28px rgba(255, 38, 60, .48);
+}
+
+.boss3DifficultyDiamond.fracture {
+  background: #ff88d6;
+  box-shadow: 0 0 12px rgba(255, 136, 214, .94), 0 0 30px rgba(255, 85, 190, .5);
+}
+
+.boss3DifficultyDiamond.skip {
+  width: 92px;
+  height: 42px;
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%);
+  color: #dff8ff;
+  background: rgba(153, 225, 255, .9);
+  box-shadow: 0 0 12px rgba(79, 200, 255, .52), inset 0 0 14px rgba(78, 190, 235, .2);
+  font: 700 13px "Orbitron", "M PLUS 1", sans-serif;
+  letter-spacing: 1px;
+  transform: scale(.35);
+}
+
+.boss3DifficultyLabel {
+  display: none;
+}
+
+.boss3DifficultyDiamond.skip .boss3DifficultyLabel {
+  position: absolute;
+  inset: 2px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  clip-path: polygon(11px 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 11px 100%, 0 50%);
+  color: #dff8ff;
+  background: rgba(21, 68, 91, .96);
+}
+
+.boss3DifficultyDiamond.expert.skip {
+  color: #ffe5e8;
+  background: rgba(255, 63, 82, .94);
+  box-shadow: 0 0 12px rgba(255, 63, 82, .62), inset 0 0 14px rgba(255, 90, 106, .24);
+}
+
+.boss3DifficultyDiamond.expert.skip .boss3DifficultyLabel {
+  color: #ffe8eb;
+  background: rgba(105, 17, 29, .96);
+}
+
+#boss3DifficultySelector.visible .boss3DifficultyDiamond.skip {
+  animation-name: boss3SkipFadeIn;
+}
+
+.boss3DifficultyDiamond:hover,
+.boss3DifficultyDiamond:focus-visible {
+  filter: brightness(1.45);
+  outline: none;
+}
+
+body.boss3DifficultySelecting #titleScreen,
+body.boss3DifficultySelecting #menuButton {
+  pointer-events: none;
+}
+
+@keyframes boss3DifficultyFadeIn {
+  0% { opacity: 0; transform: translate(0, 0) rotate(45deg) scale(.35); filter: brightness(2); }
+  18% { opacity: .82; transform: translate(-6px, 2px) rotate(47deg) scale(.78); }
+  31% { opacity: .28; transform: translate(5px, -2px) rotate(43deg) scale(.72); }
+  48% { opacity: 1; transform: translate(-2px, 0) rotate(46deg) scale(1.08); }
+  100% { opacity: 1; transform: translate(0, 0) rotate(45deg) scale(1); filter: brightness(1); }
+}
+
+@keyframes boss3DifficultyNoise {
+  0% { opacity: 0; transform: translate(0, 0); }
+  20% { opacity: .9; transform: translate(6px, -3px); }
+  42% { opacity: .25; transform: translate(-7px, 2px); }
+  65% { opacity: .7; transform: translate(3px, 1px); }
+  100% { opacity: 0; transform: translate(0, 0); }
+}
+
+@keyframes boss3SkipFadeIn {
+  0% { opacity: 0; transform: translate(0, 0) scale(.35); filter: brightness(2); }
+  18% { opacity: .82; transform: translate(-6px, 2px) scale(.78); }
+  31% { opacity: .28; transform: translate(5px, -2px) scale(.72); }
+  48% { opacity: 1; transform: translate(-2px, 0) scale(1.08); }
+  100% { opacity: 1; transform: translate(0, 0) scale(1); filter: brightness(1); }
 }
 
 @keyframes logoFadeIn {
@@ -136,11 +329,66 @@ body {
   z-index: 101;
   display: flex;
   flex-direction: column;
-  min-width: 160px;
+  min-width: 240px;
+}
+
+#playerNameSetting {
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid rgba(120, 210, 255, 0.22);
+}
+
+#playerNameSetting label {
+  display: block;
+  margin-bottom: 7px;
+  color: #66ddff;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+#playerNameEditRow {
+  display: flex;
+  gap: 6px;
+}
+
+#playerNameInput {
+  min-width: 0;
+  flex: 1;
+  box-sizing: border-box;
+  padding: 8px 9px;
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(120, 210, 255, 0.45);
+  outline: none;
+  color: white;
+  font-family: "Orbitron", "M PLUS 1", sans-serif;
+  font-size: 12px;
+  user-select: text;
+}
+
+#playerNameInput:focus {
+  border-color: #66ddff;
+}
+
+#menuPopup #playerNameSaveButton {
+  padding: 8px 10px;
+  border: 1px solid rgba(120, 210, 255, 0.55);
+  color: #66ddff;
+  text-align: center;
+}
+
+#playerNameStatus {
+  min-height: 14px;
+  margin-top: 5px;
+  color: #88ffb0;
+  font-size: 10px;
+}
+
+#playerNameStatus.error {
+  color: #ff7777;
 }
 
 #menuPopup button {
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 13px;
   padding: 12px 20px;
   background: transparent;
@@ -166,7 +414,7 @@ body {
   z-index: 101;
   min-width: 300px;
   text-align: center;
-  font-family: 'Orbitron', sans-serif;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   color: white;
 }
 

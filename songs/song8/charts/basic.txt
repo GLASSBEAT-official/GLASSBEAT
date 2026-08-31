@@ -1,7 +1,7 @@
 @bpm,112
 @timesig,4
-@offset,-10
-@tempo,12,500,4
+@offset,23
+@tempo,12,540,4
 @tempo,13,120,4
 
 1,0/1,2,long,3,0/1

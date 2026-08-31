@@ -1,0 +1,6 @@
+{
+  "title": "Mayoibana",
+  "artist": "MFP",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 1.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 4.0, "file": "expert.txt" }]
+}

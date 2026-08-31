@@ -1,0 +1,6 @@
+{
+  "title": "メンタルヘルス",
+  "artist": "えだまめ88",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 5.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10.2, "file": "expert.txt" }]
+}

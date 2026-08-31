@@ -2,5 +2,31 @@
   "title": "Crystal brriliance",
   "artist": "Tak_mfk",
   "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 10,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12, "file": "expert.txt"},{"difficulty": "FRACTURE","level": 15,"file":"fracture.txt"}]
+  "charts":[{"difficulty": "BASIC","level": 10.5,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.3, "file": "expert.txt"},{"difficulty": "FRACTURE","level": 15.0,"file":"fracture.txt"}],
+"achievementTitles": [
+  {
+    "id": "boss1achieve",
+    "name": "未知との遭遇",
+    "difficulty": ["BASIC", "EXPERT","FRACTURE"],
+    "condition": "play"
+  },
+  {
+    "id": "boss1achieve2",
+    "name": "And So, a New Journey Begins.",
+    "difficulty": ["BASIC", "EXPERT","FRACTURE"],
+    "condition": "fc"
+  },
+  {
+    "id": "boss1achieve3",
+    "name": "輝きが導く先へ",
+    "difficulty": "EXPERT",
+    "condition": "ap"
+  },
+  {
+    "id": "boss1achieve4",
+    "name": "Everlasting Brilliance",
+    "difficulty": "FRACTURE",
+    "condition": "ap"
+  }
+]
 }

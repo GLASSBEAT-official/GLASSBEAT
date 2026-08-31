@@ -2,5 +2,5 @@
   "title": "背後霊による背後争奪戦",
   "artist": "EN_OKAWA",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 2,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 7, "file": "expert.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 2.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 7.3, "file": "expert.txt" }]
 }

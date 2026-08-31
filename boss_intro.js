@@ -55,7 +55,7 @@ async function loadBossInfo() {
       <div class="diffBar"></div>
       <div class="diffName">${chart.difficulty}</div>
     </div>
-    <div class="diffLevel">${chart.level}</div>
+    <div class="diffLevel">${Math.trunc(Number(chart.level) || 0)}</div>
   `;
 
   // fractureのレベル数字だけ特別スタイル

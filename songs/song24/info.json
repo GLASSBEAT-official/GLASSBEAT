@@ -1,0 +1,14 @@
+{
+  "title": "Liar",
+  "artist": "nm free music",
+  "shardUnlockCost": 150,
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 7.9,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.6, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song24achieve",
+    "name": "みんな噓が好きだよね",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }]
+}

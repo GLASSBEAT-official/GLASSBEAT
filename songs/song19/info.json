@@ -1,0 +1,19 @@
+{
+  "title": "Lycoris",
+  "artist": "Keogh",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 5.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.8, "file": "expert.txt" },{"difficulty": "FRACTURE","level": 13.0,"file":"fracture.txt"}],
+  "achievementTitles": [
+  {
+    "id": "song18achieve",
+    "name": "散らぬ一輪",
+    "difficulty":["BASIC","EXPERT"],
+    "condition": "fc"
+  },
+  {
+    "id": "boss1achieve",
+    "name": "Lycoris in Bloom",
+    "difficulty":"FRACTURE",
+    "condition": "fc"
+  }]
+}

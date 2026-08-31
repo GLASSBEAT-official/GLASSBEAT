@@ -2,5 +2,25 @@
   "title": "収束する青",
   "artist": "Hareno",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 9,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 14, "file": "fracture.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 9.6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.2, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 14.0, "file": "fracture.txt" }],
+  "achievementTitles": [
+  {
+    "id": "boss2achieve",
+    "name": "交錯の予兆",
+    "difficulty": ["BASIC", "EXPERT","FRACTURE"],
+    "condition": "play"
+  },
+  {
+    "id": "boss2achieve2",
+    "name": "青の到達点",
+    "difficulty": ["BASIC", "EXPERT","FRACTURE"],
+    "condition": "fc"
+  },
+  {
+    "id": "boss3achieve3",
+    "name": "Beyond Convergence",
+    "difficulty": "FRACTURE",
+    "condition": "ap"
+  }
+]
 }

@@ -1,0 +1,6 @@
+{
+  "title": "matatabi dancer",
+  "artist": "YaGiYa music",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 5.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10.4, "file": "expert.txt" }]
+}

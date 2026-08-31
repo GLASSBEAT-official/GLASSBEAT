@@ -1,0 +1,94 @@
+
+{
+  "version": 1,
+  "id": "map02",
+  "title": "真と偽の狭間",
+  "gridSize": 3,
+  "completedImage": "map/images/map2.png",
+  "iconImage": "map/images/map2icon.png",
+  "completionRewards": [{
+    "percent": 50,
+    "type": "title",
+    "id": "map:second-title"
+  },
+  {
+    "percent": 99,
+    "type": "song",
+    "id": "song24"
+  },{
+    "percent": 100,
+    "type": "background",
+    "file": "map2_bg.png"
+  }],
+  "pieces": [
+    {
+      "id": "piece01",
+      "cells": [1],
+      "type": "mission",
+      "conditions": { "minRank": "S++" },
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 1 }
+    },
+    {
+      "id": "piece02",
+      "cells": [2,3],
+      "type": "random",
+      "conditions": {},
+      "songSelection": {
+        "mode": "random",
+        "songs": "all"
+      },
+      "reward": { "shards": 1 }
+    },
+
+  
+    {
+      "id": "piece05",
+      "cells": [4,5],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": ["song5","song7","song5","song7","song5","song7"]}
+        ]
+      },
+      "reward": { "shards": 0 }
+    },
+    {
+      "id": "piece06",
+      "cells": [6],
+      "type": "mission",
+      "conditions": { "fullCombo": true },
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 1 }
+    },
+    {
+      "id": "piece13_14",
+      "cells": [7],
+      "type": "bonus",
+      "conditions": {},
+      "songSelection": {
+        "mode": "choice",
+        "songs": "all"
+      },
+      "reward": { "shards": 0, "stamina": 0 }
+    },
+    {
+      "id": "piece08",
+      "cells": [8,9],
+      "type": "random",
+      "conditions": {},
+      "songSelection": {
+        "mode": "random",
+        "songs": ["song24"]
+      },
+      "reward": { "shards": 0 }
+    }]
+}

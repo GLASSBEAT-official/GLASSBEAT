@@ -2,5 +2,12 @@
   "title": "グラビティプレア",
   "artist": "流星のサイトシーイングfeat.朝比奈こん",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 3,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 6, "file": "expert.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 3.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 7.3, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song11",
+    "name": "あなたに、届く旋律。",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "clear"
+  }]
 }

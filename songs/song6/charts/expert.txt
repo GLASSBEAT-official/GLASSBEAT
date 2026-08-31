@@ -1,6 +1,6 @@
 @bpm,158
 @timesig,4
-@offset,3
+@offset,36
 
 2,0/1,0
 2,1/4,2
