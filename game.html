@@ -3,10 +3,11 @@
 
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="any" href="assets/favicon.png?v=20260910-1">
   <title>Rhythm Game</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <link rel="stylesheet" href="game.css?v=20260831-35">
+  <link rel="stylesheet" href="game.css?v=20260926-15">
 
   <link
   rel="preconnect"
@@ -72,6 +73,14 @@
 </div>
     <p id="fastLate"></p>
     <h2 id="combo">0 Combo</h2>
+    <div id="storyDualGauge" role="progressbar" aria-label="音符獲得数" aria-valuemin="0" aria-valuenow="0">
+      <div id="storyMusicStaff">
+        <div id="storyMusicStaffLines"></div>
+        <div id="storyMusicStaffNotes"></div>
+      </div>
+      <div id="storyMusicProgressPercent">0%</div>
+    </div>
+    <div id="storyMusicMissionComplete">MISSION COMPLETE!</div>
     <div id="enemyLifeArea" class="hidden">
       <div id="enemyMissionComplete" class="hidden">MISSION COMPLETE!</div>
       <div id="enemyLifeBar">
@@ -235,10 +244,13 @@
 </div>
 
 <div id="bulletEnemyFailure" class="hidden">
-  <div id="bulletEnemyFailureMessage">失敗 : 敵のライフが0になっていません</div>
-  <div id="bulletEnemyFailureButtons">
-    <button id="bulletEnemyRetry">RETRY</button>
-    <button id="bulletEnemyBack">BACK</button>
+  <div id="bulletEnemyFailureContent">
+    <div id="bulletEnemyFailureTitle">失敗</div>
+    <div id="bulletEnemyFailureMessage">敵のライフが0になっていません</div>
+    <div id="bulletEnemyFailureButtons">
+      <button id="bulletEnemyRetry">RETRY</button>
+      <button id="bulletEnemyBack">BACK</button>
+    </div>
   </div>
 </div>
 
@@ -263,6 +275,17 @@
 <div id="fadeOverlay"></div>
 <div id="blackOverlay"></div>
 <div id="secretNoiseOverlay"></div>
+<div id="song35PuzzleNoiseOverlay" aria-hidden="true"></div>
+<div id="song35FinalTrialWarpOverlay" aria-hidden="true"></div>
+<div id="boss4SecondTrialAtmosphere" aria-hidden="true"></div>
+<div id="boss4SecondTrialMelodyLayer" aria-hidden="true"></div>
+<div id="boss4ChaosIntro" aria-hidden="true">
+  <div id="boss4ChaosText">X7Q0M4V9K2</div>
+</div>
+<div id="boss4AccessDenied" aria-hidden="true">
+  <img id="boss4AccessDeniedCharacter" src="images/partners/breaka_full.png" alt="ブレイカ">
+  <div id="boss4AccessDeniedMessage">もしかして、リンクいじった？<br>正々堂々がんばって。</div>
+</div>
 
 <div id="playProfileArea">
 
@@ -308,7 +331,8 @@
 <div id="boss3FinalWhiteMist" aria-hidden="true"></div>
 
  <script src="loading-tips.js"></script>
-  <script src="game.js?v=20260831-51"></script>
+  <script src="partner-data.js?v=20260923-2"></script>
+<script src="game.js?v=20260926-16"></script>
 
 </body>
 

@@ -1,0 +1,6 @@
+{
+  "title": "Raid_FolkMetal",
+  "artist": "Peritune",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 5,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10.3, "file": "expert.txt" }]
+}

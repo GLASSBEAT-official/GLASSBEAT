@@ -1,0 +1,8 @@
+{
+  "title": "Absolute Zest",
+  "artist": "MoGura",
+   "background":"background.png",
+   "shardUnlockCost": 75,
+  "charts":[{"difficulty": "BASIC","level": 3,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 8.8, "file": "expert.txt" }]
+
+}

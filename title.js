@@ -7,6 +7,9 @@ song19IntroSE.volume = 0.9;
 const challengeStartSE = new Audio("sounds/startsound.mp3");
 challengeStartSE.preload = "auto";
 challengeStartSE.volume = 0.8;
+const chaosAwakensSE = new Audio("sounds/bulletevent.mp3");
+chaosAwakensSE.preload = "auto";
+chaosAwakensSE.volume = 1;
 
 let leaving = false;
 let endingDemoRunning = false;
@@ -18,6 +21,8 @@ const params = new URLSearchParams(window.location.search);
 const endingDemo = params.get("endingDemo") === "1";
 const boss3Retry = params.get("boss3Retry") === "1";
 const fromSong18 = params.get("fromSong18") === "1";
+const chaosAwakens = params.get("chaosAwakens") === "1";
+let chaosAwakensRunning = false;
 
 function getSaveData() {
   return JSON.parse(localStorage.getItem("rhythmGame") || "{}");
@@ -153,6 +158,37 @@ function showNormalTitle() {
   });
 }
 
+function runChaosAwakensSequence() {
+  chaosAwakensRunning = true;
+  history.replaceState(null, "", "title.html");
+  document.body.classList.add("chaosAwakensIntro");
+
+  const saveData = getSaveData();
+  if (!saveData.storyFlags) saveData.storyFlags = {};
+  saveData.storyFlags.chaosAwakensTitleSeen = true;
+  setSaveData(saveData);
+
+  const fade = document.getElementById("titleFadeOverlay");
+  const text = document.getElementById("chaosAwakensText");
+  fade.classList.remove("fadeIn", "fadeOut");
+
+  setTimeout(() => {
+    chaosAwakensSE.currentTime = 0;
+    chaosAwakensSE.play().catch(error => {
+      console.warn("CHAOS AWAKENS sound playback failed:", error);
+    });
+    text?.classList.add("visible");
+  }, 2000);
+  setTimeout(() => text?.classList.add("leaving"), 4200);
+  setTimeout(() => {
+    text?.classList.remove("visible", "leaving");
+    document.body.classList.remove("chaosAwakensIntro");
+    chaosAwakensRunning = false;
+    requestAnimationFrame(() => fade.classList.add("fadeIn"));
+    playTitleBGM();
+  }, 5000);
+}
+
 function runEndingDemoSequence() {
   endingDemoRunning = true;
 
@@ -197,6 +233,13 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  if (chaosAwakens && getSaveData().storyFlags?.chaosAwakensTitleSeen !== true) {
+    runChaosAwakensSequence();
+    return;
+  }
+
+  if (chaosAwakens) history.replaceState(null, "", "title.html");
+
   // 3-12から明示的に再挑戦した場合は、初回限定のtitle導線とは別扱い。
   if (boss3Retry && getSaveData().boss3UnlockChallengePending === true) {
     leaving = true;
@@ -213,7 +256,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 document.getElementById("titleScreen").addEventListener("click", () => {
-  if (leaving || endingDemoRunning) return;
+  if (leaving || endingDemoRunning || chaosAwakensRunning) return;
   leaving = true;
 
   const fade = document.getElementById("titleFadeOverlay");
@@ -228,7 +271,10 @@ document.getElementById("titleScreen").addEventListener("click", () => {
   }
 
   setTimeout(() => {
-    location.href = "select.html";
+    const saveData = getSaveData();
+    location.href = saveData.storyFlags?.boss4PuzzleIntroPending === true
+      ? "select.html?song=song35&boss4PuzzleIntro=1"
+      : "select.html";
   }, 900);
 });
 

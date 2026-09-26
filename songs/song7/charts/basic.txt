@@ -1,6 +1,6 @@
 @bpm,165
 @timesig,4
-@offset,255
+@offset,250
 
 1,0/1,1
 1,1/2,3

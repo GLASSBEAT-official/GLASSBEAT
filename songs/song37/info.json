@@ -1,0 +1,15 @@
+{
+  "title": "Chronomia",
+  "artist": "Lime",
+   "background":"background.png",
+    "shardUnlockCost": 100,
+  "charts":[{"difficulty": "BASIC","level": 7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.2, "file": "expert.txt" }],
+   "achievementTitles": [
+  {
+    "id": "song37achieve",
+    "name": "美しく儚く世界は廻る―――",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }
+]
+}

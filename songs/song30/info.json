@@ -1,0 +1,14 @@
+{
+  "title": "GOODTEK",
+  "artist": "EBIMAYO",
+   "background":"background.png",
+   "shardUnlockCost": 100,
+  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10.7, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song30achieve",
+    "name": "GOODなTEKに乾杯！",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }]
+}

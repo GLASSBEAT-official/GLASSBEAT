@@ -2,8 +2,9 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <link rel="icon" type="image/png" sizes="any" href="assets/favicon.png?v=20260910-1">
   <title>Select</title>
-  <link rel="stylesheet" href="select.css?v=20260830-11">
+  <link rel="stylesheet" href="select.css?v=20260924-1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
@@ -103,6 +104,14 @@
         </div>
       </div>
 
+      <div id="noteThicknessSetting" class="settingGroup">
+        <div id="noteThicknessLabelRow">
+          <label for="noteThicknessInput">ノーツの厚み</label>
+          <output id="noteThicknessValue" for="noteThicknessInput">80</output>
+        </div>
+        <input type="range" id="noteThicknessInput" min="50" max="100" step="1" value="80">
+      </div>
+
       <div class="settingGroup">
         <label>キー配置</label>
         <div id="keyLayoutButtons">
@@ -123,6 +132,14 @@
           <div id="backgroundSelectedLabel">選択中</div>
         </div>
         <button id="backgroundNext" class="backgroundArrow" type="button" aria-label="次の背景">›</button>
+      </div>
+
+      <div id="musicVolumeSetting" class="settingGroup">
+        <div id="musicVolumeLabelRow">
+          <label for="musicVolumeInput">楽曲音量</label>
+          <output id="musicVolumeValue" for="musicVolumeInput">70</output>
+        </div>
+        <input type="range" id="musicVolumeInput" min="0" max="100" step="1" value="70">
       </div>
     </section>
   </div>
@@ -231,7 +248,8 @@
 <div id="storyFadeOverlay"></div>
 
   <script src="loading-tips.js"></script>
-  <script src="map-stamina.js"></script>
-  <script src="select.js?v=20260830-12"></script>
+  <script src="map-stamina.js?v=20260925-1"></script>
+  <script src="partner-data.js?v=20260923-2"></script>
+  <script src="select.js?v=20260925-3"></script>
 </body>
 </html>

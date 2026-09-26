@@ -1,6 +1,6 @@
 (function () {
   const MAX_STAMINA = 6;
-  const RECOVERY_INTERVAL_MS = 20 * 60 * 1000;
+  const RECOVERY_INTERVAL_MS = 15 * 60 * 1000;
 
   function loadSaveData() {
     return JSON.parse(localStorage.getItem("rhythmGame") || "{}");

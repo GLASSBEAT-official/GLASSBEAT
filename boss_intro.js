@@ -29,6 +29,13 @@ const startDark = document.getElementById("startDark");
 
 const introAudio = new Audio(INTRO_AUDIO);
 
+function getDisplayedChartLevel(level) {
+  const numericLevel = Number(level) || 0;
+  const integerLevel = Math.trunc(numericLevel);
+  const decimalDigit = Math.floor((numericLevel - integerLevel) * 10 + Number.EPSILON * 10);
+  return `${integerLevel}${decimalDigit >= 5 ? "+" : ""}`;
+}
+
 async function loadBossInfo() {
   const response = await fetch(`songs/${BOSS_ID}/info.json`);
   const info = await response.json();
@@ -55,7 +62,7 @@ async function loadBossInfo() {
       <div class="diffBar"></div>
       <div class="diffName">${chart.difficulty}</div>
     </div>
-    <div class="diffLevel">${Math.trunc(Number(chart.level) || 0)}</div>
+    <div class="diffLevel">${getDisplayedChartLevel(chart.level)}</div>
   `;
 
   // fractureのレベル数字だけ特別スタイル

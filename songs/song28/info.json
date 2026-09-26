@@ -1,0 +1,7 @@
+{
+  "title": "Girl's Divinity",
+  "artist": "きゅうりジャム",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10, "file": "expert.txt" }]
+
+}

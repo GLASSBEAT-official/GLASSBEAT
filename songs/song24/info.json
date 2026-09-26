@@ -3,7 +3,7 @@
   "artist": "nm free music",
   "shardUnlockCost": 150,
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 7.9,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.6, "file": "expert.txt" }],
+  "charts":[{"difficulty": "BASIC","level": 8.1,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.6, "file": "expert.txt" }],
   "achievementTitles": [
   {
     "id": "song24achieve",

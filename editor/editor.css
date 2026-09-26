@@ -114,6 +114,18 @@ body {
   border-color: #d26dff;
 }
 
+.noteTypeBtn.music {
+  color: #fff1a0;
+  text-shadow: 0 0 8px rgba(255, 224, 95, 0.9);
+}
+
+.noteTypeBtn.music.selected {
+  background: #ffe36f;
+  color: #332900;
+  border-color: #ffe36f;
+  box-shadow: 0 0 10px rgba(255, 222, 92, 0.72);
+}
+
 #dualLaneButtons {
   display: flex;
   gap: 3px;
@@ -137,7 +149,8 @@ body {
   border-color: #FF44FF;
 }
 
-#addTempoChange {
+#addTempoChange,
+#addStopEvent {
   font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   font-size: 11px;
   padding: 6px;
@@ -149,7 +162,8 @@ body {
   transition: background 0.2s;
 }
 
-#addTempoChange:hover {
+#addTempoChange:hover,
+#addStopEvent:hover {
   background: #333;
   color: white;
 }
@@ -328,7 +342,7 @@ body {
   top: 82px;
   right: 18px;
   z-index: 220;
-  width: 174px;
+  width: 238px;
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -346,7 +360,7 @@ body {
 
 #copyPastePanel label {
   display: grid;
-  grid-template-columns: 14px 48px 1fr;
+  grid-template-columns: 12px 42px 24px 42px 1fr;
   align-items: center;
   gap: 4px;
   color: #c7d4da;
@@ -355,7 +369,7 @@ body {
 }
 
 #copyPastePanel input {
-  width: 48px;
+  width: 42px;
   padding: 3px;
   border: 1px solid #4e646b;
   background: #17232a;
@@ -538,6 +552,24 @@ body {
   clip-path: polygon(50% 0%, 96% 38%, 58% 84%, 50% 100%, 42% 84%, 4% 38%);
 }
 
+.editorNote.musicNote {
+  width: 44px;
+  height: 48px;
+  color: #fff2a6;
+  background: transparent;
+  border: 0;
+  font-family: "Times New Roman", "Yu Mincho", serif;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 48px;
+  text-align: center;
+  text-shadow:
+    0 0 5px rgba(255, 255, 220, 1),
+    0 0 12px rgba(255, 231, 112, 0.95),
+    0 0 20px rgba(255, 207, 60, 0.7);
+  z-index: 2;
+}
+
 .editorDamageLongShape {
   position: absolute;
   left: 0;
@@ -667,6 +699,41 @@ body {
 .tempoDeleteBtn:hover {
   background: #FF4444;
   color: white;
+}
+
+.stopEventItem {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px;
+  background: #211d10;
+  border: 1px solid #d8b83d;
+  color: #ffe985;
+  font-size: 10px;
+}
+
+.stopEventItem input {
+  width: 46px;
+  min-width: 0;
+  padding: 2px 3px;
+  color: white;
+  background: #333;
+  border: 1px solid #666;
+}
+
+.stopEventMarker {
+  position: absolute;
+  left: 0;
+  height: 2px;
+  color: #ffe978;
+  background: #ffe978;
+  box-shadow: 0 0 8px rgba(255, 224, 80, 0.9);
+  font: 10px 'Orbitron', sans-serif;
+  line-height: 14px;
+  text-align: right;
+  z-index: 3;
+  pointer-events: none;
 }
 
 /* 再生中のノーツアニメーション */

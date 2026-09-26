@@ -2,7 +2,7 @@
   "title": "Uni/gnitΣ",
   "artist": "O_koge",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 9.8,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.7, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.0, "file": "fracture.txt" }],
+  "charts":[{"difficulty": "BASIC","level": 10.2,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.8, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.1, "file": "fracture.txt" }],
   "achievementTitles": [
   {
     "id": "boss3achieve",
@@ -13,7 +13,7 @@
   {
     "id": "boss3achieve3",
     "name": "Ignite the Night",
-    "difficulty": ["EXPERT","BASIC"],
+    "difficulty": ["BASIC","EXPERT"],
     "condition": "fc"
   },
   {
@@ -23,7 +23,7 @@
     "condition": "fc"
   },
   {
-    "id": "boss3achieve4",
+    "id": "boss3achieve5",
     "name": "暁を焚べる双星",
     "difficulty": "FRACTURE",
     "condition": "ap"

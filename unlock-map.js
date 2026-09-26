@@ -55,7 +55,24 @@ let mapRewardInteractionLocked = false;
 function setMapRewardInteractionLocked(locked) {
   mapRewardInteractionLocked = Boolean(locked);
   document.body.classList.toggle("mapRewardInteractionLocked", mapRewardInteractionLocked);
+  const mapScreen = document.getElementById("mapScreen");
+  if (mapScreen) mapScreen.inert = mapRewardInteractionLocked;
+  if (mapRewardInteractionLocked && mapScreen?.contains(document.activeElement)) {
+    document.activeElement.blur();
+  }
 }
+
+function blockMapInputDuringReward(event) {
+  if (!mapRewardInteractionLocked) return;
+  const rewardOverlay = document.getElementById("mapRewardUnlockOverlay");
+  if (rewardOverlay?.contains(event.target) && event.type !== "keydown") return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+}
+
+document.addEventListener("pointerdown", blockMapInputDuringReward, true);
+document.addEventListener("click", blockMapInputDuringReward, true);
+document.addEventListener("keydown", blockMapInputDuringReward, true);
 
 function playMapBgm() {
   mapBgm.play().catch(() => {
@@ -344,6 +361,7 @@ async function showMapCompletionRewardUnlocks(rewards) {
   } finally {
     overlay.classList.remove("active", "completionBackground");
     overlay.setAttribute("aria-hidden", "true");
+    await new Promise(resolve => setTimeout(resolve, 1000));
     setMapRewardInteractionLocked(false);
   }
 }
@@ -759,6 +777,8 @@ function renderMap(mapData) {
   const failedPieces = progress.failedPieces || {};
   const completion = Math.round(clearedPieceIds.size / mapData.pieces.length * 100);
   const newlyClaimedCompletionRewards = claimMapCompletionRewards(mapData, completion);
+  const completionRewardSequencePending = restoredPieceId && newlyClaimedCompletionRewards.length > 0;
+  if (completionRewardSequencePending) setMapRewardInteractionLocked(true);
   renderNextCompletionReward(mapData, completion, clearedPieceIds);
   document.getElementById("mapCompletionValue").textContent = `${completion}%`;
   document.getElementById("mapCompletionFill").style.width = `${completion}%`;
@@ -869,8 +889,7 @@ function renderMap(mapData) {
     setTimeout(() => {
       document.querySelector(`.jigsawPieceShape[data-piece-id="${restoredPieceId}"]`)?.classList.remove("restoring");
     }, 1800);
-    if (newlyClaimedCompletionRewards.length > 0) {
-      setMapRewardInteractionLocked(true);
+    if (completionRewardSequencePending) {
       setTimeout(() => showMapCompletionRewardUnlocks(newlyClaimedCompletionRewards), 1950);
     }
   }

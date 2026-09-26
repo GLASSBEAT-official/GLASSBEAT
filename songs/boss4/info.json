@@ -1,0 +1,32 @@
+{
+  "title": "Annihilation in F# Minor",
+  "artist": "tn-shi",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 10.7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 13.5, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.7, "file": "fracture.txt" }],
+  "achievementTitles": [
+  {
+    "id": "boss4achieve",
+    "name": "Annihilation-Phase1",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  },
+  {
+    "id": "boss4achieve2",
+    "name": "Annihilation-Phase2",
+    "difficulty": ["FRACTURE"],
+    "condition": "fc"
+  },
+  {
+    "id": "boss4achieve3",
+    "name": "Annihilation-PhaseX",
+    "difficulty": ["BASIC","EXPERT"],
+    "condition": "ap"
+  },
+  {
+    "id": "boss4achieve4",
+    "name": "Annihilation-PhaseΩ",
+    "difficulty": "FRACTURE",
+    "condition": "ap"
+  }
+]
+}

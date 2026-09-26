@@ -2,7 +2,7 @@
   "title": "Crystal brriliance",
   "artist": "Tak_mfk",
   "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 10.5,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.3, "file": "expert.txt"},{"difficulty": "FRACTURE","level": 15.0,"file":"fracture.txt"}],
+  "charts":[{"difficulty": "BASIC","level": 10.4,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.3, "file": "expert.txt"},{"difficulty": "FRACTURE","level": 15.0,"file":"fracture.txt"}],
 "achievementTitles": [
   {
     "id": "boss1achieve",

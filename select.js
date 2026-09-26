@@ -5,7 +5,7 @@ let selectedSongIndex = 0;
 let selectedDifficulty = 0;
 let songSortMode = 0;
 const songSortLabels = ["デフォルト", "難易度順", "五十音順"];
-const bossSongIds = new Set(["boss", "boss2", "boss3"]);
+const bossSongIds = new Set(["boss", "boss2", "boss3", "boss4"]);
 const japaneseTitleCollator = new Intl.Collator("ja", { sensitivity: "base", numeric: true });
 const alphabetTitleCollator = new Intl.Collator("en", { sensitivity: "base", numeric: true });
 const songTitleReadings = {
@@ -16,10 +16,19 @@ const songTitleReadings = {
   "収束する青": "しゅうそくするあお",
   "背後霊による背後争奪戦": "はいごれいによるはいごそうだつせん",
   "星屑サラウンド": "ほしくずさらうんど",
-  "メンタルヘルス": "めんたるへるす"
+  "メンタルヘルス": "めんたるへるす",
+  "廻凍のゴシック": "かいとうのごしっく",
+  "マリスコール": "まりすこーる",
+  "森閑剣戟": "しんかんけんさい"
 };
 let previewAudio = null;
 let previewSongId = null;
+const boss4PuzzleGlowSE = new Audio("sounds/gameover.mp3");
+boss4PuzzleGlowSE.preload = "auto";
+boss4PuzzleGlowSE.volume = 0.9;
+const boss4YugamiSmokeSE = new Audio("sounds/bulletevent.mp3");
+boss4YugamiSmokeSE.preload = "auto";
+boss4YugamiSmokeSE.volume = 0.9;
 let canonGlowTimer = null;
 let profileStatsDifficulty = "expert";
 const selectParams = new URLSearchParams(window.location.search);
@@ -29,7 +38,178 @@ const selectedMapPieceId = selectParams.get("piece") || "";
 let selectedMapPiece = null;
 let puzzleStartCommitted = false;
 let recentlyShardUnlockedSongId = "";
+let boss4YugamiScoreboardIndex = null;
+let boss4YugamiSelectionCommitted = false;
 const mapRewardSongIds = new Set();
+const BOSS4_PUZZLE_DIRECTIVES = [
+  "瑕無き調べに、ただ一つの歪みを刻め",
+  "静寂の世界に、歌を呼び覚ませ",
+  "歪みは栄華の中にあり",
+  "心を決め、混沌を廻凍せよ"
+];
+
+function getBoss4MaxUnlockedDifficulty(saveData = getSaveData()) {
+  const savedMaximum = Number(saveData.boss4MaxUnlockedDifficulty);
+  return Number.isInteger(savedMaximum)
+    ? Math.max(-1, Math.min(2, savedMaximum))
+    : -1;
+}
+
+function isBoss4DifficultyLocked(songId, difficultyIndex, saveData = getSaveData()) {
+  return songId === "boss4"
+    && Number(difficultyIndex) > getBoss4MaxUnlockedDifficulty(saveData);
+}
+
+function getBoss4PuzzleState() {
+  const saveData = getSaveData();
+  const started = saveData.storyFlags?.boss4PuzzleStarted === true;
+  const stage = Math.max(0, Number(saveData.storyFlags?.boss4PuzzleStage || 0));
+  const transitionPending = saveData.storyFlags?.boss4PuzzleTransitionPending === true;
+  return {
+    started,
+    stage,
+    introPending: saveData.storyFlags?.boss4PuzzleIntroPending === true
+      || (started && stage === 0 && !transitionPending && saveData.storyFlags?.boss4PuzzleIntroShown !== true),
+    transitionPending,
+    unlocked: getBoss4MaxUnlockedDifficulty(saveData) >= selectedDifficulty
+  };
+}
+
+function setBoss4DirectiveText(element, text) {
+  element.replaceChildren();
+  Array.from(text).forEach((character, index) => {
+    const span = document.createElement("span");
+    span.className = "boss4DirectiveCharacter";
+    span.textContent = character;
+    span.style.setProperty("--directive-delay", `${(index % 7) * -37}ms`);
+    span.style.setProperty("--directive-duration", `${190 + (index % 5) * 23}ms`);
+    element.appendChild(span);
+  });
+}
+
+function createBoss4PuzzleDirective() {
+  const state = getBoss4PuzzleState();
+  if (mapSelectMode || !state.started || state.unlocked) return null;
+
+  const directive = document.createElement("div");
+  directive.id = "boss4PuzzleDirective";
+  directive.setAttribute("aria-live", "polite");
+  directive.classList.toggle("awaitingIntro", state.introPending);
+  setBoss4DirectiveText(
+    directive,
+    BOSS4_PUZZLE_DIRECTIVES[Math.min(state.stage, BOSS4_PUZZLE_DIRECTIVES.length - 1)]
+  );
+  return directive;
+}
+
+function playBoss4PuzzleAwakeningGlow(song35Item) {
+  boss4PuzzleGlowSE.pause();
+  boss4PuzzleGlowSE.currentTime = 0;
+  boss4PuzzleGlowSE.play().catch(error => {
+    console.warn("boss4 puzzle glow sound playback failed:", error);
+  });
+
+  document.getElementById("boss4PuzzleAwakeningParticles")?.remove();
+  song35Item.classList.remove("boss4PuzzleAwakeningActive");
+  void song35Item.offsetWidth;
+  song35Item.classList.add("boss4PuzzleAwakeningActive");
+
+  const rect = song35Item.getBoundingClientRect();
+  const particles = document.createElement("div");
+  particles.id = "boss4PuzzleAwakeningParticles";
+  particles.style.left = `${rect.left + 14}px`;
+  particles.style.top = `${rect.bottom + 14}px`;
+  particles.setAttribute("aria-hidden", "true");
+
+  for (let index = 0; index < 30; index++) {
+    const particle = document.createElement("span");
+    const angle = -Math.PI * (0.12 + Math.random() * 0.76);
+    const distance = 34 + Math.random() * 92;
+    particle.style.setProperty("--puzzle-particle-x", `${Math.cos(angle) * distance}px`);
+    particle.style.setProperty("--puzzle-particle-y", `${Math.sin(angle) * distance}px`);
+    particle.style.setProperty("--puzzle-particle-delay", `${Math.random() * 480}ms`);
+    particle.style.setProperty("--puzzle-particle-duration", `${620 + Math.random() * 520}ms`);
+    particle.classList.toggle("red", index % 3 === 0);
+    particles.appendChild(particle);
+  }
+
+  for (let index = 0; index < 17; index++) {
+    const ray = document.createElement("i");
+    ray.className = "boss4PuzzleAwakeningRay";
+    ray.style.setProperty("--puzzle-ray-angle", `${-88 + index * 9 + (Math.random() - 0.5) * 5}deg`);
+    ray.style.setProperty("--puzzle-ray-length", `${42 + Math.random() * 42}vw`);
+    ray.style.setProperty("--puzzle-ray-delay", `${Math.random() * 240}ms`);
+    ray.style.setProperty("--puzzle-ray-opacity", `${0.12 + Math.random() * 0.16}`);
+    particles.appendChild(ray);
+  }
+  document.body.appendChild(particles);
+
+  setTimeout(() => {
+    song35Item.classList.remove("boss4PuzzleAwakeningActive");
+    particles.remove();
+  }, 1900);
+}
+
+function presentBoss4PuzzleIntro() {
+  const state = getBoss4PuzzleState();
+  if (!state.introPending) return;
+
+  const directive = document.getElementById("boss4PuzzleDirective");
+  const song35Item = document.querySelector('.songItem[data-song-id="song35"]');
+  if (!directive || !song35Item) return;
+
+  document.body.classList.add("boss4PuzzleTransitionActive");
+  document.body.classList.add("boss4PuzzleAwakeningScreen");
+  directive.scrollIntoView({ behavior: "smooth", block: "center" });
+  playBoss4PuzzleAwakeningGlow(song35Item);
+
+  setTimeout(() => {
+    directive.classList.remove("awaitingIntro");
+    const saveData = getSaveData();
+    if (!saveData.storyFlags) saveData.storyFlags = {};
+    saveData.storyFlags.boss4PuzzleIntroPending = false;
+    saveData.storyFlags.boss4PuzzleIntroShown = true;
+    setSaveData(saveData);
+  }, 1250);
+
+  setTimeout(() => {
+    document.body.classList.remove("boss4PuzzleAwakeningScreen");
+  }, 1900);
+  setTimeout(() => document.body.classList.remove("boss4PuzzleTransitionActive"), 2200);
+}
+
+function presentPendingBoss4PuzzleTransition() {
+  const state = getBoss4PuzzleState();
+  if (!state.transitionPending) return;
+
+  const directive = document.getElementById("boss4PuzzleDirective");
+  const song35Item = document.querySelector('.songItem[data-song-id="song35"]');
+  if (!directive || !song35Item) return;
+  document.body.classList.add("boss4PuzzleTransitionActive");
+  directive.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  setTimeout(() => directive.classList.add("completing"), 500);
+  setTimeout(() => playBoss4PuzzleAwakeningGlow(song35Item), 620);
+  setTimeout(() => {
+    document.body.classList.add("boss4PuzzleDirectiveSwitchShake");
+    setTimeout(() => document.body.classList.remove("boss4PuzzleDirectiveSwitchShake"), 320);
+  }, 1080);
+  setTimeout(() => {
+    const saveData = getSaveData();
+    if (!saveData.storyFlags) saveData.storyFlags = {};
+    const nextStage = Math.min(
+      BOSS4_PUZZLE_DIRECTIVES.length - 1,
+      Number(saveData.storyFlags.boss4PuzzleStage || 0) + 1
+    );
+    saveData.storyFlags.boss4PuzzleStage = nextStage;
+    saveData.storyFlags.boss4PuzzleTransitionPending = false;
+    setSaveData(saveData);
+
+    setBoss4DirectiveText(directive, BOSS4_PUZZLE_DIRECTIVES[nextStage]);
+    requestAnimationFrame(() => directive.classList.remove("completing"));
+  }, 1200);
+  setTimeout(() => document.body.classList.remove("boss4PuzzleTransitionActive"), 2000);
+}
 
 function hasAllMapSongs() {
   return selectedMapPiece?.songSelection?.songs === "all";
@@ -45,6 +225,10 @@ function bypassUnlocksForConfiguredRandomSongs() {
 
 function isSongHidden(songId) {
   const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
+  if (songId === "boss4") {
+    // ひとつも解禁されていない間だけ隠し、BASIC以上の解禁後は表示する。
+    return getBoss4MaxUnlockedDifficulty(saveData) < 0;
+  }
   if (songId === "song19") {
     return saveData.song19Unlocked !== true && saveData.boss3Unlocked !== true;
   }
@@ -171,7 +355,10 @@ function isMapDifficultyAllowed(songId, difficulty) {
 }
 
 function getDisplayedChartLevel(level) {
-  return Math.trunc(Number(level) || 0);
+  const numericLevel = Number(level) || 0;
+  const integerLevel = Math.trunc(numericLevel);
+  const decimalDigit = Math.floor((numericLevel - integerLevel) * 10 + Number.EPSILON * 10);
+  return `${integerLevel}${decimalDigit >= 5 ? "+" : ""}`;
 }
 
 function preloadImageAssets(urls, timeoutMs = 12000) {
@@ -273,6 +460,18 @@ function isSongPrerequisiteLocked(songId) {
   if (songId === "song26") {
     return saveData.song26Unlocked !== true && saveData.storyFlags?.chapter3CreditsSeen !== true;
   }
+  if (songId === "song33") {
+    return saveData.song33Unlocked !== true;
+  }
+  if (songId === "song34") {
+    return saveData.storyRead?.chapter4_episode8 !== true;
+  }
+  if (songId === "song35") {
+    const legacyPlayed = Object.values(saveData.song35 || {}).some(record => record?.played === true);
+    return saveData.song35Unlocked !== true
+      && saveData.storyFlags?.boss4PuzzleStarted !== true
+      && !legacyPlayed;
+  }
   return false;
 }
 
@@ -326,6 +525,13 @@ function getSongUnlockMessage(songId) {
   if (songId === "boss3") {
     return "？？？";
   }
+  if (songId === "song33") {
+   return "この楽曲の解禁には、4-6の読了が必要です。";}
+  if (songId === "song34") {
+   return "この楽曲の解禁には、4-8の読了が必要です。";}
+  if (songId === "song35") {
+    return "この楽曲の解禁には、4-10の読了が必要です。";
+  }
 
   return "";}
 
@@ -348,7 +554,12 @@ async function loadSongList() {
     fadeOverlay.classList.add("fadeIn");
   }, 100);
 
-  const initialSong = selectParams.get("song");
+  const boss4PuzzleState = getBoss4PuzzleState();
+  const puzzleTransitionPending = boss4PuzzleState.transitionPending;
+  const puzzleIntroPending = boss4PuzzleState.introPending;
+  const initialSong = puzzleTransitionPending || puzzleIntroPending
+    ? "song35"
+    : selectParams.get("song");
   const initialDifficulty = selectParams.get("difficulty");
 
   if (initialSong) {
@@ -390,6 +601,11 @@ async function loadSongList() {
   }
 
   selectSong(initialIndex >= 0 ? initialIndex : 0);
+  if (puzzleTransitionPending) {
+    requestAnimationFrame(() => presentPendingBoss4PuzzleTransition());
+  } else if (puzzleIntroPending) {
+    requestAnimationFrame(() => presentBoss4PuzzleIntro());
+  }
 
   calculatePlayerRate(songList);
   loadProfilePanel();
@@ -531,9 +747,10 @@ function renderSongList() {
     const isLocked = !bypassSongUnlock && isSongLocked(song.id);
     const isShardLocked = !bypassSongUnlock && isSongShardLocked(song.id) && !isSongPrerequisiteLocked(song.id);
     const shouldHideSongInfo =
-  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3") && isLocked);
+  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "song35") && isLocked);
     const item = document.createElement("div");
     item.classList.add("songItem");
+    item.dataset.songId = song.id;
     if (song.id === recentlyShardUnlockedSongId) item.classList.add("shardJustUnlocked");
     if (i === selectedSongIndex) item.classList.add("selected");
 
@@ -560,7 +777,8 @@ function renderSongList() {
     text.classList.add("songItemText");
 
     const chart = song.info.charts[selectedDifficulty] || song.info.charts[0];
-    const chartDifficultyLocked = isBoss3SequenceDifficultyLocked(song.id, selectedDifficulty);
+    const chartDifficultyLocked = isBoss3SequenceDifficultyLocked(song.id, selectedDifficulty)
+      || isBoss4DifficultyLocked(song.id, selectedDifficulty);
     const diffClass = "diff-" + (chart.difficulty || "basic").toLowerCase();
 
     // FRACTURE未実装曲自身ではなく、現在の共通難易度から判定する。
@@ -619,6 +837,10 @@ function renderSongList() {
     item.appendChild(text);
     item.addEventListener("click", () => selectSong(i));
     listEl.appendChild(item);
+    if (song.id === "song35") {
+      const directive = createBoss4PuzzleDirective();
+      if (directive) listEl.appendChild(directive);
+    }
   }
 
   if (isRandomMapSelection()) {
@@ -673,7 +895,7 @@ function selectSong(index) {
   const isLocked = !bypassSongUnlock && isSongLocked(song.id);
   const isShardLocked = !bypassSongUnlock && isSongShardLocked(song.id) && !prerequisiteLocked;
   const shouldHideSongInfo =
-  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3") && prerequisiteLocked);
+  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "song35") && prerequisiteLocked);
   if (mapSelectMode) {
     const firstAllowedDifficulty = song.info.charts.findIndex(chart => isMapDifficultyAllowed(song.id, chart.difficulty));
     if (!isMapDifficultyAllowed(song.id, song.info.charts[selectedDifficulty]?.difficulty)) {
@@ -685,7 +907,8 @@ function selectSong(index) {
   }
   const currentChart = song.info.charts[selectedDifficulty] || song.info.charts[0];
   const challengeDifficultyLocked =
-    isBoss3SequenceDifficultyLocked(song.id, selectedDifficulty);
+    isBoss3SequenceDifficultyLocked(song.id, selectedDifficulty)
+    || isBoss4DifficultyLocked(song.id, selectedDifficulty);
 updateDifficultyColorPlate(currentChart);
 
   const items = document.querySelectorAll(".songItem");
@@ -758,7 +981,9 @@ if (prerequisiteLocked) {
   startButton.style.visibility = "hidden";
   startButton.style.display = "block";
   unlockSongButton.style.display = "none";
-  unlockText.textContent = "3-12から挑戦せよ";
+  unlockText.textContent = song.id === "boss4"
+    ? BOSS4_PUZZLE_DIRECTIVES[3]
+    : "3-12から挑戦せよ";
   unlockText.classList.add("challengePrompt");
   unlockText.style.display = "block";
 } else if (isShardLocked) {
@@ -798,7 +1023,7 @@ if (prerequisiteLocked) {
 
   // プレビュー再生
 const shouldBlockPreview =
-  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3") && isLocked);
+  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "song35") && isLocked);
 
 // Keep the current playback position when the same song is selected again.
 if (previewSongId !== song.id) {
@@ -813,7 +1038,7 @@ if (!shouldBlockPreview && !previewAudio) {
   previewAudio = new Audio(`songs/${song.id}/music.wav`);
   previewSongId = song.id;
   previewAudio.loop = true;
-  previewAudio.volume = 0.5;
+  previewAudio.volume = loadSettings().musicVolume / 100;
   previewAudio.play().catch(e => console.log("preview play failed:", e));
 }
 }
@@ -827,7 +1052,8 @@ function renderDifficultyButtons(song) {
     const btn = document.createElement("button");
     btn.classList.add("diffBtn");
     btn.classList.add("diff-" + chart.difficulty.toLowerCase());
-    const challengeDifficultyLocked = isBoss3SequenceDifficultyLocked(song.id, i);
+    const challengeDifficultyLocked = isBoss3SequenceDifficultyLocked(song.id, i)
+      || isBoss4DifficultyLocked(song.id, i);
     btn.classList.toggle("challengeLocked", challengeDifficultyLocked);
 
     if (i === selectedDifficulty) {
@@ -939,6 +1165,7 @@ document.getElementById("startButton").addEventListener("click", async () => {
   if (!song) return;
   if (song.id === "boss3" && isSongLocked(song.id)) return;
   if (isBoss3SequenceDifficultyLocked(song.id, selectedDifficulty)) return;
+  if (isBoss4DifficultyLocked(song.id, selectedDifficulty)) return;
 
   if (mapSelectMode) {
     if (!window.MapStamina?.consume()) {
@@ -982,6 +1209,18 @@ document.getElementById("startButton").addEventListener("click", async () => {
     const mapQuery = mapSelectMode
       ? `&mode=map&map=${encodeURIComponent(selectedMapId)}&piece=${encodeURIComponent(selectedMapPieceId)}`
       : "";
+    if (song.id === "boss4") {
+      try {
+        sessionStorage.setItem("glassbeatBoss4AccessTicket", JSON.stringify({
+          difficulty: Number(selectedDifficulty),
+          chaosIntro: false,
+          expiresAt: Date.now() + 15000
+        }));
+      } catch (error) {
+        console.warn("boss4 access ticket could not be saved:", error);
+        return;
+      }
+    }
     location.href = `game.html?song=${song.id}&difficulty=${selectedDifficulty}&userOffset=${userOffset}${mapQuery}`;
   }, 700);
 });
@@ -995,6 +1234,8 @@ loadSongList().catch(error => {
 const DEFAULT_SPEED = 10;
 const DEFAULT_KEY_LAYOUT = "default";
 const DEFAULT_SELECT_BACKGROUND = "select_bg";
+const DEFAULT_MUSIC_VOLUME = 70;
+const DEFAULT_NOTE_THICKNESS = 80;
 const SELECT_BACKGROUND_OPTIONS = {
   select_bg: {
     name: "DEFAULT",
@@ -1054,6 +1295,12 @@ function loadSettings() {
   return {
     speed: settings.speed || DEFAULT_SPEED,
     keyLayout: settings.keyLayout || DEFAULT_KEY_LAYOUT,
+    musicVolume: Number.isFinite(Number(settings.musicVolume))
+      ? Math.min(100, Math.max(0, Math.round(Number(settings.musicVolume))))
+      : DEFAULT_MUSIC_VOLUME,
+    noteThickness: Number.isFinite(Number(settings.noteThickness))
+      ? Math.min(100, Math.max(50, Math.round(Number(settings.noteThickness))))
+      : DEFAULT_NOTE_THICKNESS,
     selectBackground: SELECT_BACKGROUND_OPTIONS[settings.selectBackground]
       ? settings.selectBackground
       : DEFAULT_SELECT_BACKGROUND,
@@ -1063,13 +1310,17 @@ function loadSettings() {
 
 function saveSettings(settings) {
   const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
-  saveData.settings = settings;
+  saveData.settings = { ...(saveData.settings || {}), ...settings };
   localStorage.setItem("rhythmGame", JSON.stringify(saveData));
 }
 
 // 設定を画面に反映
 function applySettingsToUI(settings) {
   document.getElementById("speedInput").value = settings.speed;
+  document.getElementById("musicVolumeInput").value = settings.musicVolume;
+  document.getElementById("musicVolumeValue").textContent = settings.musicVolume;
+  document.getElementById("noteThicknessInput").value = settings.noteThickness;
+  document.getElementById("noteThicknessValue").textContent = settings.noteThickness;
 
   document.querySelectorAll(".keyLayoutBtn").forEach(btn => {
     btn.classList.toggle("selected", btn.dataset.layout === settings.keyLayout);
@@ -1151,86 +1402,30 @@ document.querySelectorAll(".keyLayoutBtn").forEach(btn => {
   });
 });
 
+document.getElementById("musicVolumeInput").addEventListener("input", event => {
+  const musicVolume = Math.min(100, Math.max(0, Math.round(Number(event.currentTarget.value))));
+  const settings = loadSettings();
+  settings.musicVolume = musicVolume;
+  saveSettings(settings);
+  document.getElementById("musicVolumeValue").textContent = musicVolume;
+  if (previewAudio) previewAudio.volume = musicVolume / 100;
+});
+
+document.getElementById("noteThicknessInput").addEventListener("input", event => {
+  const noteThickness = Math.min(100, Math.max(50, Math.round(Number(event.currentTarget.value))));
+  const settings = loadSettings();
+  settings.noteThickness = noteThickness;
+  saveSettings(settings);
+  document.getElementById("noteThicknessValue").textContent = noteThickness;
+});
+
 //初回アクセス
 if (!saveData.profile || !saveData.profile.username || !saveData.profile.tutorialDone) {
   location.href = "onboarding.html";
 }
 
-//パートナー追加したら書き足す
-const partners = {
-  breaka: {name: "ブレイカ",
-    icon: "images/partners/breaka_icon.png",
-    full: "images/partners/breaka_full.png",
-    iconScale: 1.0,
-    fullScale: 1.1, 
-    expTable: [
-      100, 120, 150, 180, 220,
-      270, 330, 400, 480, 570,
-      670, 780, 900, 1030, 1170,
-      1320, 1480, 1650, 1830, 2020,
-      2220, 2430, 2650, 2880, 3120,
-      3370, 3630, 3900, 4180
-    ] ,
-      skill: {
-    type: "timedHeal",
-    count: 2,
-    amount: 500,
-    name: "ヒールソング",
-    description: "楽曲中に2回、ライフを300回復する"
-  }
-  },
-  canon: {name: "カノン",
-    icon: "images/partners/canon_icon.png",
-    full: "images/partners/canon_full.png",
-    eventFull: "images/partners/canon_event.png",
-    iconScale: 0.80,
-    fullScale:0.9,
-    expTable: [100, 120, 150,180, 220,
-      270, 330, 400, 480, 570,
-      670, 780, 900, 1030, 1170,
-      1320, 1480, 1650, 1830, 2020,
-      2220, 2430, 2650, 2880, 3120,
-      3370, 3630, 3900, 4180 ],
-     skill: null 
-  },
-   katy: {name: "ケイティ",
-    icon: "images/partners/katy_icon.png",
-    full: "images/partners/katy_full.png",
-    iconScale: 0.82,
-    fullScale:1.05,
-    expTable: [100, 120, 150,180, 220,
-      270, 330, 400, 480, 570,
-      670, 780, 900, 1030, 1170,
-      1320, 1480, 1650, 1830, 2020,
-      2220, 2430, 2650, 2880, 3120,
-      3370, 3630, 3900, 4180 ],
-     skill: {
-  type: "judgementRecovery",
-  minJudge: "perfect",
-  amount: 1,
-  name: "Keep Going!",
-  description: "Perfectを出すたびにライフをわずかに回復"
-}
-  },
-    isabel: {name: "イザベル",
-    icon: "images/partners/isabel_icon.png",
-    full: "images/partners/isabel_full.png",
-    iconScale: 1.0,
-    fullScale:1.0,
-    expTable: [100, 120, 150,180, 220,
-      270, 330, 400, 480, 570,
-      670, 780, 900, 1030, 1170,
-      1320, 1480, 1650, 1830, 2020,
-      2220, 2430, 2650, 2880, 3120,
-      3370, 3630, 3900, 4180 ],
-       skill: {
-    type: "mirrorChart",
-    name: "鏡写しの音色",
-    description: "譜面の配置を左右反転する"
-  },
-  }
-  
-};
+// パートナーの定義は partner-data.js に集約。
+const partners = window.partners;
 
 function getSaveData() {
   return JSON.parse(localStorage.getItem("rhythmGame") || "{}");
@@ -1243,6 +1438,13 @@ function setSaveData(saveData) {
 function isPartnerSkillEnabled() {
   const saveData = getSaveData();
   return saveData.settings?.partnerSkillEnabled !== false;
+}
+
+function isLyraSkillLocked(saveData = getSaveData()) {
+  const song35Cleared = Object.values(saveData.song35 || {}).some(record => record?.cleared === true);
+  return saveData.storyFlags?.lyraSkillLocked === true
+    || saveData.storyFlags?.boss4PuzzleStarted === true
+    || song35Cleared;
 }
 
 function setPartnerSkillEnabled(enabled) {
@@ -1313,6 +1515,14 @@ const DEFAULT_PROFILE_TITLE = {
   acquisitionText: "最初から所持"
 };
 const PROFILE_TITLE_BACKGROUNDS = ["green", "yellow", "blue", "purple", "red"];
+const SPECIAL_PROFILE_TITLE_CLASSES = {
+  "rate:crimson-transcender": "titleSpecial-crimson",
+  "紅蓮の超越者": "titleSpecial-crimson",
+  "rate:sakura-virtuoso": "titleSpecial-sakura",
+  "桜華の極奏者": "titleSpecial-sakura",
+  "rate:realm-ruler": "titleSpecial-realm",
+  "音界の支配者": "titleSpecial-realm"
+};
 const TITLE_ACQUISITION_LABELS = {
   play: "プレイ",
   clear: "クリア",
@@ -1325,12 +1535,41 @@ function normalizeProfileTitleBackground(background) {
   return PROFILE_TITLE_BACKGROUNDS.includes(background) ? background : "yellow";
 }
 
-function applyProfileTitleAppearance(element, background) {
+function applyProfileTitleAppearance(element, background, titleId = "") {
   if (!element) return;
   for (const color of PROFILE_TITLE_BACKGROUNDS) {
     element.classList.remove(`titleBackground-${color}`);
   }
+  for (const className of Object.values(SPECIAL_PROFILE_TITLE_CLASSES)) {
+    element.classList.remove(className);
+  }
   element.classList.add(`titleBackground-${normalizeProfileTitleBackground(background)}`);
+  const specialClass = SPECIAL_PROFILE_TITLE_CLASSES[titleId];
+  if (specialClass) element.classList.add(specialClass);
+}
+
+function isFractureFcApUpTitle(title) {
+  if (!title || title.category !== "songRecord") return false;
+  if (!["fc", "ap", "up"].includes(String(title.condition || "").toLowerCase())) return false;
+  const difficulties = Array.isArray(title.difficulties)
+    ? title.difficulties
+    : title.difficulty
+      ? [title.difficulty]
+      : [];
+  return difficulties.length > 0 && difficulties.every(value =>
+    String(value || "").trim().toLowerCase() === "fracture"
+  );
+}
+
+function applyFractureTitleBadge(element, title) {
+  if (!element) return;
+  const text = element.querySelector(".profileTitleMarqueeText");
+  text?.querySelector(".titleFractureBadgeMark")?.remove();
+  if (!text || !isFractureFcApUpTitle(title)) return;
+  const badge = document.createElement("span");
+  badge.className = "titleFractureBadgeMark";
+  badge.setAttribute("aria-hidden", "true");
+  text.prepend(badge);
 }
 
 function setProfileTitleText(element, text) {
@@ -1387,7 +1626,8 @@ function queueTitleUnlockToast(title, initialDelay = 0) {
     const badge = document.getElementById("titleUnlockToastBadge");
     if (initialDelay > 0) await waitForTitleUnlockToast(initialDelay);
     setProfileTitleText(badge, title.name);
-    applyProfileTitleAppearance(badge, title.background);
+    applyProfileTitleAppearance(badge, title.background, title.id);
+    applyFractureTitleBadge(badge, title);
     toast.setAttribute("aria-hidden", "false");
     toast.classList.add("visible");
     await waitForTitleUnlockToast(3600);
@@ -1755,7 +1995,12 @@ profileRateEl.textContent = "RATE " + Number(profile.rate || 0).toFixed(1);
 applyRateColor(profileRateEl, profile.rate);
 const profileTitleEl = document.getElementById("profileTitle");
 setProfileTitleText(profileTitleEl, profile.title || DEFAULT_PROFILE_TITLE.name);
-applyProfileTitleAppearance(profileTitleEl, profile.titleBackground || DEFAULT_PROFILE_TITLE.background);
+applyProfileTitleAppearance(
+  profileTitleEl,
+  profile.titleBackground || DEFAULT_PROFILE_TITLE.background,
+  profile.titleId || profile.title
+);
+applyFractureTitleBadge(profileTitleEl, saveData.unlockedTitles?.[profile.titleId]);
 
 const partnerIconEl = document.getElementById("partnerIcon");
 partnerIconEl.src = partner.icon;
@@ -1769,16 +2014,40 @@ const partnerData = saveData.partnerData?.[partnerId] || { level: 1, exp: 0 };
 document.getElementById("partnerLevel").textContent = `Lv.${partnerData.level}`;
 }
 
-function getAvailablePartnerList() {
-  const saveData = getSaveData();
-  const unlockedPartners = saveData.unlockedPartners || {};
+function isPartnerUnlockConditionMet(partner, saveData) {
+  if (!partner.unlock) return true;
 
-  const list = ["breaka", "canon","katy"];
-
-  if (unlockedPartners.isabel === true) {
-    list.push("isabel");
+  if (partner.unlock.type === "storyRead") {
+    return saveData.storyRead?.[partner.unlock.storyId] === true;
   }
 
+  return false;
+}
+
+function getAvailablePartnerList() {
+  const saveData = getSaveData();
+
+  if (!saveData.unlockedPartners || typeof saveData.unlockedPartners !== "object") {
+    saveData.unlockedPartners = {};
+  }
+
+  let changed = false;
+  const list = Object.entries(partners)
+    .filter(([partnerId, partner]) => {
+      const unlocked =
+        saveData.unlockedPartners[partnerId] === true ||
+        isPartnerUnlockConditionMet(partner, saveData);
+
+      if (unlocked && partner.unlock && saveData.unlockedPartners[partnerId] !== true) {
+        saveData.unlockedPartners[partnerId] = true;
+        changed = true;
+      }
+
+      return unlocked;
+    })
+    .map(([partnerId]) => partnerId);
+
+  if (changed) setSaveData(saveData);
   return list;
 }
 
@@ -1792,36 +2061,6 @@ const partnerModal = document.getElementById("partnerModal");
 const partnerCloseButton = document.getElementById("partnerCloseButton");
 const partnerPrev = document.getElementById("partnerPrev");
 const partnerNext = document.getElementById("partnerNext");
-
-const partnerMessages = {
-  breaka: [
-    "どうも。よろしくね。",
-    "まあ、せいぜい頑張りなよ。",
-    "...眠いな...",
-    "私と話してても面白くないよ。",
-    "そんなに触りたいの？"
-  ],
-  canon: [
-    "プレイヤーさん！やっほー！",
-    "一緒に歌うの楽しみだな～",
-    "わたしのうち、花屋さんやってるんだよね！",
-    "きみはどんな歌が好き？",
-    "それじゃあ、頑張ろうね！"
-  ],
-  katy: [
-    "英語の先生をやっています。",
-    "一緒に楽しみましょう。",
-    "トライアスロンが趣味なの。",
-    "こう見えて体育会系なんですよ？",
-    "Please call me Katy!"
-  ],
-  isabel: [
-    "これからよろしくね。",
-    "あなたの演奏、期待してるよ。",
-    "難しくても、諦めないで。",
-    "…わたしのこと？まあ、おいおいね。"
-  ]
-};
 
 function getDisplayedPartnerId() {
   return partnerList[currentPartnerIndex] || "breaka";
@@ -1841,7 +2080,10 @@ function updatePartnerSpeech() {
 
   bubble.style.display = "block";
 
-  const messages = partnerMessages[partnerId] || partnerMessages.breaka;
+  const partnerMessages = partners[partnerId]?.messages;
+  const messages = Array.isArray(partnerMessages) && partnerMessages.length > 0
+    ? partnerMessages
+    : partners.breaka.messages;
   const messageIndex = Math.min(partnerTalkCount, messages.length - 1);
   bubble.textContent = messages[messageIndex];
 }
@@ -1930,8 +2172,9 @@ function updatePartnerDisplay() {
   document.getElementById("partnerName").textContent = partner.name;
 
   const levelEl = document.getElementById("partnerLevel");
+  const partnerLevel = getPartnerLevel(partnerId);
   if (levelEl) {
-    levelEl.textContent = "Lv." + getPartnerLevel(partnerId);
+    levelEl.textContent = "Lv." + partnerLevel;
   }
 
   const skillBox = document.getElementById("partnerSkillBox");
@@ -1940,17 +2183,23 @@ const skillDescription = document.getElementById("partnerSkillDescription");
 const skillToggleText = document.getElementById("partnerSkillToggleText");
 
 const skillEnabled = isPartnerSkillEnabled();
+const skillLocked = partnerId === "Lyra" && isLyraSkillLocked();
 
 if (partner.skill) {
-  skillBox.disabled = false;
-  skillBox.classList.toggle("skillOff", !skillEnabled);
-
   skillName.textContent = partner.skill.name || "SKILL";
-  skillDescription.textContent = partner.skill.description || "";
+  skillDescription.textContent = window.getPartnerSkillDescription(partnerId, partnerLevel);
 
-  skillToggleText.textContent = skillEnabled
-    ? "タップしてスキルをOFF"
-    : "タップしてスキルをON";
+  if (skillLocked) {
+    skillBox.disabled = true;
+    skillBox.classList.add("skillOff");
+    skillToggleText.textContent = "スキルは使用できません";
+  } else {
+    skillBox.disabled = false;
+    skillBox.classList.toggle("skillOff", !skillEnabled);
+    skillToggleText.textContent = skillEnabled
+      ? "タップしてスキルをOFF"
+      : "タップしてスキルをON";
+  }
 } else {
   skillBox.disabled = true;
   skillBox.classList.add("skillOff");
@@ -2128,10 +2377,85 @@ function applyScoreboardRankStyle(element, rank) {
   }
 }
 
-function createScoreboardCard(entry) {
+function playBoss4YugamiSmoke(originElement) {
+  document.getElementById("boss4YugamiSmoke")?.remove();
+
+  boss4YugamiSmokeSE.currentTime = 0;
+  boss4YugamiSmokeSE.play().catch(error => {
+    console.warn("boss4 yugami smoke sound playback failed:", error);
+  });
+
+  const rect = originElement.getBoundingClientRect();
+  const originX = rect.left + rect.width / 2;
+  const originY = rect.top + rect.height / 2;
+  const smoke = document.createElement("div");
+  smoke.id = "boss4YugamiSmoke";
+  smoke.setAttribute("aria-hidden", "true");
+
+  for (let index = 0; index < 34; index++) {
+    const cloud = document.createElement("span");
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 80 + Math.random() * Math.max(window.innerWidth, window.innerHeight) * 0.72;
+    cloud.style.left = `${originX}px`;
+    cloud.style.top = `${originY}px`;
+    cloud.style.setProperty("--smoke-x", `${Math.cos(angle) * distance}px`);
+    cloud.style.setProperty("--smoke-y", `${Math.sin(angle) * distance}px`);
+    cloud.style.setProperty("--smoke-size", `${150 + Math.random() * 260}px`);
+    cloud.style.setProperty("--smoke-delay", `${Math.random() * 320}ms`);
+    cloud.style.setProperty("--smoke-duration", `${850 + Math.random() * 500}ms`);
+    smoke.appendChild(cloud);
+  }
+
+  document.body.appendChild(smoke);
+  requestAnimationFrame(() => smoke.classList.add("active"));
+}
+
+function completeBoss4YugamiMission(originElement) {
+  if (boss4YugamiSelectionCommitted) return;
+
+  const state = getBoss4PuzzleState();
+  if (!state.started || state.stage !== 2 || state.transitionPending || state.unlocked) return;
+  boss4YugamiSelectionCommitted = true;
+
+  const saveData = getSaveData();
+  if (!saveData.storyFlags) saveData.storyFlags = {};
+  saveData.storyFlags.boss4PuzzleTransitionPending = true;
+  setSaveData(saveData);
+
+  playBoss4YugamiSmoke(originElement);
+  setTimeout(() => {
+    document.getElementById("blackOverlay")?.classList.add("dark");
+  }, 620);
+  setTimeout(() => {
+    location.href = "select.html?song=song35";
+  }, 1450);
+}
+
+function createScoreboardCard(entry, isYugami = false) {
   const card = document.createElement("article");
   const difficultyName = String(entry.chart.difficulty || "").toLowerCase();
   card.className = `scoreboardCard diff-${difficultyName}`;
+
+  if (isYugami) {
+    card.classList.add("boss4PuzzleYugamiCard");
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("aria-label", "歪みのあるパネル");
+
+    const yugami = document.createElement("img");
+    yugami.className = "boss4PuzzleYugamiImage";
+    yugami.src = "images/events/yugami.png";
+    yugami.alt = "";
+    card.appendChild(yugami);
+
+    card.addEventListener("click", () => completeBoss4YugamiMission(card));
+    card.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      completeBoss4YugamiMission(card);
+    });
+    return card;
+  }
 
   const meta = document.createElement("div");
   meta.className = "scoreboardCardMeta";
@@ -2197,10 +2521,22 @@ function createScoreboardCard(entry) {
 function renderProfileScoreboard() {
   const scoreboard = document.getElementById("profileScoreboard");
   const entries = getTopRateCharts();
+  const puzzleState = getBoss4PuzzleState();
+  const shouldShowYugami = puzzleState.started
+    && puzzleState.stage === 2
+    && !puzzleState.transitionPending
+    && !puzzleState.unlocked
+    && entries.length > 0;
+  if (shouldShowYugami && (boss4YugamiScoreboardIndex === null || boss4YugamiScoreboardIndex >= entries.length)) {
+    boss4YugamiScoreboardIndex = Math.floor(Math.random() * entries.length);
+  }
   scoreboard.innerHTML = "";
 
-  for (const entry of entries) {
-    scoreboard.appendChild(createScoreboardCard(entry));
+  for (const [index, entry] of entries.entries()) {
+    scoreboard.appendChild(createScoreboardCard(
+      entry,
+      shouldShowYugami && index === boss4YugamiScoreboardIndex
+    ));
   }
 
   for (let index = entries.length; index < 20; index++) {
@@ -2225,7 +2561,8 @@ function equipProfileTitle(title) {
 
   const panelTitle = document.getElementById("profileTitle");
   setProfileTitleText(panelTitle, title.name);
-  applyProfileTitleAppearance(panelTitle, title.background);
+  applyProfileTitleAppearance(panelTitle, title.background, title.id);
+  applyFractureTitleBadge(panelTitle, title);
   updateProfileDetailSummary();
   renderProfileTitles();
 }
@@ -2250,8 +2587,11 @@ function renderProfileTitles() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `profileTitleChoice titleBackground-${title.background}`;
+    const specialClass = SPECIAL_PROFILE_TITLE_CLASSES[title.id];
+    if (specialClass) button.classList.add(specialClass);
     button.classList.toggle("selected", title.id === selectedId);
     setProfileTitleText(button, title.name);
+    applyFractureTitleBadge(button, title);
     button.addEventListener("click", () => equipProfileTitle(title));
 
     const condition = document.createElement("div");
@@ -2278,7 +2618,12 @@ function updateProfileDetailSummary() {
   rate.textContent = "RATE " + Number(profile.rate || 0).toFixed(1);
   applyRateColor(rate, profile.rate);
   setProfileTitleText(title, profile.title || DEFAULT_PROFILE_TITLE.name);
-  applyProfileTitleAppearance(title, profile.titleBackground || DEFAULT_PROFILE_TITLE.background);
+  applyProfileTitleAppearance(
+    title,
+    profile.titleBackground || DEFAULT_PROFILE_TITLE.background,
+    profile.titleId || profile.title
+  );
+  applyFractureTitleBadge(title, currentSaveData.unlockedTitles?.[profile.titleId]);
   icon.src = partner.icon;
 
   const iconScale = partner.iconScale || 1.0;
@@ -2625,7 +2970,7 @@ document.getElementById("partnerSkillBox").addEventListener("click", () => {
   const partnerId = partnerList[currentPartnerIndex];
   const partner = partners[partnerId];
 
-  if (!partner?.skill) return;
+  if (!partner?.skill || (partnerId === "Lyra" && isLyraSkillLocked())) return;
 
   const nextEnabled = !isPartnerSkillEnabled();
   setPartnerSkillEnabled(nextEnabled);

@@ -3,7 +3,7 @@
     {
       "name": "GLASSBEAT",
       "image": "assets/folders/glassbeat.png",
-      "songs": ["song6","song22","song13","song23", "song24","song4","song7"]
+      "songs": ["song6","song22","song13","song23", "song24","song4","song7","song32","song30","song37"]
     },
     {
       "name": "はじまりの歌",
@@ -19,6 +19,11 @@
     "name": "沈黙の聖歌",
       "image": "assets/folders/chinmoku.png",
       "songs": ["song21","song14","song15","song25","song16","song18","song26","song19","boss3"]
+  },
+  {
+    "name": "湖上の漣",
+      "image": "assets/folders/sazanami.png",
+      "songs": ["song36","song29","song31","song27","song33","song34","song35","boss4"]
   }
   ]
 }

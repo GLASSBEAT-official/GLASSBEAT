@@ -1,0 +1,14 @@
+{
+  "title": "マリスコール",
+  "artist": "-45",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 7.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10.8, "file": "expert.txt" }],
+   "achievementTitles": [
+  {
+    "id": "song34archive",
+    "name": "Malice Call",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }
+]
+}

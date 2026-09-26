@@ -1,0 +1,26 @@
+{
+  "title": "廻凍のゴシック",
+  "artist": "Nanashi no Gothic",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 9.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.1, "file": "expert.txt" },{ "difficulty": "FRACTURE", "level": 14.7, "file": "fracture.txt" }],
+    "achievementTitles": [
+  {
+    "id": "song35achieve",
+    "name": "零下に唄う",
+    "difficulty": ["EXPERT","BASIC"],
+    "condition": "fc"
+  },
+  {
+    "id": "song35achieve2",
+    "name": "Gothic,Thawed.",
+    "difficulty": "FRACTURE",
+    "condition": "fc"
+  },
+  {
+    "id": "song35achieve3",
+    "name": "凍てつく輪廻を超えて",
+    "difficulty": "FRACTURE",
+    "condition": "ap"
+  }
+]
+}

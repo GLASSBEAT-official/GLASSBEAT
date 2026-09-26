@@ -94,6 +94,13 @@
       "storyId": "chapter3_episode13",
       "background": "green",
       "acquisitionText": "ストーリー3-13を読了"
+    },
+    {
+      "id": "story:chapter4-episode11",
+      "name": "変容の湖",
+      "storyId": "chapter4_episode11",
+      "background": "green",
+      "acquisitionText": "ストーリー4-11を読了"
     }
   ],
   "specialTitles": [
@@ -117,6 +124,13 @@
       "condition": "clearWithOneMiss",
       "background": "purple",
       "acquisitionText": "任意の譜面を1ミスでクリア"
+    },
+    {
+      "id": "special:not-an-idle-game",
+      "name": "放置ゲーじゃないよ～",
+      "condition": "allNotesMissed",
+      "background": "purple",
+      "acquisitionText": "任意の譜面ですべてのノーツをMISSしてリザルトに到達"
     },
     {
       "id": "special:tea-time",
@@ -147,6 +161,13 @@
       "acquisitionText": "パートナー「カノン」を用いてbossまたはsong3をプレイ"
     },
     {
+      "id": "special:link-tinkerer",
+      "name": "リンクいじりんちゅ",
+      "condition": "tamperBoss4Link",
+      "background": "purple",
+      "acquisitionText": "リンクを直接編集して特定楽曲へアクセス"
+    },
+    {
       "id": "special:map-complete",
       "name": "MAP COMPLETE",
       "condition": "anyMapComplete",
@@ -166,6 +187,12 @@
     "name": "虚構に棲む者",
     "background": "blue",
     "acquisitionText": "「真と偽の狭間」を50%完成"
+  },
+  {
+    "id": "map:third-title",
+    "name": "Between the Ticks",
+    "background": "blue",
+    "acquisitionText": "「揺蕩う時計塔」を50%完成"
   }
 ]
 }

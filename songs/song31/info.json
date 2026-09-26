@@ -1,0 +1,8 @@
+{
+  "title": "あふぁめーしょん",
+  "artist": "SHUNTA",
+   "background":"background.png",
+   "shardUnlockCost": 75,
+  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.2, "file": "expert.txt" }]
+
+}

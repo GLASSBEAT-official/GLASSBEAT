@@ -1,0 +1,19 @@
+{
+  "title": "TERMINAL VELOCITY",
+  "artist": "AnimAaminA",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 7.6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.5, "file": "expert.txt" }],
+"achievementTitles": [
+  {
+    "id": "song33achieve2",
+    "name": "五線譜に刻む航跡",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "play"
+  },
+  {
+    "id": "song33achieve",
+    "name": "Unbounded Velocity",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }]
+}

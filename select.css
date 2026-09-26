@@ -218,6 +218,175 @@ body {
   border-left: 4px solid cyan;
 }
 
+#boss4PuzzleDirective {
+  flex: 0 0 auto;
+  min-height: 54px;
+  padding: 11px 14px 13px 20px;
+  box-sizing: border-box;
+  color: #c66cff;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.55;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 7px rgba(183, 68, 255, 0.9), 0 0 16px rgba(118, 34, 210, 0.7);
+  transition: opacity 650ms ease, transform 650ms ease, filter 650ms ease;
+}
+
+#boss4PuzzleDirective.awaitingIntro {
+  opacity: 0;
+  transform: translateY(7px);
+  filter: blur(4px);
+}
+
+.songItem[data-song-id="song35"]::after {
+  content: "";
+  position: absolute;
+  left: -48px;
+  bottom: -76px;
+  z-index: 3;
+  width: 200px;
+  height: 170px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle, rgba(255, 58, 110, 0.78) 0%, rgba(156, 58, 255, 0.62) 34%, transparent 72%);
+  filter: blur(7px);
+}
+
+.songItem[data-song-id="song35"].boss4PuzzleAwakeningActive::after {
+  animation: boss4PuzzleCornerGlow 1.8s ease-in-out both;
+}
+
+body.boss4PuzzleAwakeningScreen #selectScreen {
+  animation: boss4PuzzleScreenShake 90ms steps(2, end) infinite;
+}
+
+body.boss4PuzzleDirectiveSwitchShake #selectScreen {
+  animation: boss4PuzzleDirectiveImpact 80ms steps(2, end) 4;
+}
+
+#boss4PuzzleAwakeningParticles {
+  position: fixed;
+  z-index: 260;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+#boss4PuzzleAwakeningParticles::before {
+  content: "";
+  position: absolute;
+  left: -105px;
+  top: -92px;
+  width: 240px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.82) 0%, rgba(225, 154, 255, 0.58) 18%, rgba(178, 61, 255, 0.3) 40%, rgba(255, 42, 92, 0.14) 58%, transparent 76%);
+  filter: blur(10px);
+  animation: boss4PuzzleOuterGlow 1.8s ease-in-out both;
+}
+
+#boss4PuzzleAwakeningParticles span {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c35cff;
+  box-shadow: 0 0 7px #d881ff, 0 0 15px rgba(154, 45, 255, 0.9);
+  animation: boss4PuzzleParticleBurst var(--puzzle-particle-duration) ease-out var(--puzzle-particle-delay) both;
+}
+
+#boss4PuzzleAwakeningParticles span.red {
+  background: #ff3d66;
+  box-shadow: 0 0 7px #ff7895, 0 0 16px rgba(255, 35, 86, 0.9);
+}
+
+.boss4PuzzleAwakeningRay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: var(--puzzle-ray-length);
+  height: 3px;
+  transform-origin: 0 50%;
+  opacity: 0;
+  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.82) 30%, rgba(231, 202, 255, 0.34) 68%, transparent);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.78), 0 0 20px rgba(206, 129, 255, 0.42);
+  animation: boss4PuzzleRaySpread 1.45s ease-out var(--puzzle-ray-delay) both;
+}
+
+@keyframes boss4PuzzleCornerGlow {
+  0% { opacity: 0; transform: scale(0.55); }
+  28%, 68% { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+@keyframes boss4PuzzleOuterGlow {
+  0% { opacity: 0; transform: scale(0.45); }
+  25%, 70% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 0; transform: scale(1.38); }
+}
+
+@keyframes boss4PuzzleParticleBurst {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.4); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--puzzle-particle-x), var(--puzzle-particle-y)) scale(1.15); }
+}
+
+@keyframes boss4PuzzleRaySpread {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--puzzle-ray-angle)) scaleX(0.02);
+  }
+  24%, 62% {
+    opacity: var(--puzzle-ray-opacity);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--puzzle-ray-angle)) scaleX(1);
+  }
+}
+
+@keyframes boss4PuzzleScreenShake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-1px, -1px); }
+  100% { transform: translate(1px, 2px); }
+}
+
+@keyframes boss4PuzzleDirectiveImpact {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-4px, 2px); }
+  50% { transform: translate(3px, -2px); }
+  75% { transform: translate(-2px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+body.boss4PuzzleTransitionActive #selectScreen {
+  pointer-events: none;
+}
+
+#boss4PuzzleDirective.completing {
+  opacity: 0;
+  transform: translateY(-5px);
+  filter: blur(5px);
+}
+
+.boss4DirectiveCharacter {
+  display: inline-block;
+  animation: boss4DirectiveClatter var(--directive-duration) steps(2, end) var(--directive-delay) infinite;
+}
+
+@keyframes boss4DirectiveClatter {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-0.7px, 0.4px) rotate(-0.35deg); }
+  50% { transform: translate(0.6px, -0.5px) rotate(0.3deg); }
+  75% { transform: translate(-0.3px, -0.2px) rotate(-0.2deg); }
+  100% { transform: translate(0.4px, 0.5px) rotate(0.25deg); }
+}
+
 .songItemBg {
   position: absolute;
   top: 0;
@@ -497,6 +666,16 @@ display: flex;
 #difficultyButtons {
   display: flex;
   gap: 20px; /* 10px → 20px、お好みで調整 */
+}
+
+/* ジャケットより下の情報・操作ブロックをわずかに下げる */
+#detailInfo,
+#difficultyButtons {
+  transform: translateY(6px);
+}
+
+#playButtonArea {
+  top: 6px;
 }
 
 .diffBtn {
@@ -1807,6 +1986,57 @@ body.mapSelectMode #unlockMapButton:hover::before {
   border-color: rgba(255, 112, 124, 0.52);
 }
 
+#profileTitle.titleSpecial-crimson,
+#profileDetailTitleBadge.titleSpecial-crimson,
+#titleUnlockToastBadge.titleSpecial-crimson,
+.profileTitleChoice.titleSpecial-crimson {
+  color: #fff1dc;
+  border-color: rgba(255, 151, 105, .82);
+  background: linear-gradient(135deg, rgba(70, 8, 13, .96), rgba(164, 26, 25, .72));
+  box-shadow: inset 0 0 0 1px rgba(255, 212, 142, .18), 0 0 8px rgba(218, 47, 30, .22);
+  text-shadow: 0 1px 3px rgba(90, 0, 0, .9);
+}
+
+#profileTitle.titleSpecial-sakura,
+#profileDetailTitleBadge.titleSpecial-sakura,
+#titleUnlockToastBadge.titleSpecial-sakura,
+.profileTitleChoice.titleSpecial-sakura {
+  color: #fff5fb;
+  border-color: rgba(255, 183, 218, .8);
+  background: linear-gradient(135deg, rgba(52, 31, 76, .96), rgba(171, 73, 125, .68));
+  box-shadow: inset 0 0 0 1px rgba(255, 226, 238, .2), 0 0 8px rgba(236, 113, 174, .18);
+  text-shadow: 0 1px 3px rgba(70, 24, 67, .9);
+}
+
+#profileTitle.titleSpecial-realm,
+#profileDetailTitleBadge.titleSpecial-realm,
+#titleUnlockToastBadge.titleSpecial-realm,
+.profileTitleChoice.titleSpecial-realm {
+  color: #f4fbff;
+  border-color: rgba(174, 212, 235, .88);
+  background: linear-gradient(135deg, rgba(8, 13, 22, .98), rgba(41, 52, 76, .9) 58%, rgba(70, 45, 91, .84));
+  box-shadow: inset 0 0 0 1px rgba(218, 237, 255, .22), 0 0 8px rgba(132, 160, 215, .2);
+  text-shadow: 1px 0 rgba(132, 219, 255, .42), -1px 0 rgba(236, 145, 255, .3);
+}
+
+.titleFractureBadgeMark {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 4px;
+  background: #ff8edb;
+  clip-path: polygon(
+    50% 0%,
+    61% 37%,
+    100% 50%,
+    61% 63%,
+    50% 100%,
+    39% 63%,
+    0% 50%,
+    39% 37%
+  );
+}
+
 .scoreboardCard {
   --card-accent: #66ddff;
   --card-deep: rgba(24, 104, 126, 0.92);
@@ -1976,6 +2206,7 @@ body.mapSelectMode #unlockMapButton:hover::before {
   min-width: 0;
   overflow: hidden;
   color: white;
+  -webkit-text-fill-color: currentColor;
   font-family: "M PLUS 1", sans-serif;
   font-size: clamp(11px, 0.92vw, 14px);
   font-weight: 500;
@@ -1987,6 +2218,7 @@ body.mapSelectMode #unlockMapButton:hover::before {
 .scoreboardCardRank {
   flex-shrink: 0;
   color: var(--card-accent);
+  -webkit-text-fill-color: currentColor;
   font-size: clamp(16px, 1.25vw, 20px);
   font-weight: 700;
 }
@@ -2000,6 +2232,89 @@ body.mapSelectMode #unlockMapButton:hover::before {
 
 .scoreboardCard.empty::before {
   display: none;
+}
+
+.scoreboardCard.boss4PuzzleYugamiCard {
+  display: block;
+  padding: 0;
+  cursor: pointer;
+  border-color: #c849ff;
+  background: #08000e;
+  box-shadow:
+    0 0 9px rgba(198, 55, 255, 0.72),
+    0 0 22px rgba(134, 0, 183, 0.38);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 13px 100%, 0 calc(100% - 13px));
+  animation: boss4YugamiPanelPulse 1.8s ease-in-out infinite;
+}
+
+.scoreboardCard.boss4PuzzleYugamiCard::before {
+  background: #d56aff;
+}
+
+.boss4PuzzleYugamiImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scoreboardCard.boss4PuzzleYugamiCard:hover,
+.scoreboardCard.boss4PuzzleYugamiCard:focus-visible {
+  filter: brightness(1.18);
+  outline: 2px solid rgba(239, 189, 255, 0.92);
+  outline-offset: -3px;
+}
+
+@keyframes boss4YugamiPanelPulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(198, 55, 255, 0.62), 0 0 18px rgba(134, 0, 183, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(222, 105, 255, 0.88), 0 0 30px rgba(155, 0, 206, 0.52);
+  }
+}
+
+#boss4YugamiSmoke {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  overflow: hidden;
+  pointer-events: all;
+  background: transparent;
+  transition: background-color 800ms ease 420ms;
+}
+
+#boss4YugamiSmoke.active {
+  background: #000;
+}
+
+#boss4YugamiSmoke span {
+  position: absolute;
+  width: var(--smoke-size);
+  height: var(--smoke-size);
+  margin: calc(var(--smoke-size) * -0.5) 0 0 calc(var(--smoke-size) * -0.5);
+  border-radius: 44% 56% 51% 49%;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 42% 38%, rgba(42, 35, 48, 0.94) 0%, rgba(10, 6, 13, 0.98) 48%, #000 72%);
+  filter: blur(13px);
+  transform: translate(0, 0) scale(0.12) rotate(0deg);
+  animation: boss4YugamiSmokeSpread var(--smoke-duration) cubic-bezier(0.2, 0.7, 0.2, 1)
+    var(--smoke-delay) forwards;
+}
+
+@keyframes boss4YugamiSmokeSpread {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.12) rotate(0deg);
+  }
+  18% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 1;
+    transform: translate(var(--smoke-x), var(--smoke-y)) scale(1.75) rotate(35deg);
+  }
 }
 
 #partnerIconButton {
@@ -2418,6 +2733,54 @@ body.mapSelectMode #unlockMapButton:hover::before {
   border: 1px solid #444;
   line-height: 1.6;
    pointer-events: none;
+}
+
+#partnerSkillDescription {
+  white-space: pre-line;
+}
+
+#musicVolumeSetting {
+  margin-top: 24px;
+}
+
+#musicVolumeLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#noteThicknessLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#musicVolumeValue {
+  min-width: 3ch;
+  color: cyan;
+  font-size: 13px;
+  text-align: right;
+}
+
+#noteThicknessValue {
+  min-width: 3ch;
+  color: cyan;
+  font-size: 13px;
+  text-align: right;
+}
+
+#musicVolumeInput {
+  width: 100%;
+  margin: 2px 0 0;
+  accent-color: cyan;
+  cursor: pointer;
+}
+
+#noteThicknessInput {
+  width: 100%;
+  margin: 2px 0 0;
+  accent-color: cyan;
+  cursor: pointer;
 }
 
 #unlockText.challengePrompt {

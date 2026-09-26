@@ -80,6 +80,47 @@ body {
   opacity: 1;
 }
 
+#chaosAwakensText {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 110;
+  color: #c56cff;
+  font: 700 clamp(27px, 4.2vw, 58px) "Orbitron", sans-serif;
+  letter-spacing: .22em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(.94);
+  filter: blur(5px);
+  text-shadow:
+    0 0 10px rgba(198, 88, 255, .9),
+    0 0 30px rgba(132, 34, 255, .72),
+    0 0 68px rgba(93, 12, 190, .55);
+  transition:
+    opacity .8s ease,
+    transform 1.1s cubic-bezier(.2,.75,.25,1),
+    filter .8s ease;
+}
+
+#chaosAwakensText.visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translate(-50%, -50%) scale(1);
+}
+
+#chaosAwakensText.visible.leaving {
+  opacity: 0;
+  filter: blur(3px);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+body.chaosAwakensIntro #titleScreen,
+body.chaosAwakensIntro #menuButton {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 #boss3DifficultySelector {
   position: fixed;
   left: 50%;

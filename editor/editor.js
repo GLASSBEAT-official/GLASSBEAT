@@ -17,6 +17,7 @@ const damageLaneWidth = laneWidth / 2;
 // ---- 迥ｶ諷・----
 let notes = [];
 let tempoChanges = [];
+let stopEvents = [];
 let selectedNoteType = "tap";
 let selectedDualLanes = [];
 let isDragging = false;
@@ -30,10 +31,17 @@ let movingNotePart = null;
 let audioContext = null;
 let audioBuffer = null;
 let audioSource = null;
+let noteSoundBuffer = null;
+let noteSoundLoadPromise = null;
+let dualSoundBuffer = null;
+let dualSoundLoadPromise = null;
+const scheduledNoteSoundSources = new Set();
+const editorNoteSoundGain = 1.3;
 let isPlaying = false;
 let playStartTime = 0;
 let playStartMs = 0;
 let animationFrameId = null;
+let playbackEndTimer = null;
 
 // ---- DOM ----
 const editorCanvas = document.getElementById("editorCanvas");
@@ -61,8 +69,11 @@ const zoomInButton = document.getElementById("zoomInButton");
 const zoomValue = document.getElementById("zoomValue");
 const undoButton = document.getElementById("undoButton");
 const copyStartMeasureInput = document.getElementById("copyStartMeasure");
+const copyStartDivisionInput = document.getElementById("copyStartDivision");
 const copyEndMeasureInput = document.getElementById("copyEndMeasure");
+const copyEndDivisionInput = document.getElementById("copyEndDivision");
 const copyTargetMeasureInput = document.getElementById("copyTargetMeasure");
+const copyTargetDivisionInput = document.getElementById("copyTargetDivision");
 const copyMeasuresButton = document.getElementById("copyMeasuresButton");
 const mirrorCopyMeasuresButton = document.getElementById("mirrorCopyMeasuresButton");
 const copyPasteMessage = document.getElementById("copyPasteMessage");
@@ -293,7 +304,8 @@ function getCurrentProjectData() {
     totalMeasures,
     offsetMs,
     notes,
-    tempoChanges
+    tempoChanges,
+    stopEvents
   };
 }
 
@@ -354,14 +366,38 @@ function undoLastEdit() {
 
 undoButton.addEventListener("click", undoLastEdit);
 
-function shiftPositionByMeasures(position, measureDelta) {
-  return makePosition(position.num + measureDelta * position.den, position.den);
+function shiftPosition(position, offset) {
+  return makePosition(
+    position.num * offset.den + offset.num * position.den,
+    position.den * offset.den
+  );
+}
+
+function subtractPositions(a, b) {
+  return makePosition(
+    a.num * b.den - b.num * a.den,
+    a.den * b.den
+  );
+}
+
+function parseCopyPosition(measureInput, divisionInput) {
+  const measure = Number(measureInput.value);
+  const match = String(divisionInput.value || "").trim().match(/^(\d+)\s*\/\s*(\d+)$/);
+  if (!Number.isInteger(measure) || measure < 1 || !match) return null;
+
+  const numerator = Number(match[1]);
+  const denominator = Number(match[2]);
+  if (denominator < 1 || numerator < 0 || numerator > denominator) return null;
+
+  const division = makePosition(numerator, denominator);
+  divisionInput.value = `${division.num}/${division.den}`;
+  return makePosition((measure - 1) * division.den + division.num, division.den);
 }
 
 function mirrorCopiedNote(note) {
   if (note.type === "dual") {
     note.lanes = note.lanes.map(lane => laneCount - 1 - lane).sort((a, b) => a - b);
-  } else if (note.type === "damageDiamond" || note.type === "damageCircle") {
+  } else if (note.type === "damageDiamond" || note.type === "damageCircle" || note.type === "♪" || note.type === "♬") {
     const sourceDamageLane = note.damageLane ?? Math.max(
       0,
       Math.min(damageLaneCount - 1, Number(note.lane || 0) * 2 + 1)
@@ -377,17 +413,17 @@ function mirrorCopiedNote(note) {
   }
 }
 
-function copyNoteWithMeasureShift(note, measureDelta, mirrorHorizontally = false) {
+function copyNoteWithPositionShift(note, positionOffset, mirrorHorizontally = false) {
   const copiedNote = JSON.parse(JSON.stringify(note));
 
   if (copiedNote.type === "damageLong") {
     copiedNote.points.forEach(point => {
-      point.position = shiftPositionByMeasures(point.position, measureDelta);
+      point.position = shiftPosition(point.position, positionOffset);
     });
   } else {
-    copiedNote.position = shiftPositionByMeasures(copiedNote.position, measureDelta);
+    copiedNote.position = shiftPosition(copiedNote.position, positionOffset);
     if (copiedNote.type === "long") {
-      copiedNote.endPosition = shiftPositionByMeasures(copiedNote.endPosition, measureDelta);
+      copiedNote.endPosition = shiftPosition(copiedNote.endPosition, positionOffset);
     }
   }
 
@@ -408,24 +444,22 @@ function getNoteLatestPosition(note) {
 }
 
 function copyMeasureRange({ mirrorHorizontally = false } = {}) {
-  const startMeasure = Number(copyStartMeasureInput.value);
-  const endMeasure = Number(copyEndMeasureInput.value);
-  const targetMeasure = Number(copyTargetMeasureInput.value);
+  const rangeStartPosition = parseCopyPosition(copyStartMeasureInput, copyStartDivisionInput);
+  const rangeEndPosition = parseCopyPosition(copyEndMeasureInput, copyEndDivisionInput);
+  const targetStartPosition = parseCopyPosition(copyTargetMeasureInput, copyTargetDivisionInput);
 
   if (
-    !Number.isInteger(startMeasure) ||
-    !Number.isInteger(endMeasure) ||
-    !Number.isInteger(targetMeasure) ||
-    startMeasure < 1 ||
-    endMeasure < startMeasure ||
-    targetMeasure < 1
+    !rangeStartPosition ||
+    !rangeEndPosition ||
+    !targetStartPosition ||
+    comparePosition(rangeEndPosition, rangeStartPosition) <= 0
   ) {
-    copyPasteMessage.textContent = "小節番号を確認してください";
+    copyPasteMessage.textContent = "小節番号と位置（0/1〜1/1）を確認してください";
     return;
   }
 
-  const rangeStart = startMeasure - 1;
-  const rangeEnd = endMeasure;
+  const rangeStart = positionToNumber(rangeStartPosition);
+  const rangeEnd = positionToNumber(rangeEndPosition);
   const sourceNotes = notes.filter(note => {
     const startPosition = positionToNumber(getNoteStartPosition(note));
     return startPosition >= rangeStart && startPosition < rangeEnd;
@@ -437,12 +471,22 @@ function copyMeasureRange({ mirrorHorizontally = false } = {}) {
   }
 
   const viewportAnchor = captureEditorViewport();
-  const measureDelta = targetMeasure - startMeasure;
+  const positionOffset = subtractPositions(targetStartPosition, rangeStartPosition);
   const copiedNotes = sourceNotes.map(note =>
-    copyNoteWithMeasureShift(note, measureDelta, mirrorHorizontally)
+    copyNoteWithPositionShift(note, positionOffset, mirrorHorizontally)
   );
 
+  const copiedRangeLength = subtractPositions(rangeEndPosition, rangeStartPosition);
+  const targetEndPosition = shiftPosition(targetStartPosition, copiedRangeLength);
+  const targetStart = positionToNumber(targetStartPosition);
+  const targetEnd = positionToNumber(targetEndPosition);
+  const notesToReplace = new Set(notes.filter(note => {
+    const startPosition = positionToNumber(getNoteStartPosition(note));
+    return startPosition >= targetStart && startPosition < targetEnd;
+  }));
+
   pushUndoState();
+  notes = notes.filter(note => !notesToReplace.has(note));
   notes.push(...copiedNotes);
 
   const latestCopiedPosition = Math.max(
@@ -460,8 +504,10 @@ function copyMeasureRange({ mirrorHorizontally = false } = {}) {
 
   renderCanvas();
   restoreEditorViewport(viewportAnchor);
+  const replacedText = notesToReplace.size > 0 ? `（既存${notesToReplace.size}ノーツを削除）` : "";
   copyPasteMessage.textContent = copiedNotes.length +
-    (mirrorHorizontally ? "ノーツを左右反転してコピーしました" : "ノーツをコピーしました");
+    (mirrorHorizontally ? "ノーツを左右反転してコピーしました" : "ノーツをコピーしました") +
+    replacedText;
 }
 
 copyMeasuresButton.addEventListener("click", () => copyMeasureRange());
@@ -513,6 +559,7 @@ function applyProjectData(data, { preserveViewport = false } = {}) {
   offsetMs = Number(data.offsetMs ?? offsetMs);
   notes = Array.isArray(data.notes) ? data.notes : [];
   tempoChanges = Array.isArray(data.tempoChanges) ? data.tempoChanges : [];
+  stopEvents = Array.isArray(data.stopEvents) ? data.stopEvents : [];
 
   bpmInput.value = BPM;
   timesigInput.value = timesig;
@@ -521,6 +568,7 @@ function applyProjectData(data, { preserveViewport = false } = {}) {
   offsetInput.value = offsetMs;
 
   renderTempoChangeList();
+  renderStopEventList();
   renderCanvas();
   restoreEditorViewport(viewportAnchor);
 }
@@ -562,6 +610,7 @@ function importChartText(text) {
 
   const importedNotes = [];
   const importedTempoChanges = [];
+  const importedStopEvents = [];
 
   let importedBPM = BPM;
   let importedTimesig = timesig;
@@ -612,6 +661,27 @@ function importChartText(text) {
       continue;
     }
 
+    if (parts[0] === "♪" || parts[0] === "♬") {
+      const x = Number(parts[3]);
+      importedNotes.push({
+        type: parts[0],
+        damageLane: Math.max(0, Math.min(damageLaneCount - 1, Math.floor(x * damageLaneCount))),
+        position: measureDivisionToPosition(parts[1], parts[2]),
+        size: Number(parts[4] || (parts[0] === "♬" ? 48 : 42))
+      });
+      continue;
+    }
+
+    if (line.startsWith("@stop")) {
+      const parts = line.split(",");
+      importedStopEvents.push({
+        measure: Number(parts[1]),
+        division: normalizeTempoDivision(parts[2]),
+        duration: normalizeStopDuration(parts[3] || "1/8")
+      });
+      continue;
+    }
+
     if (parts[0] === "damageLong") {
       const points = [];
       const stride = (parts.length - 1) % 5 === 0 ? 5 : 4;
@@ -635,9 +705,14 @@ function importChartText(text) {
       const laneText = line.match(/\[(.*?)\]/)?.[1];
       if (!laneText) continue;
 
+      const lanes = [...new Set(laneText.split("|").map(Number))]
+        .filter(lane => Number.isInteger(lane) && lane >= 0 && lane < laneCount)
+        .sort((a, b) => a - b);
+      if (lanes.length === 0) continue;
+
       importedNotes.push({
         type: "dual",
-        lanes: laneText.split("|").map(Number),
+        lanes,
         position: measureDivisionToPosition(parts[0], parts[1])
       });
       continue;
@@ -684,6 +759,9 @@ function importChartText(text) {
   for (const tc of importedTempoChanges) {
     maxMeasure = Math.max(maxMeasure, tc.measure);
   }
+  for (const event of importedStopEvents) {
+    maxMeasure = Math.max(maxMeasure, event.measure);
+  }
 
   totalMeasures = Math.max(totalMeasures, maxMeasure + 1);
 
@@ -692,12 +770,14 @@ function importChartText(text) {
   offsetMs = importedOffsetMs;
   notes = importedNotes;
   tempoChanges = importedTempoChanges;
+  stopEvents = importedStopEvents;
 
   BPM = importedBPM;
   timesig = importedTimesig;
   offsetMs = importedOffsetMs;
   notes = importedNotes;
   tempoChanges = importedTempoChanges;
+  stopEvents = importedStopEvents;
 
   bpmInput.value = BPM;
   timesigInput.value = timesig;
@@ -705,6 +785,7 @@ function importChartText(text) {
   offsetInput.value = offsetMs;
 
   renderTempoChangeList();
+  renderStopEventList();
   renderCanvas();
 }
  
@@ -764,6 +845,15 @@ function renderCanvas() {
   finalLine.appendChild(finalLabel);
   editorCanvas.appendChild(finalLine);
 
+  for (const event of stopEvents) {
+    const marker = document.createElement("div");
+    marker.className = "stopEventMarker";
+    marker.style.top = positionToY(measureDivisionToPosition(event.measure, event.division || "0/1")) + "px";
+    marker.style.width = totalWidth + "px";
+    marker.textContent = `STOP ${event.duration || "1/8"}`;
+    editorCanvas.appendChild(marker);
+  }
+
   renderNotes();
   editorCanvas.scrollTop = editorCanvas.scrollHeight;
 }
@@ -775,7 +865,10 @@ function renderNotes() {
   for (let note of notes) {
     drawNote(note);
   }
-  noteCountEl.textContent = "繝弱・繝・焚: " + notes.length;
+  const judgementNoteCount = notes.filter(note =>
+    !["damage", "bullet", "damageDiamond", "damageCircle", "damageLong"].includes(note.type)
+  ).length;
+  noteCountEl.textContent = "繝弱・繝・焚: " + judgementNoteCount;
   updateNoteOverlapWarning();
 }
 
@@ -783,20 +876,24 @@ function getOverlappingNoteLocations() {
   const positionCounts = new Map();
 
   for (const note of notes) {
-    if (note.type !== "tap" && note.type !== "long") continue;
+    if (note.type !== "tap" && note.type !== "long" && note.type !== "dual") continue;
 
     const position = makePosition(note.position.num, note.position.den);
-    const key = `${note.lane}:${position.num}/${position.den}`;
-    const occupied = positionCounts.get(key);
+    const occupiedLanes = note.type === "dual" ? note.lanes : [note.lane];
 
-    if (occupied) {
-      occupied.count++;
-    } else {
-      positionCounts.set(key, {
-        lane: note.lane,
-        position,
-        count: 1
-      });
+    for (const lane of occupiedLanes) {
+      const key = `${lane}:${position.num}/${position.den}`;
+      const occupied = positionCounts.get(key);
+
+      if (occupied) {
+        occupied.count++;
+      } else {
+        positionCounts.set(key, {
+          lane,
+          position,
+          count: 1
+        });
+      }
     }
   }
 
@@ -953,6 +1050,26 @@ function drawNote(note) {
       beginNotePartMove(e, note, "position");
     });
 
+    el.addEventListener("contextmenu", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      removeNote(note);
+    });
+    editorCanvas.appendChild(el);
+    return;
+  }
+
+  if (note.type === "♪" || note.type === "♬") {
+    const el = document.createElement("div");
+    el.classList.add("editorNote", "musicNote");
+    el.textContent = note.type;
+    const damageLane = note.damageLane ?? Math.max(0, Math.min(damageLaneCount - 1, note.lane * 2 + 1));
+    el.style.left = (damageLane * damageLaneWidth + damageLaneWidth / 2 - 22) + "px";
+    el.style.top = (positionToY(note.position) - 24) + "px";
+    el.addEventListener("mousedown", (e) => {
+      if (isNormalNoteToolSelected()) return;
+      beginNotePartMove(e, note, "position");
+    });
     el.addEventListener("contextmenu", (e) => {
       e.stopPropagation();
       e.preventDefault();
@@ -1257,7 +1374,7 @@ function addNote(position, lane, damageLane = null) {
   const measurePosition = positionToNumber(position);
   if (measurePosition < 0 || measurePosition > totalMeasures) return;
 
-  if (selectedNoteType === "damageDiamond" || selectedNoteType === "damageCircle") {
+  if (["damageDiamond", "damageCircle", "♪", "♬"].includes(selectedNoteType)) {
     const targetDamageLane = damageLane ?? lane * 2;
     const existing = notes.find(n =>
       n.type === selectedNoteType &&
@@ -1272,7 +1389,14 @@ function addNote(position, lane, damageLane = null) {
       return;
     }
 
-    notes.push({ type: selectedNoteType, damageLane: targetDamageLane, position: position });
+    notes.push({
+      type: selectedNoteType,
+      damageLane: targetDamageLane,
+      position: position,
+      ...(selectedNoteType === "♪" || selectedNoteType === "♬"
+        ? { size: selectedNoteType === "♬" ? 48 : 42 }
+        : {})
+    });
     renderNotes();
     return;
   }
@@ -1296,16 +1420,20 @@ function addNote(position, lane, damageLane = null) {
   }
 
   if (selectedNoteType === "dual") {
-    if (selectedDualLanes.length < 2) {
-      alert("DUAL繝弱・繝・・2縺､莉･荳翫・繝ｬ繝ｼ繝ｳ繧帝∈謚槭＠縺ｦ縺上□縺輔＞");
+    if (selectedDualLanes.length < 1) {
+      alert("DUALノーツのレーンを1つ以上選択してください");
       return;
     }
 
     pushUndoState();
 
+    const lanes = [...new Set(selectedDualLanes)].sort((a, b) => a - b);
+
     const existing = notes.find(n =>
       n.type === "dual" &&
-      samePosition(n.position, position)
+      samePosition(n.position, position) &&
+      n.lanes.length === lanes.length &&
+      n.lanes.every((existingLane, index) => existingLane === lanes[index])
     );
 
     if (existing) {
@@ -1315,7 +1443,7 @@ function addNote(position, lane, damageLane = null) {
 
     notes.push({
       type: "dual",
-      lanes: [...selectedDualLanes].sort((a, b) => a - b),
+      lanes,
       position: position
     });
     renderNotes();
@@ -1524,14 +1652,15 @@ editorCanvas.addEventListener("contextmenu", (e) => {
 
   const target = notes.find(n => {
     if (n.type === "dual") {
-      return Math.abs(positionToNumber(n.position) - clickValue) <= tolerance;
+      return n.lanes.includes(lane) &&
+        Math.abs(positionToNumber(n.position) - clickValue) <= tolerance;
     }
 
     if (n.type === "damageLong") {
       return findDamageLongAt(x, y) === n;
     }
 
-    if (n.type === "damageDiamond" || n.type === "damageCircle") {
+    if (n.type === "damageDiamond" || n.type === "damageCircle" || n.type === "♪" || n.type === "♬") {
       return (n.damageLane ?? n.lane * 2) === damageLane && Math.abs(positionToNumber(n.position) - clickValue) <= tolerance;
     }
 
@@ -1671,6 +1800,68 @@ function renderTempoChangeList() {
   });
 }
 
+document.getElementById("addStopEvent").addEventListener("click", () => {
+  pushUndoState();
+  stopEvents.push({ measure: 2, division: "0/1", duration: "1/8" });
+  renderStopEventList();
+  renderCanvas();
+});
+
+function renderStopEventList() {
+  const list = document.getElementById("stopEventList");
+  list.innerHTML = "";
+
+  stopEvents.forEach((event, index) => {
+    const item = document.createElement("div");
+    item.className = "stopEventItem";
+
+    const measureInput = document.createElement("input");
+    measureInput.type = "number";
+    measureInput.min = "1";
+    measureInput.value = event.measure;
+    measureInput.setAttribute("aria-label", "停止する小節");
+
+    const divisionInput = document.createElement("input");
+    divisionInput.type = "text";
+    divisionInput.value = event.division || "0/1";
+    divisionInput.setAttribute("aria-label", "小節内位置");
+
+    const durationInput = document.createElement("input");
+    durationInput.type = "text";
+    durationInput.value = event.duration || "1/8";
+    durationInput.setAttribute("aria-label", "停止する長さ");
+
+    const update = () => {
+      const viewportAnchor = captureEditorViewport();
+      pushUndoState();
+      event.measure = Math.max(1, Number(measureInput.value) || 1);
+      event.division = normalizeTempoDivision(divisionInput.value);
+      event.duration = normalizeStopDuration(durationInput.value || "1/8");
+      measureInput.value = event.measure;
+      divisionInput.value = event.division;
+      durationInput.value = event.duration;
+      renderCanvas();
+      restoreEditorViewport(viewportAnchor);
+    };
+    measureInput.addEventListener("change", update);
+    divisionInput.addEventListener("change", update);
+    durationInput.addEventListener("change", update);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "削除";
+    deleteButton.className = "tempoDeleteBtn";
+    deleteButton.addEventListener("click", () => {
+      pushUndoState();
+      stopEvents.splice(index, 1);
+      renderStopEventList();
+      renderCanvas();
+    });
+
+    item.append("小節", measureInput, "位置", divisionInput, "長さ", durationInput, deleteButton);
+    list.appendChild(item);
+  });
+}
+
 // ---- 髻ｳ貅・----
 document.getElementById("audioFile").addEventListener("change", async (e) => {
   const file = e.target.files[0];
@@ -1681,13 +1872,104 @@ document.getElementById("audioFile").addEventListener("change", async (e) => {
   audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
   audioControls.style.display = "flex";
+  loadNoteSound();
+  loadDualSound();
 });
+
+async function loadNoteSound() {
+  if (noteSoundBuffer) return noteSoundBuffer;
+  if (!audioContext) return null;
+  if (noteSoundLoadPromise) return noteSoundLoadPromise;
+
+  noteSoundLoadPromise = fetch("../sounds/editorsound.wav")
+    .then(response => {
+      if (!response.ok) throw new Error(`editorsound.wav: ${response.status}`);
+      return response.arrayBuffer();
+    })
+    .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+    .then(buffer => {
+      noteSoundBuffer = buffer;
+      return buffer;
+    })
+    .catch(error => {
+      console.warn("ノーツ効果音を読み込めませんでした。", error);
+      return null;
+    })
+    .finally(() => {
+      noteSoundLoadPromise = null;
+    });
+
+  return noteSoundLoadPromise;
+}
+
+async function loadDualSound() {
+  if (dualSoundBuffer) return dualSoundBuffer;
+  if (!audioContext) return null;
+  if (dualSoundLoadPromise) return dualSoundLoadPromise;
+
+  dualSoundLoadPromise = fetch("../sounds/dualsound.mp3")
+    .then(response => {
+      if (!response.ok) throw new Error(`dualsound.mp3: ${response.status}`);
+      return response.arrayBuffer();
+    })
+    .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+    .then(buffer => {
+      dualSoundBuffer = buffer;
+      return buffer;
+    })
+    .catch(error => {
+      console.warn("DUALノーツ効果音を読み込めませんでした。", error);
+      return null;
+    })
+    .finally(() => {
+      dualSoundLoadPromise = null;
+    });
+
+  return dualSoundLoadPromise;
+}
+
+function scheduleNoteSounds(startMusicMs, chartStartContextTime) {
+  if (!audioContext) return;
+
+  for (const note of notes) {
+    if (note.type === "damageDiamond" || note.type === "damageCircle" || note.type === "damageLong") {
+      continue;
+    }
+
+    const noteMusicMs = getMusicMsFromPosition(getNoteStartPosition(note));
+    if (noteMusicMs < startMusicMs - 0.5) continue;
+
+    const soundBuffer = note.type === "dual" ? dualSoundBuffer : noteSoundBuffer;
+    if (!soundBuffer) continue;
+
+    const source = audioContext.createBufferSource();
+    const gain = audioContext.createGain();
+    source.buffer = soundBuffer;
+    gain.gain.value = editorNoteSoundGain;
+    source.connect(gain);
+    gain.connect(audioContext.destination);
+    scheduledNoteSoundSources.add(source);
+    source.onended = () => scheduledNoteSoundSources.delete(source);
+
+    const delaySec = Math.max(0, noteMusicMs - startMusicMs) / 1000;
+    source.start(chartStartContextTime + delaySec);
+  }
+}
 
 function normalizeTempoDivision(value) {
   const match = String(value || "0/1").trim().match(/^(\d+)\s*\/\s*(\d+)$/);
   if (!match) return "0/1";
   const denominator = Math.max(1, Number(match[2]));
   const numerator = Math.max(0, Math.min(denominator - 1, Number(match[1])));
+  const divisor = gcd(numerator, denominator);
+  return `${numerator / divisor}/${denominator / divisor}`;
+}
+
+function normalizeStopDuration(value) {
+  const match = String(value || "1/8").trim().match(/^(\d+)\s*\/\s*(\d+)$/);
+  if (!match) return "1/8";
+  const numerator = Math.max(1, Number(match[1]) || 1);
+  const denominator = Math.max(1, Number(match[2]) || 1);
   const divisor = gcd(numerator, denominator);
   return `${numerator / divisor}/${denominator / divisor}`;
 }
@@ -1796,9 +2078,11 @@ function msToTime(ms) {
 }
 
 // 蜀咲函
-playButton.addEventListener("click", () => {
+playButton.addEventListener("click", async () => {
   if (!audioBuffer) return;
   if (isPlaying) stopPlayback();
+
+  await Promise.all([loadNoteSound(), loadDualSound()]);
 
   isPlaying = true;
 
@@ -1806,23 +2090,35 @@ playButton.addEventListener("click", () => {
   const currentPosition = yToPosition(judgeYInCanvas);
 
   const startMusicMs = getMusicMsFromPosition(currentPosition);
-  const startAudioMs = startMusicMs + offsetMs;
+  const playbackOffsetMs = Number(offsetMs) || 0;
+  const positiveOffsetDelayMs = Math.max(0, playbackOffsetMs);
+  const startAudioMs = playbackOffsetMs > 0 ? startMusicMs : startMusicMs + playbackOffsetMs;
   const startSec = Math.max(0, startAudioMs / 1000);
   const audioDelaySec = Math.max(0, -startAudioMs / 1000);
 
   audioSource = audioContext.createBufferSource();
   audioSource.buffer = audioBuffer;
   audioSource.connect(audioContext.destination);
-  // 負のオフセットで音源位置が0秒より前になる場合は、譜面を先に進めて
-  // 必要な時間だけ待ってから音源の0秒地点を再生する。
+  // 負のオフセットでは譜面を先行させ、必要な時間だけ音源開始を待つ。
+  // 正のオフセットでは音源を先へシークせず、譜面スクロールの開始を待つ。
   audioSource.start(audioContext.currentTime + audioDelaySec, startSec);
 
   audioSource.onended = () => {
-    if (isPlaying) stopPlayback();
+    if (!isPlaying) return;
+
+    if (positiveOffsetDelayMs > 0) {
+      playbackEndTimer = setTimeout(stopPlayback, positiveOffsetDelayMs);
+    } else {
+      stopPlayback();
+    }
   };
 
   playStartTime = audioContext.currentTime;
   playStartMs = startAudioMs;
+  scheduleNoteSounds(
+    startMusicMs,
+    playStartTime + positiveOffsetDelayMs / 1000
+  );
 
   playButton.textContent = "蜀咲函荳ｭ";
   playButton.disabled = true;
@@ -1835,7 +2131,9 @@ playButton.addEventListener("click", () => {
 
     currentTimeEl.textContent = msToTime(Math.max(0, currentAudioMs));
 
-    const currentMusicMs = currentAudioMs - offsetMs;
+    const currentMusicMs = playbackOffsetMs > 0
+      ? startMusicMs + Math.max(0, elapsed - positiveOffsetDelayMs)
+      : currentAudioMs - playbackOffsetMs;
     const currentPosition = getPositionFromMusicMs(currentMusicMs);
     const noteY = positionToY(currentPosition);
     const targetScrollTop = noteY - editorCanvas.clientHeight + 60;
@@ -1863,9 +2161,22 @@ function stopPlayback() {
     audioSource = null;
   }
 
+  for (const source of [...scheduledNoteSoundSources]) {
+    try {
+      source.onended = null;
+      source.stop();
+    } catch (e) {}
+  }
+  scheduledNoteSoundSources.clear();
+
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
+  }
+
+  if (playbackEndTimer) {
+    clearTimeout(playbackEndTimer);
+    playbackEndTimer = null;
   }
 
   playButton.textContent = "笆ｶ 蜀咲函";
@@ -1881,6 +2192,9 @@ document.getElementById("exportButton").addEventListener("click", () => {
   const sortedTempoChanges = [...tempoChanges].sort((a, b) =>
     getTempoChangePosition(a) - getTempoChangePosition(b)
   );
+  const sortedStopEvents = [...stopEvents].sort((a, b) =>
+    getTempoChangePosition(a) - getTempoChangePosition(b)
+  );
 
   let lines = [];
   lines.push(`@bpm,${BPM}`);
@@ -1889,6 +2203,9 @@ document.getElementById("exportButton").addEventListener("click", () => {
 
   for (let tc of sortedTempoChanges) {
     lines.push(`@tempo,${tc.measure},${normalizeTempoDivision(tc.division)},${tc.bpm},${tc.timesig}`);
+  }
+  for (const event of sortedStopEvents) {
+    lines.push(`@stop,${event.measure},${normalizeTempoDivision(event.division)},${normalizeStopDuration(event.duration || "1/8")}`);
   }
 
   lines.push("");
@@ -1916,6 +2233,13 @@ document.getElementById("exportButton").addEventListener("click", () => {
       const damageLane = note.damageLane ?? Math.max(0, Math.min(damageLaneCount - 1, note.lane * 2 + 1));
       const type = note.type === "damageDiamond" ? "damageDiamond" : "damageCircle";
       lines.push(`${type},${measure},${numerator}/${denominator},${getDamageX(damageLane)},42`);
+    }
+
+    if (note.type === "♪" || note.type === "♬") {
+      const { measure, numerator, denominator } = positionToMeasureDivision(note.position);
+      const damageLane = note.damageLane ?? Math.max(0, Math.min(damageLaneCount - 1, note.lane * 2 + 1));
+      const size = Number(note.size || (note.type === "♬" ? 48 : 42));
+      lines.push(`${note.type},${measure},${numerator}/${denominator},${getDamageX(damageLane)},${size}`);
     }
 
     if (note.type === "damageLong") {

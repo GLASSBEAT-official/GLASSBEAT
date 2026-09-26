@@ -1,0 +1,7 @@
+{
+  "title": "森閑剣戟",
+  "artist": "-misogi-",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 4,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.5, "file": "expert.txt" }]
+
+}

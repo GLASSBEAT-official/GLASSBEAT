@@ -7,6 +7,80 @@ body * {
   -webkit-user-select: none;
 }
 
+#boss4AccessDenied {
+  position: fixed;
+  inset: 0;
+  z-index: 30000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 4vw, 64px);
+  padding: 5vh 6vw 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse at 50% 58%, rgba(78, 25, 105, 0.3), transparent 58%),
+    #08060b;
+  transition: opacity 420ms ease, visibility 0s linear 420ms;
+}
+
+#boss4AccessDenied.active {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 420ms ease;
+}
+
+#boss4AccessDenied.leaving {
+  opacity: 0;
+}
+
+#boss4AccessDeniedCharacter {
+  align-self: flex-end;
+  width: min(39vw, 470px);
+  max-height: 94vh;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(0 0 28px rgba(151, 70, 196, 0.28));
+  transform: translateY(20px);
+}
+
+#boss4AccessDeniedMessage {
+  max-width: min(48vw, 650px);
+  color: #f5eaff;
+  font-size: clamp(22px, 3vw, 42px);
+  font-weight: 700;
+  line-height: 1.8;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-shadow: 0 0 10px rgba(230, 190, 255, 0.85), 0 0 28px rgba(142, 47, 195, 0.75);
+}
+
+body.boss4AccessDeniedActive > *:not(#boss4AccessDenied):not(script) {
+  pointer-events: none !important;
+}
+
+@media (max-width: 720px) {
+  #boss4AccessDenied {
+    flex-direction: column-reverse;
+    justify-content: flex-start;
+    gap: 8px;
+    padding-top: 11vh;
+  }
+
+  #boss4AccessDeniedCharacter {
+    width: min(72vw, 400px);
+    max-height: 62vh;
+  }
+
+  #boss4AccessDeniedMessage {
+    max-width: 90vw;
+    text-align: center;
+  }
+}
+
 /* プレイ中のプロフィールを位置を変えずにリザルトでも継続表示する。 */
 body.resultProfileVisible #playProfileArea,
 body.resultProfileVisible.boss3Background2HudCovered #playProfileArea {
@@ -16,6 +90,354 @@ body.resultProfileVisible.boss3Background2HudCovered #playProfileArea {
 
 body.resultProfileVisible #playSkillLine {
   display: none !important;
+}
+
+body.boss4PuzzleTrialResultCorrupted #resultScreen,
+body.boss4PuzzleTrialResultCorrupted #playProfileArea {
+  font-family: 'Orbitron', monospace;
+  text-shadow: 1px 0 rgba(255, 47, 210, 0.52), -1px 0 rgba(70, 214, 255, 0.42);
+}
+
+body.song35FinalTrialWarp,
+body.boss4LateWarp {
+  transform-origin: 50% 50%;
+  transform: scale(var(--song35-final-warp-scale, 1));
+  filter:
+    hue-rotate(var(--song35-final-warp-hue, 0deg))
+    contrast(var(--song35-final-warp-contrast, 1))
+    saturate(var(--song35-final-warp-saturation, 1));
+  will-change: transform, filter;
+  transition: transform 90ms linear, filter 90ms linear;
+}
+
+body.song35FinalTrialWarp.song35FinalTrialWarpFading,
+body.boss4LateWarp.song35FinalTrialWarpFading {
+  transform: scale(1);
+  filter: none;
+  transition: transform 900ms ease-out, filter 900ms ease-out;
+}
+
+body.song35FinalTrialWarp.song35FinalTrialWarpFading #song35FinalTrialWarpOverlay,
+body.boss4LateWarp.song35FinalTrialWarpFading #song35FinalTrialWarpOverlay {
+  opacity: 0;
+  transition: opacity 900ms ease-out;
+}
+
+body.song35FinalTrialCountdown #combo {
+  display: block !important;
+  top: 336px;
+  color: #ff334f !important;
+  font-size: 42px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.09em;
+  text-shadow: 0 0 7px rgba(255, 40, 67, 0.95), 0 0 19px rgba(190, 0, 38, 0.72);
+  animation: none !important;
+}
+
+body.song35FinalTrialCountdown #combo.song35CountdownPulse30 {
+  animation: song35CountdownPulse30 1.3s ease-out both !important;
+}
+
+body.song35FinalTrialCountdown #combo.song35CountdownPulse10 {
+  animation: song35CountdownPulse10 1.7s ease-out both !important;
+}
+
+@keyframes song35CountdownPulse30 {
+  0% {
+    color: #ff334f;
+    transform: translateX(-50%) scale(1);
+    text-shadow: 0 0 7px rgba(255, 40, 67, 0.95), 0 0 19px rgba(190, 0, 38, 0.72);
+  }
+  20% {
+    color: #fff1f4;
+    transform: translateX(-50%) scale(1.2);
+    text-shadow: 0 0 12px #fff, 0 0 28px #ff294d, 0 0 62px rgba(255, 0, 48, 0.95);
+  }
+  52% {
+    color: #ff6177;
+    transform: translateX(-50%) scale(1.06);
+    text-shadow: 0 0 12px #ff536d, 0 0 38px rgba(255, 0, 45, 0.86);
+  }
+  100% {
+    color: #ff334f;
+    transform: translateX(-50%) scale(1);
+    text-shadow: 0 0 7px rgba(255, 40, 67, 0.95), 0 0 19px rgba(190, 0, 38, 0.72);
+  }
+}
+
+@keyframes song35CountdownPulse10 {
+  0%, 100% {
+    color: #ff334f;
+    transform: translateX(-50%) scale(1);
+    text-shadow: 0 0 8px rgba(255, 40, 67, 1), 0 0 22px rgba(190, 0, 38, 0.8);
+  }
+  16% {
+    color: #fff;
+    transform: translateX(-50%) scale(1.3);
+    text-shadow: 0 0 15px #fff, 0 0 38px #ff183d, 0 0 86px #e60032;
+  }
+  38% {
+    color: #ff4a66;
+    transform: translateX(-50%) scale(1.08);
+    text-shadow: 0 0 12px #ff3858, 0 0 46px rgba(255, 0, 43, 0.96);
+  }
+  58% {
+    color: #fff5f7;
+    transform: translateX(-50%) scale(1.22);
+    text-shadow: 0 0 14px #fff, 0 0 34px #ff183d, 0 0 74px #d9002f;
+  }
+}
+
+#song35FinalTrialWarpOverlay {
+  position: fixed;
+  inset: -4%;
+  z-index: 1385;
+  display: none;
+  pointer-events: none;
+  opacity: var(--song35-final-warp-overlay, 0);
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      transparent 0 20%,
+      rgba(222, 132, 255, 0.08) 35%,
+      rgba(151, 49, 202, 0.2) 59%,
+      rgba(65, 10, 91, 0.38) 79%,
+      rgba(20, 2, 31, 0.56) 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 23px,
+      rgba(208, 93, 255, 0.045) 24px,
+      transparent 26px 45px
+    );
+  -webkit-backdrop-filter: blur(var(--song35-final-warp-blur, 0px)) contrast(1.16) saturate(1.18);
+  backdrop-filter: blur(var(--song35-final-warp-blur, 0px)) contrast(1.16) saturate(1.18);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0 10%, rgba(0, 0, 0, 0.34) 24%, rgba(0, 0, 0, 0.8) 52%, #000 78% 100%);
+  mask-image: radial-gradient(circle at 50% 50%, transparent 0 10%, rgba(0, 0, 0, 0.34) 24%, rgba(0, 0, 0, 0.8) 52%, #000 78% 100%);
+  mix-blend-mode: screen;
+  transform-origin: 50% 50%;
+  animation: song35FinalTrialLensBreath 1.8s ease-in-out infinite alternate;
+}
+
+body.song35FinalTrialWarp #song35FinalTrialWarpOverlay,
+body.boss4LateWarp #song35FinalTrialWarpOverlay {
+  display: block;
+}
+
+@keyframes song35FinalTrialLensBreath {
+  0% { transform: scale(0.91); filter: brightness(0.82) contrast(1.08); }
+  100% { transform: scale(1.13); filter: brightness(1.24) contrast(1.22); }
+}
+
+#boss4SecondTrialAtmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  background: rgba(22, 4, 34, 0.2);
+  -webkit-backdrop-filter: grayscale(0.78) saturate(0.42) brightness(0.67);
+  backdrop-filter: grayscale(0.78) saturate(0.42) brightness(0.67);
+  transition: opacity 700ms ease;
+}
+
+body.boss4SecondTrialGameplay #boss4SecondTrialAtmosphere {
+  visibility: visible;
+  opacity: var(--second-trial-atmosphere-opacity, 1);
+}
+
+#boss4SecondTrialMelodyLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  overflow: hidden;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+body.boss4SecondTrialGameplay #boss4SecondTrialMelodyLayer {
+  visibility: visible;
+}
+
+#boss4SecondTrialMelodyLayer::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: 38vmin;
+  height: 38vmin;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 238, 255, 0.95) 0%, rgba(218, 125, 255, 0.72) 18%, rgba(151, 43, 221, 0.42) 46%, transparent 72%);
+  box-shadow: 0 0 55px rgba(207, 101, 255, 0.72), 0 0 120px rgba(130, 28, 196, 0.52);
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%) scale(0.12);
+}
+
+#boss4SecondTrialMelodyLayer.finalPulse::before {
+  animation: boss4SecondTrialFinalPulse 1.25s ease-out both;
+}
+
+@keyframes boss4SecondTrialFinalPulse {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.12); }
+  22% { opacity: 0.92; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(5.4); }
+}
+
+.boss4SecondTrialWave {
+  position: absolute;
+  width: 72px;
+  height: 24px;
+  border: 2px solid rgba(239, 198, 255, 0.82);
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(ellipse, rgba(240, 198, 255, 0.22), transparent 68%);
+  box-shadow:
+    0 0 7px rgba(244, 211, 255, 0.8),
+    0 0 17px rgba(203, 80, 255, 0.72),
+    0 0 30px rgba(139, 22, 213, 0.5),
+    inset 0 0 9px rgba(249, 226, 255, 0.58);
+  transform: translate(-50%, -50%) scale(0.35);
+  animation: boss4SecondTrialWaveSpread 720ms ease-out forwards;
+}
+
+.boss4SecondTrialWave::before,
+.boss4SecondTrialWave::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.boss4SecondTrialWave::before {
+  inset: -9px -16px;
+  border: 1px solid rgba(205, 100, 255, 0.58);
+  box-shadow: 0 0 13px rgba(190, 65, 244, 0.54);
+}
+
+.boss4SecondTrialWave::after {
+  inset: -19px -32px;
+  border: 1px solid rgba(245, 210, 255, 0.42);
+  box-shadow: 0 0 20px rgba(153, 34, 221, 0.42);
+}
+
+@keyframes boss4SecondTrialWaveSpread {
+  0% { opacity: 0.86; transform: translate(-50%, -50%) scale(0.3); filter: brightness(1.35); }
+  38% { opacity: 0.72; filter: brightness(1.12); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(6.1, 3.4); filter: brightness(0.9); }
+}
+
+.boss4SecondTrialParticle {
+  position: absolute;
+  width: var(--second-trial-size);
+  height: var(--second-trial-size);
+  border-radius: 50%;
+  background: rgba(244, 218, 255, 0.94);
+  box-shadow: 0 0 6px rgba(229, 162, 255, 0.9), 0 0 14px rgba(165, 63, 220, 0.68);
+  opacity: 0;
+  animation: boss4SecondTrialParticleRise var(--second-trial-duration) ease-out forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes boss4SecondTrialParticleRise {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) scale(0.55); }
+  18% { opacity: 0.78; }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--second-trial-drift), calc(-1 * var(--second-trial-rise)), 0) scale(0.18);
+  }
+}
+
+/* song35ストーリーイベント：プレイに不要なHUDだけを隠す。 */
+body.song35EventMinimalHud:not(.resultProfileVisible) #playProfileArea,
+body.song35EventMinimalHud:not(.resultProfileVisible) #playSkillLine,
+body.song35EventMinimalHud:not(.resultProfileVisible) #lifeText,
+body.song35EventMinimalHud:not(.resultProfileVisible) #lifeBar,
+body.song35EventMinimalHud:not(.resultProfileVisible) #pauseButton,
+body.song35EventMinimalHud:not(.resultProfileVisible) #scoreArea,
+body.song35EventMinimalHud:not(.resultProfileVisible) #songInfo,
+body.song35EventMinimalHud:not(.resultProfileVisible) #damageVignette,
+body.song35EventMinimalHud:not(.resultProfileVisible) .lifeHealParticle,
+body.song35EventMinimalHud #storyChallengeIntro {
+  display: none !important;
+}
+
+#song35LightLines {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(50% - 270px),
+    transparent calc(50% - 269px),
+    transparent calc(50% + 269px),
+    #000 calc(50% + 270px),
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(50% - 270px),
+    transparent calc(50% - 269px),
+    transparent calc(50% + 269px),
+    #000 calc(50% + 270px),
+    #000 100%
+  );
+}
+
+#song35BackgroundGlow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: rgba(220, 244, 255, 0.075);
+  -webkit-backdrop-filter: brightness(1.08) saturate(1.04);
+  backdrop-filter: brightness(1.08) saturate(1.04);
+  transition: opacity 650ms ease-in-out;
+}
+
+#song35BackgroundGlow.active {
+  opacity: 1;
+}
+
+#song35LightLines.active {
+  opacity: 1;
+}
+
+.song35LightLine {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: var(--light-line-length);
+  height: 3px;
+  border-radius: 999px;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, rgba(205, 242, 255, 0), #f7fdff 22%, #d9f6ff 82%, rgba(190, 235, 255, 0));
+  box-shadow:
+    0 0 5px rgba(240, 252, 255, 1),
+    0 0 12px rgba(145, 224, 255, 1),
+    0 0 24px rgba(90, 185, 255, 0.82);
+  animation: song35LightLineFlow var(--light-line-duration) linear forwards;
+}
+
+@keyframes song35LightLineFlow {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--light-line-angle)) translateX(0);
+  }
+  8% { opacity: var(--light-line-opacity); }
+  100% {
+    opacity: var(--light-line-opacity);
+    transform: rotate(var(--light-line-angle)) translateX(var(--light-line-travel));
+  }
 }
 
 #playProfileRateRow {
@@ -527,12 +949,17 @@ body.boss3UnlockMinimalHud #game .lane {
 
 .note {
   width: 80px;
-  height: 20px;
+  height: var(--note-thickness, 20px);
   background: hotpink;
   position: absolute;
   left: 10px;
   z-index: 2;
   border-radius: 10px;
+}
+
+.note.boss4FirstPlayTap {
+  background: #ff304c;
+  box-shadow: 0 0 8px rgba(255, 35, 67, .72);
 }
 
 .boss3HoverTap {
@@ -600,6 +1027,37 @@ body.boss3UnlockMinimalHud #game .lane {
   z-index: 1;
   pointer-events: none;
   animation: damageNoteFlare 0.72s ease-in-out infinite alternate;
+}
+
+.musicCollectNote {
+  position: absolute;
+  color: #fff4a8;
+  font-family: "Times New Roman", "Yu Mincho", serif;
+  font-weight: 700;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+  z-index: 2;
+  pointer-events: none;
+  text-shadow:
+    0 0 5px rgba(255, 255, 220, 1),
+    0 0 12px rgba(255, 235, 120, 0.95),
+    0 0 25px rgba(255, 218, 80, 0.7);
+  animation: musicCollectNoteGlow 0.8s ease-in-out infinite alternate;
+}
+
+.musicCollectNote.collected {
+  animation: musicCollectNoteCollected 0.22s ease-out forwards;
+}
+
+@keyframes musicCollectNoteGlow {
+  from { filter: brightness(0.95); transform: translate(-50%, -50%) scale(0.94) rotate(-4deg); }
+  to { filter: brightness(1.28); transform: translate(-50%, -50%) scale(1.08) rotate(4deg); }
+}
+
+@keyframes musicCollectNoteCollected {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(1.8); }
 }
 
 .damageNote.circle {
@@ -718,6 +1176,175 @@ body.boss3UnlockMinimalHud #game .lane {
 
 #combo.bounce:not(.glowing) {
   animation: comboBounce 0.25s ease;
+}
+
+body.chapter4StoryChallenge #combo,
+body.chapter4StoryChallenge #fastLate {
+  display: none !important;
+}
+
+#storyDualGauge {
+  display: none;
+}
+
+body.chapter4StoryChallenge #storyDualGauge {
+  position: absolute;
+  left: 50%;
+  top: 354px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 390px;
+  transform: translateX(-50%);
+  color: #dffcff;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  pointer-events: none;
+  --story-music-color: rgb(180, 250, 255);
+  --story-music-line-color: rgba(180, 250, 255, 0.94);
+  --story-music-glow: rgba(65, 225, 255, 0.78);
+  opacity: 1;
+  transition: opacity 0.42s ease, transform 0.42s ease, filter 0.42s ease;
+}
+
+body.chapter4StoryChallenge #storyDualGauge.missionCompleteLeaving {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.94);
+  filter: blur(3px);
+}
+
+#storyMusicStaff {
+  position: relative;
+  flex: 1 1 auto;
+  height: 44px;
+  opacity: 1;
+  transform: translateX(0);
+  filter: drop-shadow(0 0 6px var(--story-music-glow));
+  transition: opacity 0.42s ease, transform 0.42s ease, filter 0.42s ease;
+}
+
+#storyMusicStaffLines,
+#storyMusicStaffNotes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5px;
+  height: 33px;
+}
+
+#storyMusicStaffLines {
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--story-music-line-color) 0,
+    var(--story-music-line-color) 1px,
+    transparent 1px,
+    transparent 8px
+  );
+  filter: drop-shadow(0 0 5px var(--story-music-glow));
+}
+
+#storyMusicStaffNotes {
+  z-index: 1;
+}
+
+.storyMusicStaffNote {
+  position: absolute;
+  color: var(--story-music-color);
+  font-family: 'M PLUS 1', sans-serif;
+  font-size: 29px;
+  line-height: 1;
+  isolation: isolate;
+  transform: translate(-50%, -28%) scale(1);
+  text-shadow: 0 0 6px var(--story-music-color), 0 0 15px var(--story-music-glow);
+  animation: storyMusicNoteLand 0.3s cubic-bezier(0.18, 0.88, 0.28, 1.3) both;
+}
+
+.storyMusicStaffNote::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--story-music-glow) 0%, transparent 70%);
+  transform: translate(-50%, -50%) scale(0.5);
+  animation: storyMusicNoteAura 0.48s ease-out both;
+}
+
+.storyMusicStaffNote.settled {
+  animation: none;
+}
+
+.storyMusicStaffNote.settled::before {
+  display: none;
+}
+
+#storyMusicStaff.turning {
+  opacity: 0;
+  transform: translateX(-12px);
+  filter: blur(3px) drop-shadow(0 0 13px var(--story-music-glow));
+}
+
+#storyMusicProgressPercent {
+  flex: 0 0 66px;
+  color: var(--story-music-color);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: right;
+  text-shadow: 0 0 8px var(--story-music-glow), 0 0 18px var(--story-music-glow);
+}
+
+#storyDualGauge.complete #storyMusicProgressPercent {
+  color: var(--story-music-color);
+  animation: storyMusicProgressComplete 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes storyMusicNoteLand {
+  from { opacity: 0; transform: translate(-50%, -85%) scale(1.55); filter: blur(3px); }
+  to { opacity: 1; transform: translate(-50%, -28%) scale(1); filter: blur(0); }
+}
+
+@keyframes storyMusicNoteAura {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.35); }
+  35% { opacity: 0.7; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+}
+
+@keyframes storyMusicProgressComplete {
+  from { text-shadow: 0 0 8px rgba(255, 215, 55, 0.9); }
+  to { text-shadow: 0 0 12px white, 0 0 28px #ffd83d; }
+}
+
+#storyMusicMissionComplete {
+  position: absolute;
+  left: 50%;
+  top: 355px;
+  z-index: 11;
+  color: #ffe76a;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) scale(0.45);
+  text-shadow: 0 0 9px #fff4a8, 0 0 24px rgba(255, 207, 45, 0.92);
+}
+
+#storyMusicMissionComplete.show {
+  animation: storyMusicMissionCompleteBurst 1.5s ease-out both;
+}
+
+@keyframes storyMusicMissionCompleteBurst {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.45); filter: blur(5px); }
+  15% { opacity: 1; transform: translateX(-50%) scale(1.16); filter: blur(0); }
+  25% { transform: translateX(-50%) scale(1); }
+  76% { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.08); filter: blur(2px); }
 }
 
 #enemyLifeArea {
@@ -854,6 +1481,7 @@ body.boss3UnlockMinimalHud #game .lane {
 #game.bulletAfterRecovery #heartPlayer,
 #game.bulletAfterRecovery .note,
 #game.bulletAfterRecovery .damageNote,
+#game.bulletAfterRecovery .musicCollectNote,
 #game.bulletAfterRecovery .damageLongShape,
 #game.bulletAfterRecovery #cover,
 #game.bulletAfterRecovery #rushEffectLayer {
@@ -984,6 +1612,91 @@ body.boss3UnlockMinimalHud #game .lane {
   background: cyan;
   box-shadow:
     0 0 10px cyan;
+}
+
+.storyChallengeDualSymbol {
+  position: absolute;
+  left: 50%;
+  top: auto;
+  bottom: calc(100% + 4px);
+  z-index: 2;
+  display: block;
+  min-width: 1em;
+  color: rgba(96, 248, 255, 0.82);
+  font-family: "Times New Roman", "Yu Mincho", serif;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  transform: translateX(-50%);
+  text-shadow:
+    0 0 6px rgba(210, 255, 255, 1),
+    0 0 15px rgba(0, 255, 255, 0.95),
+    0 0 30px rgba(0, 210, 255, 0.78);
+  pointer-events: none;
+}
+
+.storyChallengeNoteBurst {
+  position: fixed;
+  z-index: 1500;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.storyChallengeNoteBurst::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(104, 250, 255, 0.9);
+  border-radius: 50%;
+  box-shadow: 0 0 14px cyan, inset 0 0 10px cyan;
+  transform: translate(-50%, -50%) scale(0.2);
+  animation: storyChallengeBurstRing 0.52s ease-out forwards;
+}
+
+.storyChallengeNoteBurstGhost {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: rgba(130, 255, 255, 0.9);
+  font-family: "Times New Roman", "Yu Mincho", serif;
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 0 10px white, 0 0 24px cyan, 0 0 42px #00bfff;
+  transform: translate(-50%, -50%);
+  animation: storyChallengeBurstGhost 0.48s ease-out forwards;
+}
+
+.storyChallengeNoteBurstParticle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--burst-size);
+  height: var(--burst-size);
+  border-radius: 50%;
+  background: rgba(190, 255, 255, 0.96);
+  box-shadow: 0 0 7px white, 0 0 14px cyan;
+  transform: translate(-50%, -50%);
+  animation: storyChallengeBurstParticle 0.68s cubic-bezier(.12, .72, .2, 1) var(--burst-delay) forwards;
+}
+
+@keyframes storyChallengeBurstParticle {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  72% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--burst-x)), calc(-50% + var(--burst-y))) scale(0.15); }
+}
+
+@keyframes storyChallengeBurstRing {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(5.2); }
+}
+
+@keyframes storyChallengeBurstGhost {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+  100% { opacity: 0; transform: translate(-50%, -65%) scale(1.8); filter: brightness(2); }
 }
 
 #lifeBar {
@@ -2055,6 +2768,11 @@ text-shadow: 0 0 6px white, 0 0 12px white;
   opacity: 1;
 }
 
+#blackOverlay.tvBlackoutComplete {
+  opacity: 1;
+  transition: none;
+}
+
 #secretNoiseOverlay {
   position: fixed;
   inset: 0;
@@ -2249,9 +2967,769 @@ text-shadow: 0 0 6px white, 0 0 12px white;
     100% 50%,
     calc(100% - 22px) 100%,
     0% 100%
-  ); 
+  );
   margin-left: -1px;
 }
+
+#song35PuzzleNoiseOverlay {
+  position: fixed;
+  inset: -3%;
+  z-index: 10020;
+  pointer-events: none;
+  opacity: 0;
+  isolation: isolate;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.82) 0 0.8px, transparent 1.25px) 0 0 / 5px 5px,
+    radial-gradient(circle, rgba(0, 0, 0, 0.78) 0 0.9px, transparent 1.35px) 2px 3px / 7px 7px,
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.09) 0 1px, rgba(0, 0, 0, 0.08) 1px 3px, transparent 3px 6px);
+}
+
+#song35PuzzleNoiseOverlay::before,
+#song35PuzzleNoiseOverlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#song35PuzzleNoiseOverlay::before {
+  inset: 0;
+  opacity: 0.72;
+  background:
+    linear-gradient(90deg, transparent 0 8%, rgba(240, 246, 250, 0.28) 8% 34%, transparent 34% 100%) 0 12% / 160% 5% no-repeat,
+    linear-gradient(90deg, transparent 0 31%, rgba(5, 8, 12, 0.4) 31% 72%, transparent 72% 100%) 0 37% / 145% 8% no-repeat,
+    linear-gradient(90deg, transparent 0 17%, rgba(230, 238, 244, 0.2) 17% 63%, transparent 63% 100%) 0 68% / 180% 4% no-repeat,
+    linear-gradient(90deg, transparent 0 42%, rgba(0, 0, 0, 0.38) 42% 86%, transparent 86% 100%) 0 84% / 150% 7% no-repeat;
+  filter: blur(0.6px);
+}
+
+#song35PuzzleNoiseOverlay::after {
+  inset: auto 0;
+  top: 50%;
+  height: 2px;
+  background: #fff;
+  box-shadow:
+    0 0 10px 2px rgba(255, 255, 255, 0.95),
+    0 -55vh 0 55vh #000,
+    0 55vh 0 55vh #000;
+  opacity: 0;
+  transform: scaleX(1);
+}
+
+#song35PuzzleNoiseOverlay.active {
+  pointer-events: all;
+  animation:
+    song35PuzzleNoiseBuild var(--song35-noise-build-duration) steps(10, end) forwards,
+    song35PuzzleNoiseDrift 240ms steps(2, end) infinite;
+}
+
+#song35PuzzleNoiseOverlay.active::before {
+  animation: song35PuzzleBandShift 620ms steps(5, end) infinite;
+}
+
+#song35PuzzleNoiseOverlay.active::after {
+  animation: song35PuzzleTvPowerOff var(--song35-noise-build-duration) linear forwards;
+}
+
+#song35PuzzleNoiseOverlay.blackoutComplete {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+#song35PuzzleNoiseOverlay.blackoutComplete::before,
+#song35PuzzleNoiseOverlay.blackoutComplete::after {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+body.boss4ChaosSequence,
+body.boss4ChaosGameplay {
+  background: #000 !important;
+  background-image: none !important;
+}
+
+body.boss4ChaosSequence #assetLoadingScreen {
+  background: #000;
+}
+
+body.boss4ChaosSequence #assetLoadingTip,
+body.boss4ChaosSequence #assetLoadingText {
+  visibility: hidden;
+}
+
+#boss4ChaosIntro {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #000;
+  pointer-events: all;
+}
+
+#boss4ChaosIntro.active {
+  display: flex;
+}
+
+#boss4ChaosIntro.switchNoise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.38) 0 1px, transparent 1px 4px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 0.7px, transparent 1px) 0 0 / 5px 5px;
+  animation: boss4ChaosSwitchNoise 240ms steps(4, end) both;
+}
+
+#boss4ChaosIntro.heartPulse #boss4ChaosText {
+  animation: boss4HeartTextWarp 230ms cubic-bezier(0.16, 0.72, 0.3, 1) both;
+}
+
+#boss4ChaosIntro.heartPulseSecondary #boss4ChaosText {
+  animation: boss4HeartTextWarpSecondary 180ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+#boss4ChaosIntro.heartPulse::after,
+#boss4ChaosIntro.heartPulseSecondary::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  pointer-events: none;
+  background: radial-gradient(circle, transparent 0 22%, rgba(176, 71, 255, 0.13) 31%, transparent 42%);
+  animation: boss4HeartScreenRipple 300ms ease-out both;
+}
+
+@keyframes boss4HeartTextWarp {
+  0% { transform: scale(1); filter: blur(0); }
+  28% { transform: scale(1.09, 0.94) skewX(-2deg); filter: blur(0.7px) brightness(1.25); }
+  58% { transform: scale(0.985, 1.025) skewX(0.7deg); }
+  100% { transform: scale(1); filter: blur(0); }
+}
+
+@keyframes boss4HeartTextWarpSecondary {
+  0% { transform: scale(1); }
+  34% { transform: scale(1.045, 0.975) skewX(1deg); filter: brightness(1.12); }
+  100% { transform: scale(1); filter: none; }
+}
+
+@keyframes boss4HeartScreenRipple {
+  0% { opacity: 0; transform: scale(0.72); filter: blur(2px); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.35); filter: blur(7px); }
+}
+
+@keyframes boss4ChaosSwitchNoise {
+  0% { opacity: 0; transform: translateX(-5px); }
+  20% { opacity: 0.72; transform: translateX(7px); }
+  45% { opacity: 0.28; transform: translateX(-9px); }
+  70% { opacity: 0.56; transform: translateX(4px); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+#boss4ChaosText {
+  position: relative;
+  z-index: 2;
+  color: rgba(225, 195, 255, 0.92);
+  font-family: "Orbitron", monospace;
+  font-size: clamp(20px, 3.55vw, 48px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+  text-shadow:
+    0 0 7px rgba(255, 255, 255, 0.7),
+    0 0 14px rgba(211, 126, 255, 0.9),
+    0 0 34px rgba(139, 24, 220, 0.7);
+}
+
+#boss4ChaosText.characterNoise::after {
+  content: attr(data-noise-text);
+  position: absolute;
+  inset: 0;
+  color: #ff4fd8;
+  pointer-events: none;
+  text-shadow:
+    5px 0 #ff2fb9,
+    -5px 0 #32ddff,
+    0 0 8px rgba(255, 55, 211, 0.95),
+    0 0 12px rgba(42, 218, 255, 0.8);
+  clip-path: inset(34% 8% 42% 12%);
+  filter: saturate(1.5) brightness(1.25);
+  animation: boss4CharacterNoise 150ms steps(3, end) both;
+}
+
+@keyframes boss4CharacterNoise {
+  0% { opacity: 0; transform: translateX(0); }
+  18% { opacity: 1; transform: translateX(-9px) skewX(-5deg); }
+  52% { opacity: 0.78; transform: translateX(10px) skewX(4deg); }
+  78% { opacity: 0.55; transform: translateX(-5px) skewX(-2deg); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+#boss4ChaosText.confirmed:not(.released) {
+  animation: boss4ChaosConfirmedGlow 620ms ease-in-out infinite alternate;
+}
+
+#boss4ChaosText.released {
+  animation: boss4ChaosTextRelease 850ms cubic-bezier(0.12, 0.74, 0.28, 1) forwards;
+}
+
+@keyframes boss4ChaosTextRelease {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(5.4);
+    filter: blur(8px);
+    letter-spacing: 0.7em;
+  }
+}
+
+@keyframes boss4ChaosConfirmedGlow {
+  from {
+    filter: brightness(1);
+    text-shadow: 0 0 7px rgba(255, 255, 255, 0.7), 0 0 14px rgba(211, 126, 255, 0.9), 0 0 34px rgba(139, 24, 220, 0.7);
+  }
+  to {
+    filter: brightness(1.24);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.88), 0 0 22px rgba(220, 145, 255, 1), 0 0 48px rgba(152, 36, 229, 0.84);
+  }
+}
+
+body.boss4ChaosGameplay #game {
+  background: #000 !important;
+}
+
+body.boss4ChaosGameplay > *:not(#game):not(#result):not(#boss4ChaosIntro):not(#boss4BackgroundWipe):not(#boss4BackgroundDarken):not(#boss4Background2Wipe):not(#boss4ChromaticAberration):not(#boss4RedLightLines):not(#boss4LowerPinkGlow):not(#boss4ReverseBackgroundDarken):not(#boss4ReverseCracks):not(#boss4Background3Video):not(#boss4FinalDarkness):not(#song35FinalTrialWarpOverlay):not(#song11WhiteFlash):not(script) {
+  display: none !important;
+}
+
+body.boss4ChaosGameplay #game > *:not(.lane):not(.note):not(.damageNote):not(.damageLongShape):not(#judgeline):not(#result):not(#combo):not(#fastLate):not(#rushEffectLayer) {
+  display: none !important;
+}
+
+body.boss4ChaosGameplay .lane {
+  background: #07080a !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+body.boss4ChaosGameplay .lane::before,
+body.boss4ChaosGameplay .lane::after,
+body.boss4ChaosGameplay .lane > *:not(.particle):not(.laneGlowEffect):not(.flash) {
+  display: none !important;
+}
+
+body.boss4ChaosGameplay #result,
+body.boss4ChaosGameplay #combo,
+body.boss4ChaosGameplay #fastLate,
+body.boss4ChaosGameplay #judgeline,
+body.boss4ChaosGameplay .particle,
+body.boss4ChaosGameplay .laneGlowEffect,
+body.boss4ChaosGameplay .flash,
+body.boss4ChaosGameplay .damageNote,
+body.boss4ChaosGameplay .damageLongShape {
+  visibility: visible !important;
+}
+
+body.boss4ChaosGameplay #result,
+body.boss4ChaosGameplay #combo,
+body.boss4ChaosGameplay #fastLate {
+  display: block !important;
+  z-index: 80 !important;
+}
+
+body.boss4LineWaiting #game > *:not(#judgeline) {
+  visibility: hidden !important;
+}
+
+body.boss4LineWaiting #judgeline {
+  opacity: 0;
+}
+
+body.boss4LineWaiting.boss4LineReveal #judgeline {
+  animation: boss4JudgelineReveal 700ms ease-out forwards;
+}
+
+@keyframes boss4JudgelineReveal {
+  from {
+    opacity: 0;
+    filter: brightness(0.6) blur(3px);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+}
+
+body.boss4ComboReveal #combo {
+  animation: boss4ComboFadeIn 560ms ease-out both;
+}
+
+@keyframes boss4ComboFadeIn {
+  from { opacity: 0; filter: blur(3px); transform: translateX(-50%) translateY(5px); }
+  to { opacity: 1; filter: blur(0); transform: translateX(-50%) translateY(0); }
+}
+
+#boss4BackgroundWipe {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: center / cover no-repeat url("songs/boss4/background.png");
+  opacity: 0;
+  will-change: opacity;
+}
+
+#boss4BackgroundDarken {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0;
+  background: #000;
+  will-change: opacity;
+}
+
+#boss4BackgroundNoiseRing {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  z-index: 91;
+  box-sizing: border-box;
+  border: 2px solid rgba(218, 249, 255, 0.92);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(from 11deg, rgba(218, 249, 255, .95) 0deg 1.2deg, rgba(54, 203, 255, .34) 1.2deg 2.4deg, transparent 2.4deg 4.7deg, rgba(255, 255, 255, .72) 4.7deg 5.5deg, transparent 5.5deg 8deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 15px), #000 calc(100% - 12px), #000 calc(100% - 1px), transparent 100%);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 15px), #000 calc(100% - 12px), #000 calc(100% - 1px), transparent 100%);
+  filter: drop-shadow(0 0 7px rgba(99, 220, 255, 1));
+  animation: boss3BackgroundEdgeNoise .09s steps(2, end) infinite;
+}
+
+body.boss4BackgroundWiping #game,
+body.boss4BackgroundApplied #game,
+body.boss4BackgroundDarkening #game,
+body.boss4BackgroundDarkened #game {
+  z-index: 92;
+  background: transparent !important;
+}
+
+body.boss4ChaosGameplay.boss4BackgroundApplied {
+  background: center / cover no-repeat url("songs/boss4/background.png") !important;
+}
+
+body.boss4ChaosGameplay.boss4BackgroundDarkened {
+  background: #000 !important;
+  background-image: none !important;
+}
+
+#boss4Background2Wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: center / cover no-repeat url("songs/boss4/background2.png");
+  will-change: clip-path;
+  contain: strict;
+  transform: translateZ(0);
+}
+
+body.boss4Background2Wiping #game,
+body.boss4Background2Applied #game {
+  z-index: 92;
+  background: transparent !important;
+}
+
+body.boss4ChaosGameplay.boss4Background2Applied {
+  background: center / cover no-repeat url("songs/boss4/background2.png") !important;
+}
+
+body.boss4Background2Wiping #judgeline,
+body.boss4Background2Wiping #combo,
+body.boss4Background2Wiping #fastLate,
+body.boss4Background2Wiping #result,
+body.boss4Background2Wiping #game .note,
+body.boss4Background2Wiping #game .damageNote,
+body.boss4Background2Wiping #game .damageLongShape {
+  z-index: 95 !important;
+}
+
+#boss4ChromaticAberration {
+  position: fixed;
+  inset: -10px;
+  z-index: 89;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  contain: strict;
+  transform: translateZ(0);
+  will-change: opacity;
+}
+
+#boss4ChromaticAberration::before,
+#boss4ChromaticAberration::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: center / cover no-repeat url("songs/boss4/background2.png");
+  mix-blend-mode: screen;
+}
+
+#boss4ChromaticAberration::before {
+  transform: translateX(-8px) scale(1.012);
+  filter: sepia(1) saturate(8) hue-rotate(292deg) contrast(1.25);
+  opacity: 0.42;
+}
+
+#boss4ChromaticAberration::after {
+  transform: translateX(8px) scale(1.012);
+  filter: sepia(1) saturate(8) hue-rotate(128deg) contrast(1.25);
+  opacity: 0.38;
+}
+
+#boss4ChromaticAberration.active {
+  animation: boss4ChromaticPulse 230ms steps(3, end) both;
+}
+
+@keyframes boss4ChromaticPulse {
+  0% { opacity: 0; transform: translateX(0); }
+  18% { opacity: 0.88; transform: translateX(-2px); }
+  48% { opacity: 0.62; transform: translateX(2px); }
+  74% { opacity: 0.34; transform: translateX(-1px); }
+  100% { opacity: 0; transform: translateX(0); }
+}
+
+#boss4RedLightLines {
+  position: fixed;
+  inset: 0;
+  z-index: 89;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(50% - 270px), transparent calc(50% - 269px), transparent calc(50% + 269px), #000 calc(50% + 270px), #000 100%);
+  mask-image: linear-gradient(to right, #000 0, #000 calc(50% - 270px), transparent calc(50% - 269px), transparent calc(50% + 269px), #000 calc(50% + 270px), #000 100%);
+}
+
+#boss4LowerPinkGlow {
+  position: fixed;
+  inset: 0;
+  z-index: 87;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse 118% 48% at 50% 108%,
+    rgba(255, 238, 250, 0.82) 0%,
+    rgba(255, 110, 207, 0.58) 29%,
+    rgba(226, 48, 168, 0.3) 52%,
+    rgba(174, 22, 131, 0) 76%
+  );
+  mix-blend-mode: screen;
+  transform: translateZ(0) scale(1.03, 1);
+  transition: opacity 520ms ease-in-out;
+  contain: strict;
+  will-change: opacity;
+}
+
+#boss4LowerPinkGlow.active {
+  opacity: 0.86;
+  animation: boss4LowerPinkGlowBreath 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes boss4LowerPinkGlowBreath {
+  from { filter: brightness(0.9) saturate(1); }
+  to { filter: brightness(1.18) saturate(1.16); }
+}
+
+.boss4PinkGlowParticle {
+  position: absolute;
+  left: var(--pink-particle-x);
+  bottom: -12px;
+  width: var(--pink-particle-size);
+  height: var(--pink-particle-size);
+  border-radius: 50%;
+  background: rgba(255, 225, 247, 0.96);
+  box-shadow:
+    0 0 5px rgba(255, 240, 251, 0.95),
+    0 0 12px rgba(255, 95, 205, 0.9),
+    0 0 24px rgba(226, 40, 165, 0.65);
+  opacity: 0;
+  animation: boss4PinkParticleRise var(--pink-particle-duration) ease-out forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes boss4PinkParticleRise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.55);
+  }
+  16% {
+    opacity: var(--pink-particle-opacity);
+  }
+  72% {
+    opacity: calc(var(--pink-particle-opacity) * 0.72);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--pink-particle-drift), calc(-1 * var(--pink-particle-rise)), 0) scale(0.18);
+  }
+}
+
+.boss4RedLightLine {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  width: var(--boss4-red-line-length);
+  height: 3px;
+  border-radius: 999px;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, rgba(255, 52, 72, 0), #fff0f1 22%, #ff334f 74%, rgba(180, 0, 25, 0));
+  box-shadow: 0 0 5px rgba(255, 225, 228, 1), 0 0 13px rgba(255, 45, 67, 1), 0 0 26px rgba(178, 0, 26, 0.9);
+  animation: boss4RedLightLineFlow var(--boss4-red-line-duration) linear forwards;
+}
+
+@keyframes boss4RedLightLineFlow {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--boss4-red-line-angle)) translateX(0);
+  }
+  8% { opacity: var(--boss4-red-line-opacity); }
+  100% {
+    opacity: var(--boss4-red-line-opacity);
+    transform: rotate(var(--boss4-red-line-angle)) translateX(var(--boss4-red-line-travel));
+  }
+}
+
+#boss4ReverseBackgroundDarken {
+  position: fixed;
+  inset: 0;
+  z-index: 88;
+  pointer-events: none;
+  background: #000;
+  opacity: 0;
+  transition: opacity 260ms ease-in, filter 260ms ease-in;
+  filter: brightness(1.5);
+}
+
+#boss4ReverseBackgroundDarken.active {
+  opacity: 1;
+  filter: brightness(1);
+}
+
+#boss4ReverseCracks {
+  position: fixed;
+  inset: 0;
+  z-index: 89;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  contain: strict;
+  background:
+    radial-gradient(circle at 4% 18%, rgba(255, 12, 73, .23), transparent 23%),
+    radial-gradient(circle at 96% 72%, rgba(190, 12, 116, .24), transparent 25%);
+  transition: opacity 110ms ease-out;
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(50% - 280px), transparent calc(50% - 250px), transparent calc(50% + 250px), #000 calc(50% + 280px), #000 100%);
+  mask-image: linear-gradient(to right, #000 0, #000 calc(50% - 280px), transparent calc(50% - 250px), transparent calc(50% + 250px), #000 calc(50% + 280px), #000 100%);
+}
+
+#boss4ReverseCracks.active {
+  opacity: 1;
+  animation: boss4ReverseCrackPulse 720ms ease-in-out infinite alternate;
+  animation-play-state: running;
+}
+
+.boss4ReverseCrackSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.boss4ReverseCrackPath {
+  fill: none;
+  stroke: #ff3d78;
+  stroke-width: var(--crack-width);
+  stroke-linecap: square;
+  stroke-linejoin: bevel;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 2px #fff0f6) drop-shadow(0 0 7px rgba(255, 19, 88, .95));
+  animation: boss4ReverseCrackDraw 760ms cubic-bezier(.15,.82,.18,1) var(--crack-delay) forwards;
+  animation-play-state: paused;
+}
+
+#boss4ReverseCracks.active:not(.frozen) .boss4ReverseCrackPath {
+  animation-play-state: running;
+}
+
+#boss4ReverseCracks.frozen {
+  animation-play-state: paused;
+}
+
+#boss4ReverseCracks.releasing {
+  animation: boss4ReverseCrackBreak 520ms steps(5, end) forwards;
+}
+
+@keyframes boss4ReverseCrackDraw {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  8% { opacity: 1; }
+  72% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: .86; }
+}
+
+@keyframes boss4ReverseCrackPulse {
+  from { filter: brightness(.92); }
+  to { filter: brightness(1.42); }
+}
+
+@keyframes boss4ReverseCrackBreak {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); filter: brightness(1.4); }
+  20% { clip-path: inset(0 0 74% 0); transform: translate(12px, -4px) scaleX(1.025); }
+  40% { clip-path: inset(24% 0 48% 0); transform: translate(-15px, 5px) scaleX(.975); }
+  60% { clip-path: inset(49% 0 25% 0); transform: translate(18px, -3px) scaleX(1.04); }
+  80% { clip-path: inset(73% 0 0 0); transform: translate(-20px, 7px) scaleX(.96); }
+  100% { opacity: 0; clip-path: inset(0); transform: scale(1.1); filter: blur(4px); }
+}
+
+#boss4Background3Video {
+  position: fixed;
+  inset: 0;
+  z-index: 87;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0;
+  background: #000;
+  transition: opacity 180ms ease-out;
+  transform: translateZ(0) scale(1.18);
+  transform-origin: center;
+  backface-visibility: hidden;
+  contain: strict;
+  will-change: opacity, transform;
+}
+
+#boss4Background3Video.active {
+  opacity: 1;
+}
+
+#boss4FinalDarkness {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: #000;
+  clip-path: circle(0 at 50% 0%);
+  contain: strict;
+  will-change: clip-path;
+}
+
+#boss4FinalDarkness.fullDark {
+  z-index: 1390;
+}
+
+body.boss4Background3Applied #game {
+  z-index: 92;
+  background: transparent !important;
+}
+
+body.boss4BackgroundWiping #judgeline,
+body.boss4BackgroundWiping #combo,
+body.boss4BackgroundWiping #fastLate,
+body.boss4BackgroundWiping #result,
+body.boss4BackgroundWiping #game .note,
+body.boss4BackgroundWiping #game .damageNote,
+body.boss4BackgroundWiping #game .damageLongShape {
+  z-index: 95 !important;
+}
+
+html.song35PuzzleJolt {
+  animation: song35PuzzleSingleJolt 125ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@keyframes song35PuzzleNoiseDrift {
+  0% {
+    transform: translate(-7px, 3px) rotate(-0.18deg) scale(1.015);
+    background-position: 0 0, 3px 4px;
+  }
+  25% {
+    transform: translate(4px, -5px) rotate(0.12deg) scale(1.02);
+    background-position: 18px -9px, -11px 17px;
+  }
+  50% {
+    transform: translate(8px, 4px) rotate(-0.08deg) scale(1.018);
+    background-position: 35px 13px, 20px -8px;
+  }
+  75% {
+    transform: translate(-3px, 7px) rotate(0.16deg) scale(1.022);
+    background-position: 51px -4px, 7px 24px;
+  }
+  100% {
+    transform: translate(-7px, 3px) rotate(-0.18deg) scale(1.015);
+    background-position: 68px 10px, -9px 7px;
+  }
+}
+
+@keyframes song35PuzzleNoiseBuild {
+  0%, 5% { opacity: 0.16; }
+  6%, 12% { opacity: 0.11; }
+  13%, 19% { opacity: 0.18; }
+  20%, 27% { opacity: 0.14; }
+  28%, 35% { opacity: 0.22; }
+  36%, 43% { opacity: 0.18; }
+  44%, 52% { opacity: 0.27; }
+  53%, 61% { opacity: 0.23; }
+  62%, 69% { opacity: 0.32; }
+  70%, 77% { opacity: 0.28; }
+  78%, 84% { opacity: 0.38; }
+  85%, 90% { opacity: 0.43; }
+  91%, 96% { opacity: 0.5; }
+  97%, 100% { opacity: 1; }
+}
+
+@keyframes song35PuzzleBandShift {
+  0% { transform: translateX(-7%); background-position: 0 12%, 0 37%, 0 68%, 0 84%; }
+  20% { transform: translateX(5%); background-position: 18% 13%, -12% 35%, 9% 70%, -16% 83%; }
+  40% { transform: translateX(-3%); background-position: -10% 10%, 15% 39%, -14% 66%, 11% 86%; }
+  60% { transform: translateX(8%); background-position: 23% 14%, -18% 36%, 18% 71%, -8% 82%; }
+  80% { transform: translateX(-5%); background-position: -15% 11%, 9% 40%, -7% 67%, 17% 85%; }
+  100% { transform: translateX(2%); background-position: 7% 13%, -6% 38%, 12% 69%, -13% 84%; }
+}
+
+@keyframes song35PuzzleSingleJolt {
+  0% { transform: translate(0, 0); }
+  18% { transform: translate(var(--song35-jolt-x), var(--song35-jolt-y)); }
+  43% { transform: translate(var(--song35-jolt-return-x), var(--song35-jolt-return-y)); }
+  68% { transform: translate(var(--song35-jolt-settle-x), var(--song35-jolt-settle-y)); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes song35PuzzleTvPowerOff {
+  0%, 91% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+  92%, 96% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  99% {
+    opacity: 1;
+    transform: scaleX(0.08);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+}
+
 
 #profilePanel::before,
 #profilePanel::after,
@@ -2437,6 +3915,48 @@ text-shadow: 0 0 6px white, 0 0 12px white;
 #playProfileTitle.titleBackground-purple { background: rgba(163, 91, 224, 0.22); border-color: rgba(205, 145, 255, 0.5); }
 #playProfileTitle.titleBackground-red { background: rgba(214, 62, 76, 0.24); border-color: rgba(255, 112, 124, 0.52); }
 
+#playProfileTitle.titleSpecial-crimson {
+  color: #fff1dc;
+  border-color: rgba(255, 151, 105, .82);
+  background: linear-gradient(135deg, rgba(70, 8, 13, .96), rgba(164, 26, 25, .72));
+  box-shadow: inset 0 0 0 1px rgba(255, 212, 142, .18), 0 0 8px rgba(218, 47, 30, .22);
+  text-shadow: 0 1px 3px rgba(90, 0, 0, .9);
+}
+
+#playProfileTitle.titleSpecial-sakura {
+  color: #fff5fb;
+  border-color: rgba(255, 183, 218, .8);
+  background: linear-gradient(135deg, rgba(52, 31, 76, .96), rgba(171, 73, 125, .68));
+  box-shadow: inset 0 0 0 1px rgba(255, 226, 238, .2), 0 0 8px rgba(236, 113, 174, .18);
+  text-shadow: 0 1px 3px rgba(70, 24, 67, .9);
+}
+
+#playProfileTitle.titleSpecial-realm {
+  color: #f4fbff;
+  border-color: rgba(174, 212, 235, .88);
+  background: linear-gradient(135deg, rgba(8, 13, 22, .98), rgba(41, 52, 76, .9) 58%, rgba(70, 45, 91, .84));
+  box-shadow: inset 0 0 0 1px rgba(218, 237, 255, .22), 0 0 8px rgba(132, 160, 215, .2);
+  text-shadow: 1px 0 rgba(132, 219, 255, .42), -1px 0 rgba(236, 145, 255, .3);
+}
+
+.titleFractureBadgeMark {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin-right: 4px;
+  background: #ff8edb;
+  clip-path: polygon(
+    50% 0%,
+    61% 37%,
+    100% 50%,
+    61% 63%,
+    50% 100%,
+    39% 63%,
+    0% 50%,
+    39% 37%
+  );
+}
+
 #playProfileTitle .profileTitleMarqueeText {
   display: block;
   width: max-content;
@@ -2526,6 +4046,9 @@ text-shadow: 0 0 6px white, 0 0 12px white;
 }
 
 #storyChallengeIntro {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -2569,6 +4092,15 @@ text-shadow: 0 0 6px white, 0 0 12px white;
   object-fit: contain;
 }
 
+#storyChallengeIntro:not(.hidden) #storyChallengePartner {
+  animation: storyChallengePartnerFadeIn 0.22s ease-out both;
+}
+
+@keyframes storyChallengePartnerFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 #storyChallengeBubble {
   position: absolute;
   left: 30%;
@@ -2582,6 +4114,11 @@ text-shadow: 0 0 6px white, 0 0 12px white;
   font-size: 20px;
   line-height: 1.7;
   z-index: 2;
+}
+
+body.chapter4StoryChallenge #storyChallengeBubble {
+  left: auto;
+  right: 14%;
 }
 
 #storyChallengeBubble::before {
@@ -2644,24 +4181,52 @@ text-shadow: 0 0 6px white, 0 0 12px white;
   inset: 0;
   z-index: 700;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
   background: rgba(0, 0, 0, 0.72);
   backdrop-filter: brightness(0.35) blur(2px);
   opacity: 1;
-  transition: opacity 0.45s ease;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.5s ease, visibility 0s;
 }
 
 #bulletEnemyFailure.hidden {
-  display: none;
   opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.5s ease, visibility 0s 0.5s;
+}
+
+#bulletEnemyFailureContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.36s ease 0.28s, transform 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) 0.28s;
+}
+
+#bulletEnemyFailure.hidden #bulletEnemyFailureContent {
+  opacity: 0;
+  transform: translateY(10px) scale(0.96);
+  transition-delay: 0s;
+}
+
+#bulletEnemyFailureTitle {
+  color: #ff405c;
+  font-size: clamp(48px, 7vw, 76px);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  text-shadow: 0 0 12px rgba(255, 45, 75, 0.9), 0 0 34px rgba(255, 20, 55, 0.55);
 }
 
 #bulletEnemyFailureMessage {
-  color: white;
-  font-size: 26px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 22px;
   font-family: 'Orbitron', 'M PLUS 1', sans-serif;
   text-shadow: 0 0 12px rgba(255, 45, 75, 0.7);
   line-height: 1.7;
@@ -3503,7 +5068,8 @@ body.enemyRecoveryShake {
 }
 
 body.rushPreparing #rushEffectLayer,
-body.rushMode #rushEffectLayer {
+body.rushMode #rushEffectLayer,
+body.rushFading #rushEffectLayer {
   visibility: visible;
 }
 
@@ -3549,7 +5115,9 @@ body.rushMode #rushEffectLayer {
 body.rushPreparing #rushEffectLayer::before,
 body.rushPreparing #rushEffectLayer::after,
 body.rushMode #rushEffectLayer::before,
-body.rushMode #rushEffectLayer::after {
+body.rushMode #rushEffectLayer::after,
+body.rushFading #rushEffectLayer::before,
+body.rushFading #rushEffectLayer::after {
   animation-play-state: running;
 }
 #song11WhiteFlash {

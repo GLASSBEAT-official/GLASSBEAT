@@ -7,6 +7,10 @@
     {
       "file": "map2_bg.png",
       "name": "真と偽の狭間"
+    },
+    {
+      "file": "map3_bg.png",
+      "name": "揺蕩う時計塔"
     }
   ]
 }

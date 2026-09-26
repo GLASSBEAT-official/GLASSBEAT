@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "id": "map03",
+  "title": "揺蕩う時計塔",
+  "gridSize": 2,
+  "completedImage": "map/images/map3.png",
+  "iconImage": "map/images/map3icon.png",
+  "completionRewards": [{
+    "percent": 50,
+    "type": "title",
+    "id": "map:third-title"
+  },
+    {
+      "percent": 75,
+      "type": "song",
+      "id": "song37"
+    },
+    {
+      "percent": 100,
+      "type": "background",
+      "file": "map3_bg.png"
+    }
+  ],
+  "pieces": [
+    {
+      "id": "piece01",
+      "cells": [1],
+       "type": "mission",
+      "conditions": { "fullCombo": true },
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [{"songId":["song1","song2","song5","song3","boss"]}]
+      },
+      "reward": {
+        "shards": 10
+      }
+    },
+    {
+      "id": "piece02",
+      "cells": [2],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          {
+            "songId": ["song8","song10","song9","song11","boss2"]
+          }
+        ]
+      },
+      "reward": {
+        "shards": 20
+      }
+    },
+    {
+      "id": "piece03",
+      "cells": [3],
+      "type": "random",
+      "conditions": {},
+      "songSelection": {
+        "mode": "random",
+        "songs": [
+          {
+            "songId": ["song21","song14","song15","song25","song16","song18","song26","song19","boss3"]
+          }
+        ]
+      },
+      "reward": {
+        "shards": 30
+      }
+    },
+    {
+      "id": "piece04",
+      "cells": [4],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          {
+            "songId": "song32"
+          }
+        ]
+      },
+      "reward": {
+        "shards": 40
+      }
+    }
+  ]
+}
