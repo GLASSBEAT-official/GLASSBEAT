@@ -1471,15 +1471,15 @@ function updateBoss4SecondTrialAtmosphere(currentMs) {
   }
 }
 
-function applyStrongCircularWarp(intensity, currentMs) {
+function applyStrongCircularWarp(intensity, currentMs, colorStrength = 1) {
   const phase = currentMs / 1000;
   const scale = 1 + intensity * (0.028 + (Math.sin(phase * 2.8) + 1) * 0.0125);
-  const hueShift = Math.sin(phase * 6.2) * 25 * intensity;
+  const hueShift = Math.sin(phase * 6.2) * 25 * intensity * colorStrength;
 
   document.documentElement.style.setProperty("--song35-final-warp-scale", scale.toFixed(4));
   document.documentElement.style.setProperty("--song35-final-warp-hue", `${hueShift.toFixed(2)}deg`);
-  document.documentElement.style.setProperty("--song35-final-warp-contrast", String(1 + intensity * 0.24));
-  document.documentElement.style.setProperty("--song35-final-warp-saturation", String(1 + intensity * 0.42));
+  document.documentElement.style.setProperty("--song35-final-warp-contrast", String(1 + intensity * 0.24 * colorStrength));
+  document.documentElement.style.setProperty("--song35-final-warp-saturation", String(1 + intensity * 0.42 * colorStrength));
   document.documentElement.style.setProperty("--song35-final-warp-blur", `${(intensity * 18).toFixed(2)}px`);
   document.documentElement.style.setProperty("--song35-final-warp-overlay", String(0.08 + intensity * 0.86));
 }
@@ -1526,7 +1526,8 @@ function updateBoss4LateWarp(currentMs) {
   boss4LateWarpLastUpdateAt = currentMs;
 
   const rawProgress = Math.max(0, Math.min(1, (currentMs - startTime) / Math.max(1, endTime - startTime)));
-  applyStrongCircularWarp(Math.pow(rawProgress, 1.38), currentMs);
+  // 赤いタップノーツの視認性を保つため、boss4では色調変化だけ控えめにする。
+  applyStrongCircularWarp(Math.pow(rawProgress, 1.38), currentMs, 0.55);
   document.body.classList.add("boss4LateWarp");
 }
 
