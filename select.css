@@ -1263,6 +1263,8 @@ body.mapSelectMode #unlockMapButton:hover::before {
   gap: 20px;
   width: min(760px, calc(100vw - 80px));
   min-width: 680px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
   box-sizing: border-box;
 }
 
@@ -1346,6 +1348,52 @@ body.mapSelectMode #unlockMapButton:hover::before {
 
 .keyLayoutBtn:hover {
   background: #333;
+}
+
+#customKeyBindings {
+  display: grid;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.customKeyBindingRow {
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  align-items: center;
+  gap: 12px;
+}
+
+.customKeyBindingRow label {
+  color: #ccc;
+}
+
+.laneKeySelect {
+  width: 100%;
+  padding: 7px 28px 7px 10px;
+  border: 1px solid #555;
+  background: #242424;
+  color: white;
+  font-family: 'Orbitron', 'M PLUS 1', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.laneKeySelect:focus {
+  border-color: cyan;
+  outline: 1px solid rgba(0, 255, 255, 0.35);
+}
+
+.laneKeySelect option:disabled {
+  color: #666;
+}
+
+#customKeyBindingHint {
+  margin: 0;
+  color: #777;
+  font-size: 10px;
+  line-height: 1.4;
 }
 
 #sfxToggle {
@@ -2741,6 +2789,10 @@ body.mapSelectMode #unlockMapButton:hover::before {
 
 #musicVolumeSetting {
   margin-top: 24px;
+}
+
+#backgroundSettingsPanel > .settingGroup + .settingGroup {
+  margin-top: 20px;
 }
 
 #musicVolumeLabelRow {

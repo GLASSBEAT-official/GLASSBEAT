@@ -2962,8 +2962,143 @@ script:`[装置から、リラの旋律が流れている。/ついさっきま�
 「じゃあ、そのときはお願いしようかな。」//けれど、そんな日は、結局来なかった。/
 少なくとも、ブレイカが知る限りでは。/あれだけ長く付き合ってきたにもかかわらず、
 カノンが泣いているところも、悲しそうな顔をしているところさえも。/
-ブレイカは、一度も見たことがなかったのだ。]`}]
-  }
+ブレイカは、一度も見たことがなかったのだ。]`}]},
+{
+    title: "硝子越しの残響",
+    hidden: true,
+    background: "assets/bg/story_chapter5.png",
+    episodes: [{title: "5-0",unlock: null,"id": "chapter5_episode0",script:`
+      [暗い。/どれくらい、そうしていたのだろう。/頬に触れる冷たさで、私は目を覚ました。/
+「……っ。」/身体を起こそうとして、頭に鈍い痛みが走る。/思わず、その場にうずくまった。/
+土の匂いがする。/辺りには砕けた石が散らばり、細かな砂埃が、薄暗い空気の中を漂っていた。/
+「……ここ……。」/記憶を辿る。/歌。リラの旋律。地震。地面の亀裂。青白い光。/そして――落ちてきた、大きな岩。]
+[「……リラ。」/返事はない。/「イザベル！」/少し大きな声を出す。/
+声は岩壁にぶつかって、何度か反響したが、誰の応答もなかった。
+「そんな……。」/私は立ち上がった。/右足に痛みが走ったけれど、歩けないほどではない。/
+二人を探さないと。/そう思って一歩踏み出して――ふと、足を止めた。/「……歌。」]
+[私は目を閉じた。/そして、小さく息を吸う。/声にするほどでもない、小さな音を口ずさむ。/
+すると。/胸の奥から、するりと旋律が浮かんできた。/
+私の知らなかったはずの音。/それなのに今は、ずっと昔から知っていたように、その続きを辿ることができる。/
+「……ある。」/私は胸元を押さえた。/「リラの歌……。」/取り戻せた。
+……いや、違う。/あの子が、私に託したんだ。][嬉しいはずなのに。/胸の奥が、少しだけ痛かった。/
+「……リラ。」/もう一度呼ぶ。/やっぱり返事はない。/私は顔を上げた。/「……探さなきゃ。」/
+崩れた岩の隙間を抜ける。/足元は不安定で、何度も靴が小石を蹴った。/
+上を見ても、空は遠い。運悪く、断崖の間に転落したようだった。その代わり。遠くに、細い光が見えた。]
+[「……？」/近づいてみる。明らかに自然の光ではなかった。/岩の間から、錆びた金属の棒が突き出している。/
+その先には、半分ほど土に埋もれた板のようなもの。/「何、これ……。」/手で土を払う。冷たい。/
+さらに進むと、また一つ。/今度は細長い金属片。/
+その次には、割れた硝子の容器。/もとはビーカーのような形だったのだろう。]
+[そのとき。/「――ブレイカ！」/「！」/振り返る。/暗がりの向こうから、人影が走ってきた。/
+「イザベル！」/思わず駆け寄る。/
+「よかった……！」/イザベルは私の肩をつかむと、頭から足まで確かめるように見た。/
+「怪我は？」/「ちょっと痛いけど、大丈夫。」/「そう。」/短く答えて、イザベルは息を吐いた。
+「私たちも、あの後ここに落ちてきたの。」]
+[「リラは？」/私が尋ねると、イザベルの表情が曇った。/「まだ。」/「……そっか。」/
+辺りを見回す。/「探そう。」/「ええ。」/二人で歩き出す。/しばらくして、私は口を開いた。/
+「……歌、残ってた。」/「歌？」/「リラの。」/私は自分の胸を指した。/「ちゃんと、ここにある。」/
+イザベルは少しだけ目を見開いた。/「でも……これでよかったのかな。」/「……。」/
+「本当は、返したかったんだ。リラに。」][しばらく、靴音だけが続いた。/
+やがてイザベルは、前を向いたまま言った。/「本人に聞けばいいわ。」/「え？」/
+「あなたが考えても、リラがどう思っているかまでは分からないでしょう。」/
+それから、ほんの少しだけ歩調を速めた。/「……見つけてから、聞けばいい。」]
+[私は一瞬立ち止まった。/それから、小さく頷く。/「……うん。」/
+そのときだった。/「――こっち！」/遠くから声がした。/「リラ！」/
+二人で声の方へ走る。/崩れた岩場を越えた先に、リラが立っていた。/
+服は土まみれだったけれど、大きな怪我はなさそうだった。/
+「よかった……！」/「それ、こっちの台詞。」/リラはそう言ってから、少しだけ笑った。/
+その顔を見て、ようやく肩の力が抜けた。][「二人とも、これ見て。」/
+リラが指差す。/岩壁だと思っていたものの一部が、崩れている。/
+その奥から現れていたのは、黒ずんだ金属製の巨大な扉だった。/
+表面には何本もの傷が走り、その半分以上が土砂に埋まっている。/
+けれど、確かに人の手で作られたものだった。/「なんで、こんなのがここに？」
+「たぶん、地震で岩が崩れて出てきたんだと思う。」/リラが扉へ近づき、表面に積もった土を袖で拭った。]
+[その下から、古びた紋様が現れた。「……これ、教団の……。」リラの声が低くなる。
+「そうね、でも……。」イザベルが指先で紋様をなぞる。/
+「私がいたときに使われてたものとは、少し違う。」/「古いってこと？」/
+「たぶん。」/三人で扉を見上げる。/こんなものが、ずっと地面の下に埋まっていた。]
+[ゴゴ……。/小さな揺れが足元を通り抜けた。/「っ……。」反射的に身構える。/
+天井から砂がぱらぱらと落ちてきた。/これでは、いつ大岩が降ってきてもおかしくないだろう。
+イザベルが来た道を振り返る。/「長居はしない方がよさそうね。」/
+「でも、上に戻れる道……。」/リラが首を横に振った。/「私が来た方も塞がってた。崖も崩れてる。」/
+「じゃあ……。」/三人の視線が、目の前の扉へ集まった。]
+[「こういう施設なら、別の出入口があるかもしれない。」/リラが扉に手をかける。/
+力を込めると、錆びついた金属が低い音を立てた。/ギギギギ――。/
+長い間閉ざされていた扉が、ゆっくりと開いていく。/その奥から、冷たい空気が流れ出した。/
+暗い。どこまで続いているのか、ここからでは見えない。/
+「誰かいるかもしれないけど……行く？」私が尋ねる。イザベルは短剣を握り直した。/
+リラも、小さく頷いた。/「ここにいるよりは。」]
+[私は、開いた扉の向こうを見る。/古い教団の施設。/
+どうしてこんな場所にあるのか。何のために作られたのか。/そのときの私たちは、まだ何も知らなかった。/
+ただ、外へ出る道を探すために。/三人で、その暗闇へ足を踏み入れた。]`},
+{title: "5-1",unlock: null,"id": "chapter5_episode1",script:`
+[扉の向こうは、静かだった。/私たちの足音だけが、細い通路の奥へ響いていく。/
+壁には等間隔に照明が並んでいた。/けれど、そのほとんどは消えている。/
+「……暗いね。」/「足元、気をつけて。」/リラが先を歩く。/その少し後ろを、私とイザベルがついていった。]
+[通路のあちこちに、地震でできた亀裂が走っている。ビーカーや本が、床に散乱していた。
+「……ここ、本当に使われてないの？」/私が言うと、リラが振り返った。/
+「どうして？」/「だって……。」/私は壁際を指差す。/そこにある小さな照明は、弱々しく明滅していた。
+「やっぱりここ、誰かが……。」][「設備の一部が生きてるのかもね。」
+リラが照明を覗き込む。「地震で電源が戻ったとか？」ジジッ。/
+突如、頭上の照明が一つだけ点いた。/「っ！？」/三人とも足を止める。身構えた。
+けれど、何も起こらない。/白い光は数秒だけ通路を照らし、また消えた。]
+[「……びっくりした。」/「先に進みましょう。」/イザベルが促す。/
+その声はいつも通りだったけれど、短剣を握る手には少し力が入っていた。/
+通路の先で、道が二つに分かれていた。/壁には文字の消えかかった案内板。/
+「……『保管区画』。」/リラが片方を読む。/「こっちは……『研究区画』。」/
+「研究？」/私はその文字を見上げた。/教団の、古い研究施設。/何を研究していたんだろう。]
+[「出口を探すなら、保管区画じゃない方がよさそうね。」/イザベルが言った。/
+「研究区画なら、人が出入りするための通路があるかもしれない。」/
+「じゃあ、こっちか。」/私たちは研究区画へ向かった。/少し進むと、左右に扉が並び始めた。/
+どれも固く閉ざされている。/表札の文字も、ほとんど消えていた。]
+[一つ目、開かない。/二つ目、中は崩れていて入れない。/
+三つ目。/「……待って。」/リラが足を止めた。/「どうしたの？」/
+返事の代わりに、リラはしゃがみ込んだ。/床を指でなぞる。/「ここ。」/
+私は目を凝らした。/埃の積もった床に、細長い跡が残っている。/「……足跡？」/
+イザベルもそれを見つめる。/「新しいわね。」]
+[私は周囲を見る。/ここへ入ってから、どこも埃だらけだった。/
+なのに、その足跡だけははっきりと残っている。/そしてそれらは、通路の奥へと続いていた。/
+「私たち以外にも、ここに来た人がいるってこと？」/「少なくとも、この施設が埋まる前にはね。」/
+「でも……。」/リラが足跡の横を指差した。/そこだけ、埃が薄い。/
+何度も同じ場所を通ったように見える。/「一回じゃない。」]
+[誰かが、つい最近までこの場所を使っていた。/
+そう思った途端、さっきまでただ古かっただけの通路が、急に違って見えた。/
+一気に緊張が高まる。/「……まだ、いるのかな。」/小声で言った。/「分からない。」/
+イザベルが立ち上がる。/「気をつけましょう。」/私たちは、足跡をたどって歩き始めた。]
+[やがて、一つの部屋に辿り着いた。/扉は少しだけ開いている。/
+しばらく息をひそめて部屋の様子をうかがったが、人がいる気配はなかった。
+リラが手を添え、ゆっくりと押した。/キィ――。/小さな部屋だった。/
+一般的な民家のように、机やいす、本棚が並んでいる。
+「……ここだけ、綺麗。」/机の上は、綺麗に掃除されていた。
+壁際には、小さなランプまで置かれている。]
+[「誰かが使ってる……。」/机の上には、何冊かの本と紙束。/
+その横に、黒い手袋が置かれていた。/私は何となく、それを見つめた。/
+どこかで。見たことがある。/「……これ。」/手を伸ばしかけて、止まる。/
+黒い服に、独特な低い声。/旅の途中で何度も現れては、何かを知っているような言葉だけを残していった人。/
+「まさか……。」][「知ってるの？」/リラに聞かれ、私は頷いた。/
+「たぶん。」/「誰？」/「……前に何度か会った人。」/
+私は手袋から目を離せなかった。/あの人は、洞窟の前で私に聞いた。/
+――なんで救う？/舟の中で、私に教えた。――力は、救うためにだけ働くものじゃない。/
+――使うなら、覚悟を持て。/彼は何を知っていて、どうして私たちの前に現れるのか。/
+聞いても、ちゃんと答えてくれたことはなかった。]
+[「あの人……ここに来てたんだ。」/机の上の紙を一枚持ち上げる。/
+難しい文字と数字が並んでいる。/ほとんど意味は分からない。「ブレイカ。」/
+イザベルの声に振り返る。/彼女は部屋の奥に立っていた。/そこには、もう一つ扉があった。/
+さっきまで棚の陰に隠れていて、気づかなかった。/「これ……開くわ。」/
+扉の先は、今までの部屋より広かった。/私は息を呑んだ。]
+[棚。/棚。/棚。/壁一面を埋めるほどの書類。/古びた機械。大小さまざまな容器。/
+割れたものもあれば、何かが入ったまま濁っているものもある。/
+中央には、大きな机。/その上にも、束ねられた紙が山のように積まれていた。/
+「これは……研究室。」/リラが呟いた。][何を調べていた場所なのかは分からない。/
+けれど、これだけのものを残して、あの人は何をしていたんだろう。/
+私は一番近くにあった棚へ歩いた。/背表紙には番号しか書かれていない。/
+一冊抜き取る。その本は、ずしりと重かった。/表面に積もった埃を払う。]
+[その瞬間。/紙の束が、一枚だけ床へ落ちた。/「……？」/
+拾い上げる。上の方に、大きな文字が印刷されていた。/
+私は、その文字をゆっくりと読んだ。/「……研究記録。」/その下には、日付と番号。/そして。/
+『硝子化現象に関する観測記録』/私は、ページに指をかけた。]`}
+
+]}
+
 ];
 
 //{title: "2-1",unlock: null,"id": "chapterX_episodeX",script:`[]`}
@@ -2980,6 +3115,18 @@ if (boss4EventStoryEntry) {
 }
 
 let currentChapterIndex = Number(localStorage.getItem(LAST_STORY_CHAPTER_KEY) || 0);
+
+function getVisibleChapterIndex(preferredIndex) {
+  if (chapters[preferredIndex] && !chapters[preferredIndex].hidden) return preferredIndex;
+
+  for (let index = Math.min(preferredIndex - 1, chapters.length - 1); index >= 0; index--) {
+    if (!chapters[index].hidden) return index;
+  }
+
+  return chapters.findIndex(chapter => !chapter.hidden);
+}
+
+currentChapterIndex = getVisibleChapterIndex(currentChapterIndex);
 let currentEpisodeIndex = null;
 let currentLineIndex = 0;
 let typingTimer = null;
@@ -2996,6 +3143,89 @@ const readingOverlay = document.getElementById("readingOverlay");
 const storyText = document.getElementById("storyText");
 const chapterTitle = document.getElementById("chapterTitle");
 const episodeList = document.getElementById("episodeList");
+const researchRecordsButton = document.getElementById("researchRecordsButton");
+const researchRecordsOverlay = document.getElementById("researchRecordsOverlay");
+const researchRecordsList = document.getElementById("researchRecordsList");
+let researchRecords = [];
+
+function isChapter5Selected() {
+  return chapters[currentChapterIndex]?.title === "硝子越しの残響";
+}
+
+function updateResearchRecordsButtonVisibility() {
+  researchRecordsButton?.classList.toggle("hidden", !isChapter5Selected());
+}
+
+function showResearchRecord(record, selectedButton) {
+  document.querySelectorAll(".researchRecordListItem.active").forEach(button => {
+    button.classList.remove("active");
+  });
+  selectedButton?.classList.add("active");
+  document.getElementById("researchRecordId").textContent = record?.id || "---";
+  document.getElementById("researchRecordTitle").textContent = record?.title || "記録を選択してください";
+  document.getElementById("researchRecordBody").textContent = String(record?.body || "")
+    .split("/")
+    .map(line => line.trim())
+    .join("\n");
+}
+
+function renderResearchRecords() {
+  if (!researchRecordsList) return;
+  researchRecordsList.replaceChildren();
+  researchRecords.forEach((record, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "researchRecordListItem";
+
+    const id = document.createElement("span");
+    id.className = "researchRecordListId";
+    id.textContent = record.id;
+    const title = document.createElement("span");
+    title.className = "researchRecordListTitle";
+    title.textContent = record.title;
+    button.append(id, title);
+    button.addEventListener("click", () => showResearchRecord(record, button));
+    researchRecordsList.appendChild(button);
+
+    if (index === 0) showResearchRecord(record, button);
+  });
+}
+
+function loadResearchRecords() {
+  const data = window.researchRecordsData || {};
+  researchRecords = Array.isArray(data.records) ? data.records : [];
+  renderResearchRecords();
+}
+
+function openResearchRecords() {
+  if (!isChapter5Selected() || !researchRecordsOverlay) return;
+  loadResearchRecords();
+  researchRecordsOverlay.classList.remove("hidden");
+  researchRecordsOverlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("researchRecordsOpen");
+  if (storyPage) storyPage.inert = true;
+  document.getElementById("researchRecordsClose")?.focus();
+}
+
+function closeResearchRecords() {
+  if (!researchRecordsOverlay) return;
+  researchRecordsOverlay.classList.add("hidden");
+  researchRecordsOverlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("researchRecordsOpen");
+  if (storyPage) storyPage.inert = false;
+  researchRecordsButton?.focus();
+}
+
+researchRecordsButton?.addEventListener("click", openResearchRecords);
+document.getElementById("researchRecordsClose")?.addEventListener("click", closeResearchRecords);
+researchRecordsOverlay?.addEventListener("click", event => {
+  if (event.target === researchRecordsOverlay) closeResearchRecords();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !researchRecordsOverlay?.classList.contains("hidden")) {
+    closeResearchRecords();
+  }
+});
 
 const song9StartSound = new Audio("sounds/startsound.mp3");
 song9StartSound.volume = 0.9;
@@ -3090,6 +3320,8 @@ function renderChapters() {
   chapterList.innerHTML = "";
 
   chapters.forEach((chapter, index) => {
+    if (chapter.hidden) return;
+
     const button = document.createElement("button");
     button.classList.add("chapterButton");
     button.textContent = chapter.title;
@@ -3099,14 +3331,6 @@ function renderChapters() {
       button.classList.add("selected");
     }
 
-    if (
-      Number.isNaN(currentChapterIndex) ||
-      currentChapterIndex < 0 ||
-      currentChapterIndex >= chapters.length
-    ) {
-      currentChapterIndex = 0;
-    }
-
     button.addEventListener("click", () => {
       clearLockedStoryMessage();
       currentChapterIndex = index;
@@ -3114,6 +3338,7 @@ function renderChapters() {
       renderChapters();
       renderEpisodes();
       updateChapterBackground();
+      startStoryBGM();
     });
 
     const frame = document.createElement("div");
@@ -3121,6 +3346,7 @@ function renderChapters() {
     frame.appendChild(button);
     chapterList.appendChild(frame);
   });
+  updateResearchRecordsButtonVisibility();
 }
 
 function renderEpisodes() {
@@ -3431,7 +3657,7 @@ function closeEpisode() {
   currentEpisodeSource = "normal";
   isTyping = false;
 
-  playStoryBGM("sounds/story_bgm.mp3", 0.45);
+  startStoryBGM();
 }
 
 function markEpisodeRead() {
@@ -3559,13 +3785,27 @@ document.getElementById("readingPrevButton").addEventListener("click", (e) => {
 let storyBGM = null;
 let currentBgmSrc = null;
 let bgmFadeTimer = null;
+let bgmTransitionToken = 0;
+
+const STORY_BGM2_START_CHAPTER_INDEX = chapters.findIndex(
+  chapter => chapter.title === "硝子越しの残響"
+);
+
+function getDefaultStoryBgmSrc(chapterIndex = currentChapterIndex) {
+  return STORY_BGM2_START_CHAPTER_INDEX >= 0
+    && chapterIndex >= STORY_BGM2_START_CHAPTER_INDEX
+    ? "sounds/story_bgm2.mp3"
+    : "sounds/story_bgm.mp3";
+}
 
 function startStoryBGM() {
-  playStoryBGM("sounds/story_bgm.mp3", 0.45);
+  playStoryBGM(getDefaultStoryBgmSrc(), 0.45);
 }
 
 function stopStoryBGM(fadeMs = 900) {
   if (!storyBGM) return;
+
+  bgmTransitionToken++;
 
   if (bgmFadeTimer) {
     clearInterval(bgmFadeTimer);
@@ -3608,32 +3848,84 @@ window.addEventListener("DOMContentLoaded", () => {
   startStoryBGM();
 });
 
-function playStoryBGM(src = "sounds/story_bgm.mp3", volume = 0.45) {
+function playStoryBGM(src = getDefaultStoryBgmSrc(), volume = 0.45, fadeMs = 700) {
   if (storyBGM && currentBgmSrc === src && !storyBGM.paused) {
     storyBGM.volume = volume;
     return;
   }
 
+  const transitionToken = ++bgmTransitionToken;
   if (bgmFadeTimer) {
     clearInterval(bgmFadeTimer);
     bgmFadeTimer = null;
   }
 
-  if (storyBGM) {
-    storyBGM.pause();
-    storyBGM.currentTime = 0;
+  const beginNewTrack = () => {
+    if (transitionToken !== bgmTransitionToken) return;
+
+    const audio = new Audio(src);
+    storyBGM = audio;
+    currentBgmSrc = src;
+    audio.loop = true;
+    audio.volume = fadeMs > 0 ? 0 : volume;
+
+    audio.play().catch(() => {
+      document.addEventListener("click", () => {
+        if (transitionToken === bgmTransitionToken && storyBGM === audio) {
+          audio.play().catch(() => {});
+        }
+      }, { once: true });
+    });
+
+    if (fadeMs <= 0) return;
+    const intervalMs = 50;
+    const steps = Math.max(1, Math.ceil(fadeMs / intervalMs));
+    let currentStep = 0;
+    bgmFadeTimer = setInterval(() => {
+      if (transitionToken !== bgmTransitionToken) {
+        clearInterval(bgmFadeTimer);
+        bgmFadeTimer = null;
+        return;
+      }
+      currentStep++;
+      audio.volume = Math.min(volume, volume * (currentStep / steps));
+      if (currentStep >= steps) {
+        clearInterval(bgmFadeTimer);
+        bgmFadeTimer = null;
+      }
+    }, intervalMs);
+  };
+
+  const previousAudio = storyBGM;
+  if (!previousAudio || previousAudio.paused || fadeMs <= 0) {
+    if (previousAudio) {
+      previousAudio.pause();
+      previousAudio.currentTime = 0;
+    }
+    beginNewTrack();
+    return;
   }
 
-  storyBGM = new Audio(src);
-  currentBgmSrc = src;
-  storyBGM.loop = true;
-  storyBGM.volume = volume;
-
-  storyBGM.play().catch(() => {
-    document.addEventListener("click", () => {
-      storyBGM.play();
-    }, { once: true });
-  });
+  const startVolume = previousAudio.volume;
+  const intervalMs = 50;
+  const steps = Math.max(1, Math.ceil(fadeMs / intervalMs));
+  let currentStep = 0;
+  bgmFadeTimer = setInterval(() => {
+    if (transitionToken !== bgmTransitionToken) {
+      clearInterval(bgmFadeTimer);
+      bgmFadeTimer = null;
+      return;
+    }
+    currentStep++;
+    previousAudio.volume = Math.max(0, startVolume * (1 - currentStep / steps));
+    if (currentStep >= steps) {
+      clearInterval(bgmFadeTimer);
+      bgmFadeTimer = null;
+      previousAudio.pause();
+      previousAudio.currentTime = 0;
+      beginNewTrack();
+    }
+  }, intervalMs);
 }
 
 function waitMs(ms) {
@@ -4188,7 +4480,7 @@ if (requestedEpisodeId) {
     const episodeIndex = chapters[chapterIndex].episodes.findIndex(
       episode => episode.id === requestedEpisodeId
     );
-    if (episodeIndex === -1) continue;
+    if (episodeIndex === -1 || chapters[chapterIndex].hidden) continue;
     requestedChapterIndex = chapterIndex;
     requestedEpisodeIndex = episodeIndex;
     break;

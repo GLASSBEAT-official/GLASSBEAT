@@ -222,8 +222,30 @@ const speed = settings.speed || 10;
 
 // キー配置
 const keyLayout = settings.keyLayout || "default";
+const CUSTOM_KEY_BINDING_CODES = new Set([
+  ...Array.from({ length: 26 }, (_, index) => `Key${String.fromCharCode(65 + index)}`),
+  ...Array.from({ length: 10 }, (_, index) => `Digit${index}`),
+  "Space"
+]);
+const savedCustomKeyBindings = Array.isArray(settings.customKeyBindings)
+  && settings.customKeyBindings.length === 5
+  && new Set(settings.customKeyBindings).size === 5
+  && settings.customKeyBindings.every(code => CUSTOM_KEY_BINDING_CODES.has(code))
+  ? settings.customKeyBindings
+  : null;
 
-const keyBindings = keyLayout === "alt"
+function createCustomKeyBinding(code) {
+  if (code === "Space") return { key: " ", codes: ["Space"] };
+  if (code.startsWith("Digit")) {
+    const digit = code.slice(-1);
+    return { key: digit, codes: [code, `Numpad${digit}`] };
+  }
+  return { key: code.slice(-1).toLowerCase(), codes: [code] };
+}
+
+const keyBindings = keyLayout === "custom" && savedCustomKeyBindings
+  ? savedCustomKeyBindings.map(createCustomKeyBinding)
+  : keyLayout === "alt"
   ? [
       { key: "d", codes: ["KeyD"] },
       { key: "f", codes: ["KeyF"] },

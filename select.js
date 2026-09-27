@@ -1233,6 +1233,19 @@ loadSongList().catch(error => {
 // ---- 設定 ----
 const DEFAULT_SPEED = 10;
 const DEFAULT_KEY_LAYOUT = "default";
+const KEY_LAYOUT_BINDINGS = {
+  default: ["KeyG", "KeyH", "KeyJ", "KeyK", "KeyL"],
+  alt: ["KeyD", "KeyF", "Space", "KeyJ", "KeyK"],
+  num: ["Digit4", "Digit5", "Digit7", "Digit8", "Digit9"]
+};
+const KEY_BINDING_OPTIONS = [
+  ...Array.from({ length: 26 }, (_, index) => ({
+    value: `Key${String.fromCharCode(65 + index)}`,
+    label: String.fromCharCode(65 + index)
+  })),
+  ...Array.from({ length: 10 }, (_, index) => ({ value: `Digit${index}`, label: String(index) })),
+  { value: "Space", label: "Space" }
+];
 const DEFAULT_SELECT_BACKGROUND = "select_bg";
 const DEFAULT_MUSIC_VOLUME = 70;
 const DEFAULT_NOTE_THICKNESS = 80;
@@ -1292,9 +1305,16 @@ const secretBossUnlocked = saveData.secretBossUnlocked === true;
 function loadSettings() {
   const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
   const settings = saveData.settings || {};
+  const customKeyBindings = Array.isArray(settings.customKeyBindings)
+    && settings.customKeyBindings.length === 5
+    && new Set(settings.customKeyBindings).size === 5
+    && settings.customKeyBindings.every(value => KEY_BINDING_OPTIONS.some(option => option.value === value))
+    ? [...settings.customKeyBindings]
+    : [...KEY_LAYOUT_BINDINGS.default];
   return {
     speed: settings.speed || DEFAULT_SPEED,
     keyLayout: settings.keyLayout || DEFAULT_KEY_LAYOUT,
+    customKeyBindings,
     musicVolume: Number.isFinite(Number(settings.musicVolume))
       ? Math.min(100, Math.max(0, Math.round(Number(settings.musicVolume))))
       : DEFAULT_MUSIC_VOLUME,
@@ -1325,6 +1345,13 @@ function applySettingsToUI(settings) {
   document.querySelectorAll(".keyLayoutBtn").forEach(btn => {
     btn.classList.toggle("selected", btn.dataset.layout === settings.keyLayout);
   });
+  const displayedBindings = settings.keyLayout === "custom"
+    ? settings.customKeyBindings
+    : (KEY_LAYOUT_BINDINGS[settings.keyLayout] || KEY_LAYOUT_BINDINGS.default);
+  document.querySelectorAll(".laneKeySelect").forEach(select => {
+    select.value = displayedBindings[Number(select.dataset.lane)];
+  });
+  updateUnavailableKeyOptions();
 
   const backgroundIds = Object.keys(SELECT_BACKGROUND_OPTIONS);
   const backgroundIndex = Math.max(0, backgroundIds.indexOf(settings.selectBackground));
@@ -1398,7 +1425,48 @@ document.querySelectorAll(".keyLayoutBtn").forEach(btn => {
     btn.classList.add("selected");
     const settings = loadSettings();
     settings.keyLayout = btn.dataset.layout;
+    settings.customKeyBindings = [...KEY_LAYOUT_BINDINGS[btn.dataset.layout]];
     saveSettings(settings);
+    applySettingsToUI(settings);
+  });
+});
+
+function initializeKeyBindingSelects() {
+  document.querySelectorAll(".laneKeySelect").forEach(select => {
+    select.replaceChildren(...KEY_BINDING_OPTIONS.map(({ value, label }) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      return option;
+    }));
+  });
+}
+
+function updateUnavailableKeyOptions() {
+  const selects = [...document.querySelectorAll(".laneKeySelect")];
+  const selectedValues = new Set(selects.map(select => select.value));
+  selects.forEach(select => {
+    [...select.options].forEach(option => {
+      option.disabled = option.value !== select.value && selectedValues.has(option.value);
+    });
+  });
+}
+
+initializeKeyBindingSelects();
+document.querySelectorAll(".laneKeySelect").forEach(select => {
+  select.addEventListener("change", () => {
+    const customKeyBindings = [...document.querySelectorAll(".laneKeySelect")]
+      .map(keySelect => keySelect.value);
+    if (new Set(customKeyBindings).size !== customKeyBindings.length) {
+      applySettingsToUI(loadSettings());
+      return;
+    }
+
+    const settings = loadSettings();
+    settings.keyLayout = "custom";
+    settings.customKeyBindings = customKeyBindings;
+    saveSettings(settings);
+    applySettingsToUI(settings);
   });
 });
 

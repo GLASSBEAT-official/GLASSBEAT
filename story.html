@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="icon" type="image/png" sizes="any" href="assets/favicon.png?v=20260910-1">
   <title>GlassBeat Story</title>
-  <link rel="stylesheet" href="story.css?v=20260926-3">
+  <link rel="stylesheet" href="story.css?v=20260927-4">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,6 +33,10 @@
   <main id="episodeSide">
   <div id="chapterTitle">はじまりの歌</div>
 
+  <button id="researchRecordsButton" class="hidden" type="button" aria-label="研究記録を開く">
+    <img src="images/records.png" alt="">
+  </button>
+
   <div id="episodeArea">
     <div id="episodeList"></div>
     <div id="fragmentEpisodeList"></div>
@@ -40,6 +44,27 @@
 
   <div id="lockedStoryMessage"></div>
 </main>
+</div>
+
+<div id="researchRecordsOverlay" class="hidden" aria-hidden="true">
+  <section id="researchRecordsPanel" role="dialog" aria-modal="true" aria-labelledby="researchRecordsHeading">
+    <header id="researchRecordsHeader">
+      <div>
+        <span id="researchRecordsKicker">ARCHIVED DOCUMENTS</span>
+        <h2 id="researchRecordsHeading">研究記録</h2>
+      </div>
+      <button id="researchRecordsClose" type="button" aria-label="研究記録を閉じる">close</button>
+    </header>
+    <div id="researchRecordsContent">
+      <nav id="researchRecordsList" aria-label="研究記録一覧"></nav>
+      <article id="researchRecordViewer">
+        <div id="researchRecordId">---</div>
+        <h3 id="researchRecordTitle">記録を選択してください</h3>
+        <div id="researchRecordDivider"></div>
+        <p id="researchRecordBody"></p>
+      </article>
+    </div>
+  </section>
 </div>
 
 <div id="readingOverlay" class="hidden">
@@ -116,6 +141,7 @@
 
   <script src="loading-tips.js"></script>
   <script src="partner-data.js?v=20260905-2"></script>
-  <script src="story.js?v=20260926-1"></script>
+  <script src="research-records.js?v=20260927-1"></script>
+  <script src="story.js?v=20260927-4"></script>
 </body>
 </html>

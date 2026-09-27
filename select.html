@@ -96,29 +96,20 @@
       <div class="settingsSectionTitle">ゲーム設定</div>
 
       <div class="settingGroup">
-        <label>ノーツ速度</label>
-        <div id="speedControl">
-          <button id="speedMinus">－</button>
-          <input type="number" id="speedInput" min="1" max="20" step="0.1">
-          <button id="speedPlus">＋</button>
-        </div>
-      </div>
-
-      <div id="noteThicknessSetting" class="settingGroup">
-        <div id="noteThicknessLabelRow">
-          <label for="noteThicknessInput">ノーツの厚み</label>
-          <output id="noteThicknessValue" for="noteThicknessInput">80</output>
-        </div>
-        <input type="range" id="noteThicknessInput" min="50" max="100" step="1" value="80">
-      </div>
-
-      <div class="settingGroup">
         <label>キー配置</label>
         <div id="keyLayoutButtons">
           <button class="keyLayoutBtn selected" data-layout="default">G H J K L</button>
           <button class="keyLayoutBtn" data-layout="alt">D F Space J K</button>
           <button class="keyLayoutBtn" data-layout="num">4 5 7 8 9</button>
         </div>
+        <div id="customKeyBindings" aria-label="レーンごとのキー配置">
+          <div class="customKeyBindingRow"><label for="laneKey0">レーン 0</label><select id="laneKey0" class="laneKeySelect" data-lane="0"></select></div>
+          <div class="customKeyBindingRow"><label for="laneKey1">レーン 1</label><select id="laneKey1" class="laneKeySelect" data-lane="1"></select></div>
+          <div class="customKeyBindingRow"><label for="laneKey2">レーン 2</label><select id="laneKey2" class="laneKeySelect" data-lane="2"></select></div>
+          <div class="customKeyBindingRow"><label for="laneKey3">レーン 3</label><select id="laneKey3" class="laneKeySelect" data-lane="3"></select></div>
+          <div class="customKeyBindingRow"><label for="laneKey4">レーン 4</label><select id="laneKey4" class="laneKeySelect" data-lane="4"></select></div>
+        </div>
+        <p id="customKeyBindingHint">各レーンに異なるキーを割り当ててください</p>
       </div>
     </section>
 
@@ -140,6 +131,23 @@
           <output id="musicVolumeValue" for="musicVolumeInput">70</output>
         </div>
         <input type="range" id="musicVolumeInput" min="0" max="100" step="1" value="70">
+      </div>
+
+      <div class="settingGroup">
+        <label>ノーツ速度</label>
+        <div id="speedControl">
+          <button id="speedMinus">－</button>
+          <input type="number" id="speedInput" min="1" max="20" step="0.1">
+          <button id="speedPlus">＋</button>
+        </div>
+      </div>
+
+      <div id="noteThicknessSetting" class="settingGroup">
+        <div id="noteThicknessLabelRow">
+          <label for="noteThicknessInput">ノーツの厚み</label>
+          <output id="noteThicknessValue" for="noteThicknessInput">80</output>
+        </div>
+        <input type="range" id="noteThicknessInput" min="50" max="100" step="1" value="80">
       </div>
     </section>
   </div>
