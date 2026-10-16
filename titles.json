@@ -82,11 +82,11 @@
       "acquisitionText": "ストーリー1-6を読了"
     },
     {
-      "id": "story:chapter2-episode6",
+      "id": "story:chapter2-episode7",
       "name": "ひとつめの救い",
-      "storyId": "chapter2_episode6",
+      "storyId": "chapter2_episode7",
       "background": "green",
-      "acquisitionText": "ストーリー2-6を読了"
+      "acquisitionText": "ストーリー2-7を読了"
     },
     {
       "id": "story:chapter3-episode13",
@@ -101,6 +101,13 @@
       "storyId": "chapter4_episode11",
       "background": "green",
       "acquisitionText": "ストーリー4-11を読了"
+    },
+    {
+      "id": "story:chapter5-episode7",
+      "name": "追憶の残響",
+      "storyId": "chapter5_episode7",
+      "background": "green",
+      "acquisitionText": "ストーリー5-7を読了"
     }
   ],
   "specialTitles": [

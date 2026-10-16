@@ -1,0 +1,141 @@
+
+{
+  "version": 1,
+  "id": "map04",
+  "title": "深淵の研究室",
+  "gridSize": 3,
+  "completedImage": "map/images/map4.png",
+  "iconImage": "map/images/map4icon.png",
+  "hideUnclearedImage": true,
+  "showCompletionRewards": false,
+  "showResearchRecords": true,
+  "challengeOrder": [
+    "piece01",
+    "piece02",
+    "piece03",
+    "piece06",
+    "piece08",
+    "piece07",
+    "piece04",
+    "piece05",
+    "piece09"
+  ],
+  "completionRewards": [],
+  "pieces": [
+    {
+      "id": "piece01",
+      "cells": [1],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": ["song38"]}
+        ]
+      },
+      "reward": {"researchRecords": ["No.011", "No.016","No.021", "No.009","No.017"],"stamina": 1}
+    },
+    {
+      "id": "piece02",
+      "cells": [2],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": ["song39"]}
+        ]
+      },
+      "reward": {"researchRecords": ["No.020", "No.023","No.025", "No.018","No.013","No.036"],"stamina": 1}
+    },
+    {
+      "id": "piece03",
+      "cells": [3],
+       "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": ["song41"]}
+        ]
+      },
+      "reward": {"researchRecords": ["No.030","No.031", "No.026","No.027", "No.028","No.033"],"stamina": 1}
+    },
+
+    {
+      "id": "piece04",
+      "cells": [4],
+     "type": "random",
+      "conditions": {},
+      "songSelection": {
+        "mode": "random",
+        "songs": ["song41","song38","song39","song40","song42","song1","song2","song5","song3","boss"]
+      },
+      "reward": {"researchRecords": ["No.058", "No.059","No.060", "No.061"],"stamina": 1}
+    },
+    {
+      "id": "piece05",
+      "cells": [5],
+      "unclearedImage": "map/images/map4piece5.png",
+      "type": "random",
+      "conditions": {},
+      "songSelection": {
+        "mode": "random",
+        "songs": [
+          { "songId": ["song28"]}
+        ]
+      },
+      "reward": []
+    },
+    {
+      "id": "piece06",
+      "cells": [6],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": ["song44"]}
+        ]
+      },
+      "reward": {"researchRecords": ["No.044", "No.045","No.029", "No.037","No.039","No.040","No.019"],"stamina": 1}
+    },
+    {
+      "id": "piece07",
+      "cells": [7],
+         "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": ["song40"]}
+        ]
+      },
+      "reward": {"researchRecords": ["No.051", "No.052","No.053", "No.054","No.055","No.057"],"stamina": 1}
+    },
+    {
+      "id": "piece08",
+      "cells": [8],
+      "type": "songRestriction",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": ["song42"]
+      },
+      "reward": {"researchRecords": ["No.041", "No.043","No.047", "No.048","No.050"],"stamina": 1}
+    },
+  {
+      "id": "piece09",
+      "cells": [9],
+      "type": "songRestriction",
+      "gauge": "hard",
+      "conditions": {},
+      "songSelection": {
+        "mode": "fixed",
+        "songs": [
+          { "songId": ["song43"]}
+        ]
+      },
+      "reward": {"researchRecords": ["No.062","No.063", "No.034","No.064","No.065","No.066","No.XXX","No.YYY"],"stamina": 1}
+    }]
+}

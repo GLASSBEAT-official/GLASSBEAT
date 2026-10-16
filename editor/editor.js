@@ -713,6 +713,7 @@ function importChartText(text) {
       importedNotes.push({
         type: "dual",
         lanes,
+        contracting: parts.includes("shrink"),
         position: measureDivisionToPosition(parts[0], parts[1])
       });
       continue;
@@ -878,27 +879,45 @@ function getOverlappingNoteLocations() {
   for (const note of notes) {
     if (note.type !== "tap" && note.type !== "long" && note.type !== "dual") continue;
 
-    const position = makePosition(note.position.num, note.position.den);
     const occupiedLanes = note.type === "dual" ? note.lanes : [note.lane];
+    const occupiedPositions = [{
+      position: makePosition(note.position.num, note.position.den),
+      part: "start"
+    }];
+    if (note.type === "long" && !samePosition(note.position, note.endPosition)) {
+      occupiedPositions.push({
+        position: makePosition(note.endPosition.num, note.endPosition.den),
+        part: "longEnd"
+      });
+    }
 
-    for (const lane of occupiedLanes) {
-      const key = `${lane}:${position.num}/${position.den}`;
-      const occupied = positionCounts.get(key);
+    for (const { position, part } of occupiedPositions) {
+      for (const lane of occupiedLanes) {
+        const key = `${lane}:${position.num}/${position.den}`;
+        const occupied = positionCounts.get(key);
 
-      if (occupied) {
-        occupied.count++;
-      } else {
-        positionCounts.set(key, {
-          lane,
-          position,
-          count: 1
-        });
+        if (occupied) {
+          occupied.items.push({ type: note.type, part });
+        } else {
+          positionCounts.set(key, {
+            lane,
+            position,
+            items: [{ type: note.type, part }]
+          });
+        }
       }
     }
   }
 
   return [...positionCounts.values()]
-    .filter(occupied => occupied.count > 1)
+    .filter(occupied => occupied.items.some((item, index) =>
+      occupied.items.slice(index + 1).some(otherItem => {
+        const isLongEndAndDual =
+          (item.part === "longEnd" && otherItem.type === "dual") ||
+          (otherItem.part === "longEnd" && item.type === "dual");
+        return !isLongEndAndDual;
+      })
+    ))
     .sort((a, b) => comparePosition(a.position, b.position) || a.lane - b.lane);
 }
 
@@ -916,7 +935,7 @@ function updateNoteOverlapWarning() {
 }
 
 function isNormalNoteToolSelected() {
-  return selectedNoteType === "tap" || selectedNoteType === "long" || selectedNoteType === "dual";
+  return selectedNoteType === "tap" || selectedNoteType === "long" || selectedNoteType === "dual" || selectedNoteType === "contractDual";
 }
 
 function beginNotePartMove(e, note, part, point = null) {
@@ -1084,6 +1103,10 @@ function drawNote(note) {
     const maxLane = Math.max(...note.lanes);
     const el = document.createElement("div");
     el.classList.add("editorNote", "dual");
+    if (note.contracting) {
+      el.classList.add("contracting");
+      el.title = "縮小DUAL（画面上端では全幅、判定位置でこの幅になります）";
+    }
     el.style.left = (minLane * laneWidth + 5) + "px";
     el.style.width = ((maxLane - minLane + 1) * laneWidth - 10) + "px";
 
@@ -1303,7 +1326,7 @@ function drawDamageLong(note) {
 
     handle.addEventListener("mousedown", (e) => {
       if (e.button !== 0) return;
-      if (selectedNoteType === "tap" || selectedNoteType === "long" || selectedNoteType === "dual") {
+      if (isNormalNoteToolSelected()) {
         return;
       }
 
@@ -1419,7 +1442,7 @@ function addNote(position, lane, damageLane = null) {
     renderNotes();
   }
 
-  if (selectedNoteType === "dual") {
+  if (selectedNoteType === "dual" || selectedNoteType === "contractDual") {
     if (selectedDualLanes.length < 1) {
       alert("DUALノーツのレーンを1つ以上選択してください");
       return;
@@ -1428,9 +1451,11 @@ function addNote(position, lane, damageLane = null) {
     pushUndoState();
 
     const lanes = [...new Set(selectedDualLanes)].sort((a, b) => a - b);
+    const contracting = selectedNoteType === "contractDual";
 
     const existing = notes.find(n =>
       n.type === "dual" &&
+      Boolean(n.contracting) === contracting &&
       samePosition(n.position, position) &&
       n.lanes.length === lanes.length &&
       n.lanes.every((existingLane, index) => existingLane === lanes[index])
@@ -1444,6 +1469,7 @@ function addNote(position, lane, damageLane = null) {
     notes.push({
       type: "dual",
       lanes,
+      contracting,
       position: position
     });
     renderNotes();
@@ -1683,7 +1709,7 @@ document.querySelectorAll(".noteTypeBtn").forEach(btn => {
     document.querySelectorAll(".noteTypeBtn").forEach(b => b.classList.remove("selected"));
     btn.classList.add("selected");
     document.getElementById("dualLaneGroup").style.display =
-      selectedNoteType === "dual" ? "block" : "none";
+      selectedNoteType === "dual" || selectedNoteType === "contractDual" ? "block" : "none";
   });
 });
 
@@ -2225,7 +2251,7 @@ document.getElementById("exportButton").addEventListener("click", () => {
     if (note.type === "dual") {
       const { measure, numerator, denominator } = positionToMeasureDivision(note.position);
       const laneStr = note.lanes.join("|");
-      lines.push(`${measure},${numerator}/${denominator},[${laneStr}],dual`);
+      lines.push(`${measure},${numerator}/${denominator},[${laneStr}],dual${note.contracting ? ",shrink" : ""}`);
     }
 
     if (note.type === "damageDiamond" || note.type === "damageCircle") {

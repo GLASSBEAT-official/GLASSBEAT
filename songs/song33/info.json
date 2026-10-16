@@ -2,7 +2,7 @@
   "title": "TERMINAL VELOCITY",
   "artist": "AnimAaminA",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 7.6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.5, "file": "expert.txt" }],
+  "charts":[{"difficulty": "BASIC","level": 7.6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.6, "file": "expert.txt" }],
 "achievementTitles": [
   {
     "id": "song33achieve2",

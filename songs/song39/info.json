@@ -1,0 +1,6 @@
+{
+  "title": "The Ghost",
+  "artist": "NIVIRO",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 5,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.5, "file": "expert.txt" }]
+}

@@ -2,6 +2,6 @@
   "title": "cyberpunk survivor",
   "artist": "NoTT",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.2, "file": "expert.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.3, "file": "expert.txt" }]
 
 }

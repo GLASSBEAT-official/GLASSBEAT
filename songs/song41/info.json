@@ -1,0 +1,6 @@
+{
+  "title": "Manor of Tricks",
+  "artist": "zensen",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 4,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 8.3, "file": "expert.txt" }]
+}

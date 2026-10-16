@@ -2,7 +2,7 @@
   "title": "Annihilation in F# Minor",
   "artist": "tn-shi",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 10.7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 13.5, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.7, "file": "fracture.txt" }],
+  "charts":[{"difficulty": "BASIC","level": 10.5,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 13.6, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.7, "file": "fracture.txt" }],
   "achievementTitles": [
   {
     "id": "boss4achieve",

@@ -1,6 +1,6 @@
 {
   "title": "噓つきパラノイア",
-  "artist": "M-ART",
+  "artist": "Napi",
    "background":"background.png",
   "charts":[{"difficulty": "BASIC","level": 7.5,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.1, "file": "expert.txt" }]
 }

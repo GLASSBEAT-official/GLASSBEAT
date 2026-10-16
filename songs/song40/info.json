@@ -1,0 +1,6 @@
+{
+  "title": "Hadephobia",
+  "artist": "UcchiiØ-うっちーぜろ-",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 7.2,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10.9, "file": "expert.txt" }]
+}

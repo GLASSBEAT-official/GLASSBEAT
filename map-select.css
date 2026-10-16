@@ -160,6 +160,7 @@ button { font: inherit; }
 }
 
 .mapSelectCard:not(.preparing) .mapOrbFrame { cursor: pointer; }
+.mapSelectCard.locked .mapOrbFrame { cursor: default; }
 
 .mapOrbFrame {
   position: relative;
@@ -213,6 +214,28 @@ button { font: inherit; }
   object-position: center;
   filter: brightness(0.78) saturate(0.85);
   transition: filter 0.28s ease;
+}
+
+.mapSelectCard.locked .mapOrbImage {
+  filter: brightness(.22) grayscale(.8) saturate(.35);
+}
+
+.mapUnlockRequirement {
+  position: absolute;
+  inset: 9px;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  border-radius: 50%;
+  color: rgba(244, 239, 255, .9);
+  background: rgba(2, 2, 10, .48);
+  font-family: "M PLUS 1", sans-serif;
+  font-size: clamp(14px, 1.15vw, 19px);
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-shadow: 0 0 10px rgba(196, 157, 255, .64);
+  pointer-events: none;
 }
 
 .mapCompleteBand {

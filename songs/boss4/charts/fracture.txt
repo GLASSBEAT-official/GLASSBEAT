@@ -1,6 +1,6 @@
 @bpm,150
 @timesig,4
-@offset,5
+@offset,40
 @tempo,10,0/1,225,4
 @initialspeed,0.7
 @speed,10,0/1,1.5

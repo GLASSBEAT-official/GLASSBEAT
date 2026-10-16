@@ -3,7 +3,7 @@
     {
       "name": "GLASSBEAT",
       "image": "assets/folders/glassbeat.png",
-      "songs": ["song6","song22","song13","song23", "song24","song4","song7","song32","song30","song37"]
+      "songs": ["song6","song22","song13","song23", "song24","song4","song7","song32","song30","song37","song45"]
     },
     {
       "name": "はじまりの歌",
@@ -24,6 +24,11 @@
     "name": "湖上の漣",
       "image": "assets/folders/sazanami.png",
       "songs": ["song36","song29","song31","song27","song33","song34","song35","boss4"]
+  },
+  {
+    "name": "硝子越しの残響",
+      "image": "assets/folders/zankyo.png",
+      "songs": ["song41","song38","song39","song44","song42","song40","song28","song43","boss5"]
   }
   ]
 }

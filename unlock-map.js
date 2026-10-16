@@ -35,14 +35,22 @@
 // percent は1～100。到達率がこの値以上になると一度だけ自動獲得します。
 // title の詳細（name等）は titles.json の mapTitles に同じidで記述します。
 // background は画像ファイル名、title と song はIDを指定します。
+// ピース復元で研究記録を解禁する場合は、ピースのrewardにIDを配列で指定します:
+// "reward": { "researchRecords": ["No.001", "No.002"] }
+// どのピースのresearchRecordsにも指定されていない記録は、最初から解禁されます。
+// ハードゲージを強制する場合は、ピース直下に "gauge": "hard" を指定します。
+// ハードゲージではGOOD以下でライフが減少し、ライフ0でプレイが強制終了します。
 const requestedMapId = new URLSearchParams(window.location.search).get("map") || "map01";
 const safeMapId = /^[a-zA-Z0-9_-]+$/.test(requestedMapId) ? requestedMapId : "map01";
 const MAP_DATA_PATH = `map/maps/${safeMapId}.json`;
 const restoredPieceId = new URLSearchParams(window.location.search).get("restored") || "";
 const failedPieceId = new URLSearchParams(window.location.search).get("failed") || "";
-const mapBgm = new Audio("sounds/map.wav");
+const mapBgm = new Audio(safeMapId === "map04" ? "sounds/story_bgm2.mp3" : "sounds/map.wav");
 mapBgm.loop = true;
 mapBgm.volume = 0.45;
+const map04GateSound = new Audio("sounds/bulletevent.mp3");
+map04GateSound.preload = "auto";
+map04GateSound.volume = 0.85;
 let activeMapData = null;
 let mapTitleDefinitions = [];
 let specialTitleDefinitions = [];
@@ -51,6 +59,74 @@ let selectedMapPiece = null;
 let mapTransitioning = false;
 let mapRewardPreviewPlaying = false;
 let mapRewardInteractionLocked = false;
+let pendingCompletionRewardsAfterResearch = [];
+let mapBgmSuppressed = false;
+let pendingMap04GateAfterResearch = false;
+let map04GateActive = false;
+
+function isMap04FullyRestored() {
+  if (activeMapData?.id !== "map04" || !Array.isArray(activeMapData.pieces)) return false;
+  const clearedPieces = new Set(getMapProgress(activeMapData.id).clearedPieces || []);
+  return activeMapData.pieces.length > 0
+    && activeMapData.pieces.every(piece => clearedPieces.has(piece.id));
+}
+
+function activateMap04Gate() {
+  if (map04GateActive || !isMap04FullyRestored()) return;
+  const board = document.getElementById("mapBoard");
+  if (!board) return;
+  map04GateActive = true;
+  pendingMap04GateAfterResearch = false;
+  board.classList.add("map04GateActive");
+  board.setAttribute("role", "button");
+  board.setAttribute("tabindex", "0");
+  board.setAttribute("aria-label", "ゲートに入る（ストーリー5-6へ）");
+
+  const effect = document.createElement("div");
+  effect.className = "map04GateEffect";
+  effect.setAttribute("aria-hidden", "true");
+  const core = document.createElement("div");
+  core.className = "map04GateCore";
+  const particles = document.createElement("div");
+  particles.className = "map04GateParticles";
+  const particleCount = 16;
+  for (let index = 0; index < particleCount; index++) {
+    const particle = document.createElement("span");
+    const angle = index / particleCount * Math.PI * 2 + (index % 3) * 0.14;
+    const radius = 105 + (index % 5) * 18;
+    particle.style.setProperty("--gate-x", `${Math.cos(angle) * radius}px`);
+    particle.style.setProperty("--gate-y", `${Math.sin(angle) * radius}px`);
+    particle.style.setProperty("--gate-delay", `${-(index % 10) * 0.24}s`);
+    particle.style.setProperty("--gate-duration", `${2.2 + (index % 6) * 0.22}s`);
+    particle.style.setProperty("--gate-size", `${2 + (index % 4)}px`);
+    particles.appendChild(particle);
+  }
+  effect.append(core, particles);
+  board.appendChild(effect);
+}
+
+function enterMap04Gate() {
+  if (!map04GateActive || mapTransitioning) return;
+  mapTransitioning = true;
+  map04GateSound.currentTime = 0;
+  map04GateSound.play().catch(() => {});
+  setMapRewardInteractionLocked(true);
+  const board = document.getElementById("mapBoard");
+  const overlay = document.getElementById("mapTransitionOverlay");
+  board?.classList.add("map04GateEntering");
+  overlay?.classList.remove("leaving", "piece05StoryTransition", "piece05StoryDarkening");
+  overlay?.classList.add("map04GateTransition");
+
+  setTimeout(() => {
+    overlay?.classList.add("map04GateWhite");
+  }, 520);
+  setTimeout(() => {
+    overlay?.classList.add("map04GateDarkening");
+  }, 1080);
+  setTimeout(() => {
+    location.href = "story.html?episode=chapter5_episode6&source=map04Gate";
+  }, 1600);
+}
 
 function setMapRewardInteractionLocked(locked) {
   mapRewardInteractionLocked = Boolean(locked);
@@ -66,6 +142,9 @@ function blockMapInputDuringReward(event) {
   if (!mapRewardInteractionLocked) return;
   const rewardOverlay = document.getElementById("mapRewardUnlockOverlay");
   if (rewardOverlay?.contains(event.target) && event.type !== "keydown") return;
+  const researchOverlay = document.getElementById("researchRecordsOverlay");
+  if (researchOverlay && !researchOverlay.classList.contains("hidden")
+    && (event.type === "keydown" || researchOverlay.contains(event.target))) return;
   event.preventDefault();
   event.stopImmediatePropagation();
 }
@@ -73,10 +152,13 @@ function blockMapInputDuringReward(event) {
 document.addEventListener("pointerdown", blockMapInputDuringReward, true);
 document.addEventListener("click", blockMapInputDuringReward, true);
 document.addEventListener("keydown", blockMapInputDuringReward, true);
+document.addEventListener("wheel", blockMapInputDuringReward, { capture: true, passive: false });
 
 function playMapBgm() {
+  if (mapBgmSuppressed) return;
   mapBgm.play().catch(() => {
     document.addEventListener("pointerdown", () => {
+      if (mapBgmSuppressed) return;
       mapBgm.play().catch(() => {});
     }, { once: true });
   });
@@ -89,6 +171,39 @@ function navigateFromMap(url) {
   overlay?.classList.remove("ready");
   overlay?.classList.add("leaving");
   setTimeout(() => { location.href = url; }, 560);
+}
+
+function transitionFromMap04Piece05ToStory(board) {
+  if (mapTransitioning) return;
+  mapTransitioning = true;
+  board.classList.remove("map04Piece05Restoring");
+  const boardRect = board.getBoundingClientRect();
+  const gridSize = Math.max(1, Number(activeMapData?.gridSize) || 3);
+  const pieceSize = Math.min(boardRect.width, boardRect.height) / gridSize;
+  const zoomVisual = document.createElement("div");
+  zoomVisual.className = "map04Piece05ZoomVisual";
+  zoomVisual.style.left = `${boardRect.left + (boardRect.width - pieceSize) / 2}px`;
+  zoomVisual.style.top = `${boardRect.top + (boardRect.height - pieceSize) / 2}px`;
+  zoomVisual.style.width = `${pieceSize}px`;
+  zoomVisual.style.height = `${pieceSize}px`;
+  zoomVisual.style.backgroundImage = `url("${activeMapData.completedImage}")`;
+  zoomVisual.style.backgroundSize = `${gridSize * 100}% ${gridSize * 100}%`;
+  zoomVisual.style.backgroundPosition = "center";
+  const zoomScale = Math.max(innerWidth, innerHeight) / Math.max(1, pieceSize) * 1.18;
+  zoomVisual.style.setProperty("--piece05-zoom-scale", String(zoomScale));
+  document.body.appendChild(zoomVisual);
+  const overlay = document.getElementById("mapTransitionOverlay");
+  overlay?.classList.remove("leaving", "piece05StoryTransition", "piece05StoryDarkening");
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    zoomVisual.classList.add("active");
+    overlay?.classList.add("piece05StoryTransition");
+  }));
+  setTimeout(() => {
+    overlay?.classList.add("piece05StoryDarkening");
+  }, 2450);
+  setTimeout(() => {
+    location.href = "story.html?episode=chapter5_episode4&source=map04Piece05";
+  }, 3250);
 }
 
 function getCurrentStamina() {
@@ -468,6 +583,14 @@ function isPieceCleared(pieceId) {
   return getMapProgress(activeMapData.id).clearedPieces?.includes(pieceId) === true;
 }
 
+function isPieceChallengeUnlocked(pieceId, mapData = activeMapData) {
+  const order = Array.isArray(mapData?.challengeOrder) ? mapData.challengeOrder : [];
+  const orderIndex = order.indexOf(pieceId);
+  if (orderIndex <= 0) return true;
+  const clearedPieces = new Set(getMapProgress(mapData.id).clearedPieces || []);
+  return clearedPieces.has(order[orderIndex - 1]);
+}
+
 function clearPieceSelection() {
   selectedMapPiece = null;
   document.querySelectorAll(".mapPiece.selected").forEach(element => element.classList.remove("selected"));
@@ -520,6 +643,21 @@ function validateMapData(mapData) {
   const gridSize = Number(mapData.gridSize);
   const maxCell = gridSize * gridSize;
   const occupiedCells = new Set();
+  const assignedResearchRecords = new Map();
+  const validResearchRecordIds = new Set(
+    (window.researchRecordsData?.records || []).map(record => String(record?.id || "").trim()).filter(Boolean)
+  );
+  const pieceIds = new Set((mapData.pieces || []).map(piece => piece.id));
+  if (mapData.challengeOrder !== undefined && !Array.isArray(mapData.challengeOrder)) {
+    warnMap(mapData.id, "challengeOrder", "challengeOrderはピースIDの配列で指定してください。");
+  }
+  const challengeOrder = Array.isArray(mapData.challengeOrder) ? mapData.challengeOrder : [];
+  const orderedPieceIds = new Set();
+  for (const pieceId of challengeOrder) {
+    if (!pieceIds.has(pieceId)) warnMap(mapData.id, "challengeOrder", `存在しないピースID "${pieceId}" が指定されています。`);
+    if (orderedPieceIds.has(pieceId)) warnMap(mapData.id, "challengeOrder", `ピースID "${pieceId}" が重複しています。`);
+    orderedPieceIds.add(pieceId);
+  }
 
   if (mapData.completionRewards !== undefined && !Array.isArray(mapData.completionRewards)) {
     warnMap(mapData.id, "completionRewards", "completionRewardsは配列で指定してください。");
@@ -541,6 +679,9 @@ function validateMapData(mapData) {
   }
 
   for (const piece of mapData.pieces || []) {
+    if (piece.gauge !== undefined && piece.gauge !== "hard") {
+      warnMap(mapData.id, piece.id, `gauge "${piece.gauge}" は有効ではありません。hardを指定してください。`);
+    }
     const cells = piece.cells || [];
     if (cells.length === 0) {
       warnMap(mapData.id, piece.id, "cellsが指定されていません。");
@@ -576,6 +717,18 @@ function validateMapData(mapData) {
         warnMap(mapData.id, piece.id, `${conditionName} には0以上の数値を指定してください。`);
       }
     }
+
+    const researchRecordIds = window.researchRecordsState?.getRewardRecordIds(piece.reward) || [];
+    for (const recordId of researchRecordIds) {
+      if (!validResearchRecordIds.has(recordId)) {
+        warnMap(mapData.id, piece.id, `researchRecordsに存在しない記録ID "${recordId}" が指定されています。`);
+      }
+      if (assignedResearchRecords.has(recordId)) {
+        warnMap(mapData.id, piece.id, `研究記録 ${recordId} は ${assignedResearchRecords.get(recordId)} にも指定されています。`);
+      } else {
+        assignedResearchRecords.set(recordId, piece.id);
+      }
+    }
   }
 
   for (let cell = 1; cell <= maxCell; cell++) {
@@ -585,6 +738,7 @@ function validateMapData(mapData) {
 
 function selectPiece(piece, button) {
   const acquired = isPieceCleared(piece.id);
+  if (!acquired && !isPieceChallengeUnlocked(piece.id)) return;
   selectedMapPiece = piece;
   saveSelectedPiece(piece.id);
   document.querySelectorAll(".mapPiece.selected").forEach(element => element.classList.remove("selected"));
@@ -597,7 +751,9 @@ function selectPiece(piece, button) {
   const presentation = getPiecePresentation(piece);
   document.getElementById("selectedPieceIconSymbol").textContent = presentation.icon;
   document.getElementById("selectedPieceType").textContent = presentation.label;
-  document.getElementById("selectedPieceRule").textContent = presentation.rule;
+  document.getElementById("selectedPieceRule").textContent = piece.gauge === "hard"
+    ? "HARD：GOOD以下でライフ減少／LIFE 0で強制終了"
+    : presentation.rule;
   const conditionLabels = getConditionLabels(piece);
   const targetElement = document.getElementById("selectedPieceTarget");
   targetElement.textContent = conditionLabels.length > 0 ? `目標：${conditionLabels.join(" / ")}` : "";
@@ -612,15 +768,23 @@ function selectPiece(piece, button) {
   });
   const rewardElement = document.getElementById("selectedPieceReward");
   const rewardRows = [];
-  const hasShardReward = Object.prototype.hasOwnProperty.call(piece.reward || {}, "shards");
-  const shardReward = Number(piece.reward?.shards || 0);
-  if (hasShardReward && shardReward >= 0) {
-    rewardRows.push(`<div class="selectedRewardRow"><span class="mapPointIcon"></span><span>シャード</span><strong>+${shardReward}</strong></div>`);
-  }
-  const hasStaminaReward = Object.prototype.hasOwnProperty.call(piece.reward || {}, "stamina");
-  const staminaReward = Number(piece.reward?.stamina || 0);
-  if (hasStaminaReward && staminaReward >= 0) {
-    rewardRows.push(`<div class="selectedRewardRow"><span class="staminaRewardHeart">❤</span><span>スタミナ</span><strong>+${staminaReward}</strong></div>`);
+  if (activeMapData.id === "map04" && piece.id === "piece05") {
+    rewardRows.push(`<div class="selectedRewardMystery">？？？</div>`);
+  } else {
+    const hasShardReward = Object.prototype.hasOwnProperty.call(piece.reward || {}, "shards");
+    const shardReward = Number(piece.reward?.shards || 0);
+    if (hasShardReward && shardReward >= 0) {
+      rewardRows.push(`<div class="selectedRewardRow"><span class="mapPointIcon"></span><span>シャード</span><strong>+${shardReward}</strong></div>`);
+    }
+    const hasStaminaReward = Object.prototype.hasOwnProperty.call(piece.reward || {}, "stamina");
+    const staminaReward = Number(piece.reward?.stamina || 0);
+    if (hasStaminaReward && staminaReward >= 0) {
+      rewardRows.push(`<div class="selectedRewardRow"><span class="staminaRewardHeart">❤</span><span>スタミナ</span><strong>+${staminaReward}</strong></div>`);
+    }
+    const researchRecordIds = window.researchRecordsState?.getRewardRecordIds(piece.reward) || [];
+    if (researchRecordIds.length > 0) {
+      rewardRows.push(`<div class="selectedRewardRow researchRecordRewardRow"><span class="researchRecordRewardIcon">記</span><span>研究記録</span></div>`);
+    }
   }
   rewardElement.innerHTML = rewardRows.join("");
   const songButton = document.getElementById("selectMapSongButton");
@@ -706,12 +870,40 @@ function createJigsawLayer(mapData) {
   svg.setAttribute("viewBox", `0 0 ${mapData.gridSize} ${mapData.gridSize}`);
   svg.setAttribute("aria-hidden", "true");
 
+  const definitions = document.createElementNS(svgNamespace, "defs");
+  svg.appendChild(definitions);
+
   const junctions = new Set();
   for (const piece of mapData.pieces) {
     const path = document.createElementNS(svgNamespace, "path");
     path.classList.add("jigsawPieceShape");
     path.dataset.pieceId = piece.id;
     path.setAttribute("d", createJigsawPath(piece, mapData.gridSize));
+    if (piece.unclearedImage) {
+      path.classList.add("hasUnclearedImage");
+      const patternId = `uncleared-piece-${String(mapData.id).replace(/[^a-zA-Z0-9_-]/g, "")}-${String(piece.id).replace(/[^a-zA-Z0-9_-]/g, "")}`;
+      const pattern = document.createElementNS(svgNamespace, "pattern");
+      pattern.id = patternId;
+      pattern.setAttribute("width", "1");
+      pattern.setAttribute("height", "1");
+      pattern.setAttribute("patternContentUnits", "objectBoundingBox");
+      const backing = document.createElementNS(svgNamespace, "rect");
+      backing.setAttribute("width", "1");
+      backing.setAttribute("height", "1");
+      backing.setAttribute("fill", "#000");
+      pattern.appendChild(backing);
+      const image = document.createElementNS(svgNamespace, "image");
+      image.setAttribute("href", piece.unclearedImage);
+      image.setAttribute("width", "1");
+      image.setAttribute("height", "1");
+      image.setAttribute("preserveAspectRatio", "xMidYMid slice");
+      image.style.opacity = "1";
+      image.style.filter = "none";
+      image.style.mixBlendMode = "normal";
+      pattern.appendChild(image);
+      definitions.appendChild(pattern);
+      path.style.fill = `url(#${patternId})`;
+    }
     svg.appendChild(path);
 
     const firstCell = piece.cells[0];
@@ -757,6 +949,15 @@ function createJigsawLayer(mapData) {
 
 function renderMap(mapData) {
   activeMapData = mapData;
+  document.body.classList.toggle("map04Theme", mapData.id === "map04");
+  const hasCompletionRewards = mapData.showCompletionRewards !== false
+    && Array.isArray(mapData.completionRewards)
+    && mapData.completionRewards.length > 0;
+  const showsResearchRecords = mapData.showResearchRecords === true;
+  document.body.classList.toggle("mapWithoutCompletionRewards", !hasCompletionRewards);
+  document.body.classList.toggle("mapWithResearchRecords", showsResearchRecords);
+  document.getElementById("researchRecordsButton")?.classList.toggle("hidden", !showsResearchRecords);
+  updateResearchRecordsUnreadBadge();
   const currentSaveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
   currentSaveData.lastPlayedMapId = mapData.id;
   localStorage.setItem("rhythmGame", JSON.stringify(currentSaveData));
@@ -766,6 +967,7 @@ function renderMap(mapData) {
   mapIdentityIconImage.src = mapData.iconImage || mapData.completedImage || "";
   mapIdentityIconImage.alt = mapData.title || mapData.id;
   const board = document.getElementById("mapBoard");
+  board.classList.toggle("hideUnclearedImage", mapData.hideUnclearedImage === true);
   board.style.gridTemplateColumns = `repeat(${mapData.gridSize}, 1fr)`;
   board.style.gridTemplateRows = `repeat(${mapData.gridSize}, 1fr)`;
   board.style.backgroundImage = `url("${mapData.completedImage}")`;
@@ -776,9 +978,22 @@ function renderMap(mapData) {
   const clearedPieceIds = new Set(progress.clearedPieces || []);
   const failedPieces = progress.failedPieces || {};
   const completion = Math.round(clearedPieceIds.size / mapData.pieces.length * 100);
+  const isMap04Complete = mapData.id === "map04"
+    && mapData.pieces.length > 0
+    && clearedPieceIds.size === mapData.pieces.length;
   const newlyClaimedCompletionRewards = claimMapCompletionRewards(mapData, completion);
-  const completionRewardSequencePending = restoredPieceId && newlyClaimedCompletionRewards.length > 0;
-  if (completionRewardSequencePending) setMapRewardInteractionLocked(true);
+  const restoredPiece = mapData.pieces.find(piece => piece.id === restoredPieceId);
+  const isMap04Piece05Restore = mapData.id === "map04" && restoredPieceId === "piece05";
+  const validResearchRecordIds = new Set(
+    (window.researchRecordsData?.records || []).map(record => String(record?.id || "").trim()).filter(Boolean)
+  );
+  const newlyUnlockedResearchRecordIds = restoredPiece && mapData.showResearchRecords === true
+    ? (window.researchRecordsState?.getRewardRecordIds(restoredPiece.reward) || [])
+      .filter(recordId => validResearchRecordIds.has(recordId))
+    : [];
+  const postRestoreSequencePending = restoredPieceId
+    && (isMap04Piece05Restore || newlyUnlockedResearchRecordIds.length > 0 || newlyClaimedCompletionRewards.length > 0);
+  if (postRestoreSequencePending) setMapRewardInteractionLocked(true);
   renderNextCompletionReward(mapData, completion, clearedPieceIds);
   document.getElementById("mapCompletionValue").textContent = `${completion}%`;
   document.getElementById("mapCompletionFill").style.width = `${completion}%`;
@@ -806,36 +1021,46 @@ function renderMap(mapData) {
     const row = Math.floor((firstCell - 1) / mapData.gridSize) + 1;
     const column = ((firstCell - 1) % mapData.gridSize) + 1;
     const presentation = getPiecePresentation(piece);
+    const acquired = clearedPieceIds.has(piece.id);
+    const challengeUnlocked = acquired || isPieceChallengeUnlocked(piece.id, mapData);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "mapPiece";
+    button.dataset.pieceId = piece.id;
     button.style.gridRow = `${row}`;
     button.style.gridColumn = `${column} / span ${piece.cells.length}`;
-    button.setAttribute("aria-label", presentation.label);
+    button.setAttribute("aria-label", challengeUnlocked ? presentation.label : `${presentation.label}（未解禁）`);
     if (!firstPiece) {
       firstPiece = piece;
       firstPieceButton = button;
     }
-    if (piece.id === preferredPieceId) {
+    if (piece.id === preferredPieceId && challengeUnlocked) {
       savedPiece = piece;
       savedPieceButton = button;
     }
-    if (clearedPieceIds.has(piece.id)) {
+    if (acquired) {
       button.classList.add("cleared");
       button.setAttribute("aria-disabled", "true");
       const pieceShape = document.querySelector(`.jigsawPieceShape[data-piece-id="${piece.id}"]`);
+      pieceShape?.style.removeProperty("fill");
       pieceShape?.classList.add("cleared");
       if (piece.id === restoredPieceId) {
         pieceShape?.classList.add("restoring");
       }
-    } else if (!firstUnclearedPiece) {
+    } else if (challengeUnlocked && !firstUnclearedPiece) {
       firstUnclearedPiece = piece;
       firstUnclearedButton = button;
     }
     button.innerHTML = !hasMissionCondition(piece) && piece.type === "normal"
       ? ""
       : `<span class="mapPieceTypeIcon">${presentation.icon}</span><span class="mapPieceTypeName">${presentation.label}</span>`;
-    if (!clearedPieceIds.has(piece.id)) {
+    if (!challengeUnlocked) {
+      button.classList.add("challengeLocked");
+      button.disabled = true;
+      document.querySelector(`.jigsawPieceShape[data-piece-id="${piece.id}"]`)?.classList.add("challengeLocked");
+      button.insertAdjacentHTML("beforeend", `<span class="mapPieceLock" aria-hidden="true">LOCK</span>`);
+    }
+    if (!acquired) {
       const failureCount = Math.min(2, Number(failedPieces[piece.id] || 0));
       for (let crackIndex = 1; crackIndex <= failureCount; crackIndex++) {
         const crack = document.createElement("span");
@@ -850,7 +1075,7 @@ function renderMap(mapData) {
         if (piece.id === failedPieceId && crackIndex === failureCount) crack.classList.add("newCrack");
         button.appendChild(crack);
       }
-      if (piece.id === failedPieceId) {
+      if (piece.id === failedPieceId && challengeUnlocked) {
         failedPiece = piece;
         failedPieceButton = button;
       }
@@ -884,14 +1109,34 @@ function renderMap(mapData) {
   }
 
   if (restoredPieceId) {
+    const restoreDuration = isMap04Piece05Restore
+      ? 3400
+      : mapData.id === "map04"
+        ? 1700
+        : 1800;
+    const postRestoreDelay = restoreDuration + (mapData.id === "map04" ? 30 : 150);
+    board.classList.toggle("map04Piece05Restoring", isMap04Piece05Restore);
+    if (isMap04Piece05Restore) {
+      mapBgmSuppressed = true;
+      mapBgm.pause();
+    }
     const pieceSound = new Audio("sounds/piece.mp3");
     pieceSound.play().catch(() => {});
     setTimeout(() => {
       document.querySelector(`.jigsawPieceShape[data-piece-id="${restoredPieceId}"]`)?.classList.remove("restoring");
-    }, 1800);
-    if (completionRewardSequencePending) {
-      setTimeout(() => showMapCompletionRewardUnlocks(newlyClaimedCompletionRewards), 1950);
+      board.classList.remove("map04Piece05Restoring");
+    }, restoreDuration);
+    if (isMap04Piece05Restore) {
+      setTimeout(() => transitionFromMap04Piece05ToStory(board), postRestoreDelay);
+    } else if (newlyUnlockedResearchRecordIds.length > 0) {
+      pendingMap04GateAfterResearch = isMap04Complete;
+      pendingCompletionRewardsAfterResearch = newlyClaimedCompletionRewards;
+      setTimeout(() => openResearchRecords(newlyUnlockedResearchRecordIds), postRestoreDelay);
+    } else if (newlyClaimedCompletionRewards.length > 0) {
+      setTimeout(() => showMapCompletionRewardUnlocks(newlyClaimedCompletionRewards), postRestoreDelay);
     }
+  } else if (isMap04Complete) {
+    activateMap04Gate();
   }
 }
 
@@ -985,11 +1230,156 @@ const mapBoardResizeObserver = new ResizeObserver(() => {
   mapBoard.style.height = `${size}px`;
 });
 mapBoardResizeObserver.observe(mapBoardArea);
+mapBoard.addEventListener("click", event => {
+  if (!map04GateActive) return;
+  event.preventDefault();
+  enterMap04Gate();
+});
+mapBoard.addEventListener("keydown", event => {
+  if (!map04GateActive || (event.key !== "Enter" && event.code !== "Space")) return;
+  event.preventDefault();
+  enterMap04Gate();
+});
 
 setInterval(renderMapStamina, 30000);
 setInterval(renderMapRecoveryTimer, 1000);
 window.addEventListener("focus", renderMapStamina);
 window.addEventListener("mapstaminachange", renderMapStamina);
+
+const researchRecordsButton = document.getElementById("researchRecordsButton");
+const researchRecordsOverlay = document.getElementById("researchRecordsOverlay");
+const researchRecordsList = document.getElementById("researchRecordsList");
+let researchRecords = [];
+let researchRecordAutoScrollTimer = null;
+
+function updateResearchRecordsUnreadBadge() {
+  const allRecords = Array.isArray(window.researchRecordsData?.records) ? window.researchRecordsData.records : [];
+  const unlockedRecords = window.researchRecordsState?.getUnlockedRecords(allRecords, activeMapData) || allRecords;
+  researchRecordsButton?.classList.toggle("hasUnread", window.researchRecordsState?.hasUnread(unlockedRecords) === true);
+}
+
+function showResearchRecord(record, selectedButton) {
+  const viewer = document.getElementById("researchRecordViewer");
+  document.querySelectorAll(".researchRecordListItem.active").forEach(button => {
+    button.classList.remove("active");
+  });
+  selectedButton?.classList.add("active");
+  selectedButton?.classList.remove("unread");
+  window.researchRecordsState?.markRead(record?.id);
+  updateResearchRecordsUnreadBadge();
+  document.getElementById("researchRecordId").textContent = record?.id || "---";
+  document.getElementById("researchRecordTitle").textContent = record?.title || "記録を選択してください";
+  document.getElementById("researchRecordBody").textContent = String(record?.body || "")
+    .split("/")
+    .map(line => line.trim())
+    .join("\n");
+  if (viewer) viewer.scrollTop = 0;
+}
+
+function renderResearchRecords(preferredRecordIds = []) {
+  if (!researchRecordsList) return null;
+  researchRecordsList.replaceChildren();
+  const readIds = window.researchRecordsState?.getReadIds() || new Set();
+  const preferredRecordId = preferredRecordIds.find(recordId =>
+    researchRecords.some(record => record.id === recordId)
+  );
+  let selectedRecord = null;
+  let selectedButton = null;
+  researchRecords.forEach((record, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "researchRecordListItem";
+    button.classList.toggle("unread", !readIds.has(record.id));
+
+    const id = document.createElement("span");
+    id.className = "researchRecordListId";
+    id.textContent = record.id;
+    const title = document.createElement("span");
+    title.className = "researchRecordListTitle";
+    title.textContent = record.title;
+    button.append(id, title);
+    button.addEventListener("click", () => showResearchRecord(record, button));
+    researchRecordsList.appendChild(button);
+
+    if (record.id === preferredRecordId || (!preferredRecordId && index === 0)) {
+      selectedRecord = record;
+      selectedButton = button;
+    }
+  });
+  if (selectedRecord) showResearchRecord(selectedRecord, selectedButton);
+  return selectedButton;
+}
+
+function openResearchRecords(preferredRecordIds = []) {
+  if (activeMapData?.showResearchRecords !== true || !researchRecordsOverlay) return;
+  const automaticOpen = Array.isArray(preferredRecordIds) && preferredRecordIds.length > 0;
+  const data = window.researchRecordsData || {};
+  const allRecords = Array.isArray(data.records) ? data.records : [];
+  researchRecords = window.researchRecordsState?.getUnlockedRecords(allRecords, activeMapData) || allRecords;
+  const selectedButton = renderResearchRecords(Array.isArray(preferredRecordIds) ? preferredRecordIds : []);
+  researchRecordsOverlay.classList.remove("autoOpening");
+  if (automaticOpen) {
+    void researchRecordsOverlay.offsetWidth;
+    researchRecordsOverlay.classList.add("autoOpening");
+  }
+  researchRecordsOverlay.classList.remove("hidden");
+  researchRecordsOverlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("researchRecordsOpen");
+  const mapScreen = document.getElementById("mapScreen");
+  if (mapScreen) mapScreen.inert = true;
+  if (researchRecordAutoScrollTimer) clearTimeout(researchRecordAutoScrollTimer);
+  if (automaticOpen && selectedButton && researchRecordsList) {
+    researchRecordAutoScrollTimer = setTimeout(() => {
+      requestAnimationFrame(() => {
+        const listRect = researchRecordsList.getBoundingClientRect();
+        const buttonRect = selectedButton.getBoundingClientRect();
+        const targetScrollTop = researchRecordsList.scrollTop
+          + buttonRect.top - listRect.top
+          - (listRect.height - buttonRect.height) / 2;
+        const maximumScrollTop = Math.max(0, researchRecordsList.scrollHeight - researchRecordsList.clientHeight);
+        researchRecordsList.scrollTop = Math.max(0, Math.min(maximumScrollTop, targetScrollTop));
+        researchRecordAutoScrollTimer = null;
+      });
+    }, 280);
+  }
+  document.getElementById("researchRecordsClose")?.focus();
+}
+
+function closeResearchRecords() {
+  if (!researchRecordsOverlay) return;
+  if (researchRecordAutoScrollTimer) {
+    clearTimeout(researchRecordAutoScrollTimer);
+    researchRecordAutoScrollTimer = null;
+  }
+  researchRecordsOverlay.classList.add("hidden");
+  researchRecordsOverlay.classList.remove("autoOpening");
+  researchRecordsOverlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("researchRecordsOpen");
+  const mapScreen = document.getElementById("mapScreen");
+  if (mapScreen) mapScreen.inert = mapRewardInteractionLocked;
+  researchRecordsButton?.focus();
+  if (pendingCompletionRewardsAfterResearch.length > 0) {
+    const rewards = pendingCompletionRewardsAfterResearch;
+    pendingCompletionRewardsAfterResearch = [];
+    showMapCompletionRewardUnlocks(rewards);
+  } else if (mapRewardInteractionLocked) {
+    setMapRewardInteractionLocked(false);
+  }
+  if (pendingMap04GateAfterResearch || isMap04FullyRestored()) {
+    activateMap04Gate();
+  }
+}
+
+researchRecordsButton?.addEventListener("click", openResearchRecords);
+document.getElementById("researchRecordsClose")?.addEventListener("click", closeResearchRecords);
+researchRecordsOverlay?.addEventListener("click", event => {
+  if (event.target === researchRecordsOverlay) closeResearchRecords();
+});
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !researchRecordsOverlay?.classList.contains("hidden")) {
+    closeResearchRecords();
+  }
+});
 
 window.addEventListener("keydown", async (event) => {
   if (event.code !== "KeyR" || event.ctrlKey || event.shiftKey || event.altKey || event.metaKey || event.repeat) return;

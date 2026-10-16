@@ -2,9 +2,9 @@
 @timesig,4
 @offset,500
 @rush,65,0/1,on
-@rush,65,1/8,off
+@rush,65,2/8,off
 @rush,66,0/1,on
-@rush,66,1/8,off
+@rush,66,2/8,off
 @speed,93,0/1,0.8
 @speed,101,0/1,0.9
 @speed,108,0/1,1

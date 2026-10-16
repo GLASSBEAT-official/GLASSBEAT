@@ -193,6 +193,26 @@ body.readingMode #storyPage {
   transform: rotate(-45deg);
 }
 
+.episodeButton.unread::after {
+  content: "！";
+  position: absolute;
+  top: -11px;
+  left: 14px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(255, 220, 224, 0.9);
+  border-radius: 50%;
+  color: #fff;
+  background: #b51f2a;
+  font: 700 12px/1 "Orbitron", sans-serif;
+  box-shadow: 0 0 8px rgba(224, 43, 56, 0.72);
+  transform: rotate(-45deg);
+  pointer-events: none;
+  animation: researchRecordUnreadPulse 2.2s ease-in-out infinite;
+}
+
 .episodeButton.locked {
   opacity: 1;
   filter: grayscale(1) brightness(0.45);
@@ -228,14 +248,187 @@ body.readingMode #storyPage {
 }
 
 body.boss4EventStoryEntry,
-body.boss4EventStoryEntry #storyBackground {
+body.boss4EventStoryEntry #storyBackground,
+body.map04GateStoryEntry,
+body.map04GateStoryEntry #storyBackground {
   background-color: #000 !important;
   background-image: none !important;
 }
 
-body.boss4EventStoryEntry.readingMode #storyBackground {
+body.boss4EventStoryEntry.readingMode #storyBackground,
+body.map04GateStoryEntry.readingMode #storyBackground {
   filter: none;
   transform: none;
+}
+
+body.map04GateStoryEntry #readingBackButton {
+  opacity: .32;
+  pointer-events: none;
+  cursor: default;
+}
+
+#chapter5EyeClose {
+  --chapter5-eye-opening: 0%;
+  position: fixed;
+  inset: 0;
+  z-index: 13000;
+  overflow: hidden;
+  pointer-events: all;
+  background: transparent;
+}
+
+#chapter5EyeClose.hidden {
+  display: none;
+}
+
+.chapter5Eyelid {
+  position: absolute;
+  left: -8%;
+  width: 116%;
+  height: 58%;
+  background: #000;
+  will-change: transform;
+}
+
+.chapter5Eyelid.top {
+  top: -58%;
+  border-radius: 0 0 50% 50% / 0 0 16% 16%;
+}
+
+.chapter5Eyelid.bottom {
+  bottom: -58%;
+  border-radius: 50% 50% 0 0 / 16% 16% 0 0;
+}
+
+.chapter5EyeCloseBlackout {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+}
+
+.chapter5EyeGlimpse {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  opacity: 0;
+  background: #05060a center / cover no-repeat url("songs/boss5/background.png");
+  clip-path: inset(calc(50% - var(--chapter5-eye-opening)) 0 round 50%);
+  filter: brightness(.68) saturate(.78);
+  transform: scale(1.025);
+  will-change: clip-path, opacity, transform, filter;
+}
+
+.chapter5EyeHint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  width: min(34vw, 420px);
+  height: 2px;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(225, 242, 255, .36), transparent 72%);
+  filter: blur(2px);
+}
+
+.chapter5EyeImpact {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  background: #fff;
+  pointer-events: none;
+}
+
+#chapter5EyeClose.closing .chapter5Eyelid.top {
+  animation: chapter5EyelidTopClose 1.25s cubic-bezier(.55, .04, .78, .38) forwards;
+}
+
+#chapter5EyeClose.closing .chapter5Eyelid.bottom {
+  animation: chapter5EyelidBottomClose 1.25s cubic-bezier(.55, .04, .78, .38) forwards;
+}
+
+#chapter5EyeClose.closing .chapter5EyeCloseBlackout {
+  animation: chapter5EyeCloseBlackout .16s 1.12s linear forwards;
+}
+
+#chapter5EyeClose.awaitingInput .chapter5EyeCloseBlackout {
+  opacity: 1;
+}
+
+#chapter5EyeClose.awaitingInput.idleHint .chapter5EyeHint {
+  animation: chapter5EyeHintPulse 1.8s ease-in-out infinite;
+}
+
+#chapter5EyeClose.glimpse .chapter5EyeGlimpse {
+  animation: chapter5EyeGlimpse .42s cubic-bezier(.16, .78, .3, 1) both;
+}
+
+#chapter5EyeClose.eyeStage1 { --chapter5-eye-opening: 1.2%; }
+#chapter5EyeClose.eyeStage2 { --chapter5-eye-opening: 3.2%; }
+#chapter5EyeClose.eyeStage3 { --chapter5-eye-opening: 7%; }
+#chapter5EyeClose.eyeStage4 { --chapter5-eye-opening: 13%; }
+
+#chapter5EyeClose.finalOpening {
+  --chapter5-eye-opening: 52%;
+  background: #000;
+}
+
+#chapter5EyeClose.finalOpening .chapter5EyeCloseBlackout,
+#chapter5EyeClose.finalOpening .chapter5Eyelid,
+#chapter5EyeClose.finalOpening .chapter5EyeHint {
+  opacity: 0;
+}
+
+#chapter5EyeClose.finalOpening .chapter5EyeGlimpse {
+  opacity: 1;
+  clip-path: inset(0 round 0);
+  filter: brightness(1) saturate(1);
+  transform: scale(1);
+  transition: clip-path .62s cubic-bezier(.12, .76, .2, 1),
+              filter .62s ease,
+              transform .8s ease-out;
+}
+
+#chapter5EyeClose.finalOpening .chapter5EyeImpact {
+  animation: chapter5EyeImpact .72s ease-out forwards;
+}
+
+@keyframes chapter5EyelidTopClose {
+  0% { transform: translateY(0); }
+  58% { transform: translateY(55%); }
+  82% { transform: translateY(88%); }
+  100% { transform: translateY(100%); }
+}
+
+@keyframes chapter5EyelidBottomClose {
+  0% { transform: translateY(0); }
+  58% { transform: translateY(-55%); }
+  82% { transform: translateY(-88%); }
+  100% { transform: translateY(-100%); }
+}
+
+@keyframes chapter5EyeCloseBlackout {
+  to { opacity: 1; }
+}
+
+@keyframes chapter5EyeGlimpse {
+  0% { opacity: 0; transform: scale(1.04, .72); filter: brightness(1.16) saturate(.55); }
+  24% { opacity: 1; }
+  68% { opacity: .9; transform: scale(1.025, 1); }
+  100% { opacity: 0; transform: scale(1.025, .82); filter: brightness(.62) saturate(.76); }
+}
+
+@keyframes chapter5EyeHintPulse {
+  0%, 100% { opacity: 0; transform: translate(-50%, -50%) scaleX(.45); }
+  50% { opacity: .52; transform: translate(-50%, -50%) scaleX(1); }
+}
+
+@keyframes chapter5EyeImpact {
+  0% { opacity: .7; }
+  18% { opacity: .22; }
+  100% { opacity: 0; }
 }
 #storyBackButton::before {
   content: "";
@@ -880,6 +1073,21 @@ body.whiteFlashOut::after {
   margin-top: 8px;
   font-size: 18px;
   color: white;
+}
+
+#partnerUnlockOverlay.mapUnlock #partnerUnlockImage {
+  height: min(50.4vh, 476px);
+}
+
+#partnerUnlockOverlay.mapUnlock #partnerUnlockText {
+  color: #ffe56b;
+  font-family: "M PLUS 1", sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-shadow:
+    0 0 7px rgba(255, 235, 126, .88),
+    0 0 18px rgba(255, 199, 53, .58);
 }
 
 @keyframes partnerUnlockIn {
@@ -1676,6 +1884,25 @@ body.readingMode #researchRecordsButton {
   transform: scale(1.035);
 }
 
+#researchRecordsButton.hasUnread::after {
+  content: "！";
+  position: absolute;
+  top: 9px;
+  right: 8px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid rgba(255, 220, 224, .9);
+  border-radius: 50%;
+  color: #fff;
+  background: #b51f2a;
+  font: 700 17px/1 "Orbitron", sans-serif;
+  box-shadow: 0 0 12px rgba(224, 43, 56, .72);
+  animation: researchRecordUnreadPulse 2.2s ease-in-out infinite;
+}
+
 #researchRecordsOverlay {
   position: fixed;
   inset: 0;
@@ -1760,6 +1987,7 @@ body.readingMode #researchRecordsButton {
 }
 
 .researchRecordListItem {
+  position: relative;
   width: 100%;
   display: grid;
   grid-template-columns: 72px 1fr;
@@ -1774,6 +2002,26 @@ body.readingMode #researchRecordsButton {
   color: #dbc8c9;
   text-align: left;
   cursor: pointer;
+}
+
+.researchRecordListItem.unread {
+  padding-right: 38px;
+}
+
+.researchRecordListItem.unread::after {
+  content: "！";
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  color: #ff8188;
+  font: 700 17px/1 "Orbitron", sans-serif;
+  text-shadow: 0 0 8px rgba(239, 55, 66, .86);
+  animation: researchRecordUnreadPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes researchRecordUnreadPulse {
+  0%, 100% { opacity: .48; filter: brightness(.86); }
+  50% { opacity: 1; filter: brightness(1.2); }
 }
 
 .researchRecordListItem.active {

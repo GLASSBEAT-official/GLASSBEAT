@@ -1,0 +1,6 @@
+{
+  "title": "Magical World",
+  "artist": "nons works",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 4,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 8.9, "file": "expert.txt" }]
+}

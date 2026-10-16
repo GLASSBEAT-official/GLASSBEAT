@@ -5,7 +5,7 @@ let selectedSongIndex = 0;
 let selectedDifficulty = 0;
 let songSortMode = 0;
 const songSortLabels = ["デフォルト", "難易度順", "五十音順"];
-const bossSongIds = new Set(["boss", "boss2", "boss3", "boss4"]);
+const bossSongIds = new Set(["boss", "boss2", "boss3", "boss4", "boss5"]);
 const japaneseTitleCollator = new Intl.Collator("ja", { sensitivity: "base", numeric: true });
 const alphabetTitleCollator = new Intl.Collator("en", { sensitivity: "base", numeric: true });
 const songTitleReadings = {
@@ -41,6 +41,14 @@ let recentlyShardUnlockedSongId = "";
 let boss4YugamiScoreboardIndex = null;
 let boss4YugamiSelectionCommitted = false;
 const mapRewardSongIds = new Set();
+const mapClearUnlockSongIds = new Set(["song28", "song43"]);
+
+function isMapClearSongUnlocked(songId, saveData) {
+  if (saveData.mapClearUnlockedSongs?.[songId] === true) return true;
+  const clearedMap04Pieces = new Set(saveData.mapProgress?.map04?.clearedPieces || []);
+  return (songId === "song28" && clearedMap04Pieces.has("piece05"))
+    || (songId === "song43" && clearedMap04Pieces.has("piece09"));
+}
 const BOSS4_PUZZLE_DIRECTIVES = [
   "瑕無き調べに、ただ一つの歪みを刻め",
   "静寂の世界に、歌を呼び覚ませ",
@@ -225,6 +233,10 @@ function bypassUnlocksForConfiguredRandomSongs() {
 
 function isSongHidden(songId) {
   const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
+  if (mapClearUnlockSongIds.has(songId)) {
+    const configuredForCurrentMapPiece = mapSelectMode && getConfiguredMapSongIds().includes(songId);
+    return !configuredForCurrentMapPiece && !isMapClearSongUnlocked(songId, saveData);
+  }
   if (songId === "boss4") {
     // ひとつも解禁されていない間だけ隠し、BASIC以上の解禁後は表示する。
     return getBoss4MaxUnlockedDifficulty(saveData) < 0;
@@ -286,6 +298,16 @@ async function loadMapSelectContext() {
   const mapData = await response.json();
   selectedMapPiece = mapData.pieces?.find(piece => piece.id === selectedMapPieceId) || null;
   if (!selectedMapPiece?.songSelection) throw new Error(`ピース ${selectedMapPieceId} に選択可能な楽曲がありません。`);
+  const challengeOrder = Array.isArray(mapData.challengeOrder) ? mapData.challengeOrder : [];
+  const orderIndex = challengeOrder.indexOf(selectedMapPieceId);
+  if (orderIndex > 0) {
+    const saveData = getSaveData();
+    const clearedPieces = new Set(saveData.mapProgress?.[selectedMapId]?.clearedPieces || []);
+    if (!clearedPieces.has(challengeOrder[orderIndex - 1])) {
+      location.replace(`unlock-map.html?map=${encodeURIComponent(selectedMapId)}`);
+      throw new Error(`ピース ${selectedMapPieceId} は直前のピースを復元するまで挑戦できません。`);
+    }
+  }
   document.body.classList.add("mapSelectMode");
   document.body.classList.toggle("mapAllSongs", hasAllMapSongs() && !isRandomMapSelection());
   document.body.classList.toggle("randomMapSelection", isRandomMapSelection());
@@ -432,6 +454,11 @@ document.getElementById("userOffsetInput").addEventListener("change", () => {
 function isSongPrerequisiteLocked(songId) {
   const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
 
+  if (mapClearUnlockSongIds.has(songId)) {
+    const configuredForCurrentMapPiece = mapSelectMode && getConfiguredMapSongIds().includes(songId);
+    return !configuredForCurrentMapPiece && !isMapClearSongUnlocked(songId, saveData);
+  }
+
   if (mapRewardSongIds.has(songId) && saveData.mapRewardUnlockedSongs?.[songId] !== true) {
     return true;
   }
@@ -453,6 +480,12 @@ function isSongPrerequisiteLocked(songId) {
   }
   if (songId === "boss3") {
     return saveData.boss3Unlocked !== true;
+  }
+  if (songId === "boss5") {
+    const hasSavedScore = Object.values(saveData.boss5 || {}).some(record =>
+      record && Object.prototype.hasOwnProperty.call(record, "bestScore")
+    );
+    return saveData.boss5InitialScoreSaved !== true && !hasSavedScore;
   }
   if (songId === "song18") {
     return saveData.song18Unlocked !== true && saveData.storyRead?.chapter3_episode12 !== true;
@@ -525,6 +558,9 @@ function getSongUnlockMessage(songId) {
   if (songId === "boss3") {
     return "？？？";
   }
+  if (songId === "boss5") {
+    return "この楽曲の解禁には、MAPの進行が必要です。";
+  }
   if (songId === "song33") {
    return "この楽曲の解禁には、4-6の読了が必要です。";}
   if (songId === "song34") {
@@ -547,6 +583,8 @@ async function loadSongList() {
     const info = await infoResponse.json();
     songList.push({ id: songId, info: info });
   }
+  // 称号の判定前に、現行の楽曲一覧を基準に保存レートを確定させる。
+  calculatePlayerRate(songList);
   await syncEarnedProfileTitles();
 
   const fadeOverlay = document.getElementById("selectFadeOverlay");
@@ -607,7 +645,6 @@ async function loadSongList() {
     requestAnimationFrame(() => presentBoss4PuzzleIntro());
   }
 
-  calculatePlayerRate(songList);
   loadProfilePanel();
   checkCanonPartnerEvent();
 
@@ -747,7 +784,7 @@ function renderSongList() {
     const isLocked = !bypassSongUnlock && isSongLocked(song.id);
     const isShardLocked = !bypassSongUnlock && isSongShardLocked(song.id) && !isSongPrerequisiteLocked(song.id);
     const shouldHideSongInfo =
-  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "song35") && isLocked);
+  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "boss5" || song.id === "song35") && isLocked);
     const item = document.createElement("div");
     item.classList.add("songItem");
     item.dataset.songId = song.id;
@@ -895,7 +932,7 @@ function selectSong(index) {
   const isLocked = !bypassSongUnlock && isSongLocked(song.id);
   const isShardLocked = !bypassSongUnlock && isSongShardLocked(song.id) && !prerequisiteLocked;
   const shouldHideSongInfo =
-  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "song35") && prerequisiteLocked);
+  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "boss5" || song.id === "song35") && prerequisiteLocked);
   if (mapSelectMode) {
     const firstAllowedDifficulty = song.info.charts.findIndex(chart => isMapDifficultyAllowed(song.id, chart.difficulty));
     if (!isMapDifficultyAllowed(song.id, song.info.charts[selectedDifficulty]?.difficulty)) {
@@ -1023,7 +1060,7 @@ if (prerequisiteLocked) {
 
   // プレビュー再生
 const shouldBlockPreview =
-  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "song35") && isLocked);
+  isRandomMapSelection() || ((song.id === "boss" || song.id === "boss2" || song.id === "boss3" || song.id === "boss5" || song.id === "song35") && isLocked);
 
 // Keep the current playback position when the same song is selected again.
 if (previewSongId !== song.id) {
@@ -1829,7 +1866,21 @@ async function syncEarnedProfileTitles() {
         }
         continue;
       }
-      if (currentRate < requiredRate) continue;
+      if (currentRate < requiredRate) {
+        const invalidTitle = currentSaveData.unlockedTitles[id];
+        if (!invalidTitle) continue;
+
+        delete currentSaveData.unlockedTitles[id];
+        if (currentSaveData.viewedTitles) delete currentSaveData.viewedTitles[id];
+        if (currentSaveData.notifiedTitles) delete currentSaveData.notifiedTitles[id];
+        if (currentSaveData.profile?.titleId === id || currentSaveData.profile?.title === invalidTitle.name) {
+          currentSaveData.profile.titleId = DEFAULT_PROFILE_TITLE.id;
+          currentSaveData.profile.title = DEFAULT_PROFILE_TITLE.name;
+          currentSaveData.profile.titleBackground = DEFAULT_PROFILE_TITLE.background;
+        }
+        changed = true;
+        continue;
+      }
 
       if (!currentSaveData.unlockedTitles[id]) {
         currentSaveData.unlockedTitles[id] = { unlockedAt: Date.now() };
@@ -2355,7 +2406,6 @@ document.getElementById("partnerModalBg").addEventListener("click", () => {
 });
 
 loadProfilePanel();
-syncEarnedProfileTitles();
 
 let lastDetectedDevicePixelRatio = window.devicePixelRatio;
 let lastDetectedViewportScale = window.visualViewport?.scale || 1;

@@ -94,28 +94,34 @@ function createAvailableCard(entry, mapData, saveData, selected) {
   const mainSongReward = (mapData.completionRewards || []).find(reward => reward.type === "song");
   const mainSongId = mainSongReward?.id || "";
   const number = getMapNumber(entry, mapData);
+  const map04Locked = mapData.id === "map04"
+    && saveData.storyRead?.chapter5_episode1 !== true;
   const card = document.createElement("article");
-  card.className = `mapSelectCard${selected ? " selected" : ""}`;
+  card.className = `mapSelectCard${selected ? " selected" : ""}${map04Locked ? " locked" : ""}`;
   card.dataset.mapId = mapData.id;
 
   const orb = document.createElement("div");
   orb.className = "mapOrbFrame";
-  orb.tabIndex = 0;
+  orb.tabIndex = map04Locked ? -1 : 0;
   orb.setAttribute("role", "button");
-  orb.setAttribute("aria-label", `MAP ${number}へ進む`);
+  orb.setAttribute("aria-label", map04Locked ? "MAP 04：5-1読了で解禁" : `MAP ${number}へ進む`);
+  if (map04Locked) orb.setAttribute("aria-disabled", "true");
   orb.innerHTML = `
     <div class="mapOrbGlow"></div>
     <img class="mapOrbImage" src="${mapData.iconImage || mapData.completedImage || ""}" alt="">
     ${completion >= 100 ? `<div class="mapCompleteBand"><span>COMPLETE</span></div>` : ""}
+    ${map04Locked ? `<div class="mapUnlockRequirement">5-1読了で解禁</div>` : ""}
     <span class="mapOrbTopMark">◆</span>`;
 
-  const enterMap = () => enterMapWithStartTransition(mapData);
-  orb.addEventListener("click", enterMap);
-  orb.addEventListener("keydown", event => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    event.preventDefault();
-    enterMap();
-  });
+  if (!map04Locked) {
+    const enterMap = () => enterMapWithStartTransition(mapData);
+    orb.addEventListener("click", enterMap);
+    orb.addEventListener("keydown", event => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      enterMap();
+    });
+  }
 
   const details = document.createElement("div");
   details.className = "mapCardDetails";

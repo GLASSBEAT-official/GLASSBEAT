@@ -5,7 +5,7 @@
   <link rel="icon" type="image/png" sizes="any" href="assets/favicon.png?v=20260910-1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MAP</title>
-  <link rel="stylesheet" href="unlock-map.css?v=20260827-1">
+  <link rel="stylesheet" href="unlock-map.css?v=20261012-1">
 </head>
 <body>
   <div id="mapLoadingScreen" role="status" aria-live="polite" aria-label="マップをロード中">
@@ -98,6 +98,9 @@
           <button id="mapRewardNext" class="mapRewardArrow" type="button" aria-label="次の報酬">▷</button>
           <div id="mapNextRewardTrack"><div id="mapNextRewardFill"></div></div>
         </aside>
+        <button id="researchRecordsButton" class="hidden" type="button" aria-label="研究記録を開く">
+          <img src="images/records.png" alt="">
+        </button>
       </div>
     </section>
 
@@ -113,8 +116,29 @@
       <div id="mapRewardUnlockHint">クリックでスキップ</div>
     </div>
   </div>
+  <div id="researchRecordsOverlay" class="hidden" aria-hidden="true">
+    <section id="researchRecordsPanel" role="dialog" aria-modal="true" aria-labelledby="researchRecordsHeading">
+      <header id="researchRecordsHeader">
+        <div>
+          <span id="researchRecordsKicker">ARCHIVED DOCUMENTS</span>
+          <h2 id="researchRecordsHeading">研究記録</h2>
+        </div>
+        <button id="researchRecordsClose" type="button" aria-label="研究記録を閉じる">close</button>
+      </header>
+      <div id="researchRecordsContent">
+        <nav id="researchRecordsList" aria-label="研究記録一覧"></nav>
+        <article id="researchRecordViewer">
+          <div id="researchRecordId">---</div>
+          <h3 id="researchRecordTitle">記録を選択してください</h3>
+          <div id="researchRecordDivider"></div>
+          <p id="researchRecordBody"></p>
+        </article>
+      </div>
+    </section>
+  </div>
   <div id="mapTransitionOverlay" aria-hidden="true"></div>
   <script src="map-stamina.js?v=20260925-1"></script>
-  <script src="unlock-map.js?v=20260925-2"></script>
+  <script src="research-records.js?v=20260927-1"></script>
+  <script src="unlock-map.js?v=20261015-2"></script>
 </body>
 </html>

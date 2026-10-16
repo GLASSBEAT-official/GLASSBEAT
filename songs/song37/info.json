@@ -3,7 +3,7 @@
   "artist": "Lime",
    "background":"background.png",
     "shardUnlockCost": 100,
-  "charts":[{"difficulty": "BASIC","level": 7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.2, "file": "expert.txt" }],
+  "charts":[{"difficulty": "BASIC","level": 7.3,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.3, "file": "expert.txt" }],
    "achievementTitles": [
   {
     "id": "song37achieve",

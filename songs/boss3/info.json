@@ -2,7 +2,7 @@
   "title": "Uni/gnitΣ",
   "artist": "O_koge",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 10.2,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.8, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.1, "file": "fracture.txt" }],
+  "charts":[{"difficulty": "BASIC","level": 10.3,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.8, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.2, "file": "fracture.txt" }],
   "achievementTitles": [
   {
     "id": "boss3achieve",

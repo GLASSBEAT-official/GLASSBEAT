@@ -3,6 +3,7 @@
   "maps": [
     { "id": "map01", "data": "map/maps/map01.json", "status": "available" },
     { "id": "map02", "data": "map/maps/map02.json", "status": "available" },
-    { "id": "map03", "data": "map/maps/map03.json", "status": "available" }
+    { "id": "map03", "data": "map/maps/map03.json", "status": "available" },
+    { "id": "map04", "data": "map/maps/map04.json", "status": "available" }
   ]
 }

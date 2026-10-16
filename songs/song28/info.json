@@ -2,6 +2,12 @@
   "title": "Girl's Divinity",
   "artist": "きゅうりジャム",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10, "file": "expert.txt" }]
-
+  "charts":[{"difficulty": "BASIC","level": 6,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10.1, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song28achieve",
+    "name": "其ノ少女ノ軛",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }]
 }

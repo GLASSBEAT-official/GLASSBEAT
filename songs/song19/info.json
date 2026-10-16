@@ -2,7 +2,7 @@
   "title": "Lycoris",
   "artist": "Keogh",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 5.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.8, "file": "expert.txt" },{"difficulty": "FRACTURE","level": 13.0,"file":"fracture.txt"}],
+  "charts":[{"difficulty": "BASIC","level": 5.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 9.8, "file": "expert.txt" },{"difficulty": "FRACTURE","level": 12.5,"file":"fracture.txt"}],
   "achievementTitles": [
   {
     "id": "song18achieve",

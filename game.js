@@ -15,10 +15,14 @@ const bulletChallenge = params.get("bulletChallenge") === "1";
 const boss3Challenge = params.get("boss3Challenge") === "1";
 const unlockChallenge = storyChallenge || bulletChallenge || boss3Challenge;
 const mapMode = params.get("mode") === "map";
+// MAPプレイでは、各楽曲が通常モードで持つ自動分岐よりも
+// MAPの判定・通常リザルトを優先する。MAP専用条件の演出は個別に実行する。
+const suppressAutomaticSongEvents = mapMode;
 const song19StoryChallenge = boss3Challenge && currentSong === "song19";
 const chapter4StoryChallenge = storyChallenge && currentSong === "song33";
 const song35StoryChallenge = storyChallenge && currentSong === "song35";
 const boss4ChaosIntroMode = currentSong === "boss4" && params.get("boss4ChaosIntro") === "1";
+const boss5IntroMode = currentSong === "boss5" && params.get("boss5Intro") === "1";
 const BOSS4_ACCESS_TICKET_KEY = "glassbeatBoss4AccessTicket";
 const BOSS4_RELOAD_PERMIT_KEY = "glassbeatBoss4ReloadPermit";
 
@@ -111,6 +115,9 @@ if (song19StoryChallenge) {
 if (song35StoryChallenge) {
   document.body.classList.add("song35EventMinimalHud");
 }
+if (boss5IntroMode) {
+  document.body.classList.add("boss5IntroMode");
+}
 if (chapter4StoryChallenge) {
   document.body.classList.add("chapter4StoryChallenge");
   const storyChallengePartner = document.getElementById("storyChallengePartner");
@@ -125,11 +132,32 @@ if (chapter4StoryChallenge) {
 }
 const currentMapId = params.get("map") || "";
 const currentMapPieceId = params.get("piece") || "";
+const song28Map04Piece5Event = currentSong === "song28"
+  && mapMode
+  && currentMapId === "map04"
+  && currentMapPieceId === "piece05";
 let activeMapPiece = null;
 let activeMapData = null;
 let mapPieceWasNewlyCleared = false;
 let mapAttemptFailed = false;
 let mapAttemptFailureReasons = [];
+let mapPieceChallengeLocked = false;
+let mapHardGaugeFailureTriggered = false;
+
+function isHardGaugeActive() {
+  return song19StoryChallenge || (mapMode && activeMapPiece?.gauge === "hard");
+}
+
+function mapPieceIncludesSong(piece, songId) {
+  const songs = piece?.songSelection?.songs;
+  if (songs === "all") return true;
+  if (!Array.isArray(songs)) return false;
+  return songs.some(setting => {
+    if (typeof setting === "string") return setting === songId;
+    if (Array.isArray(setting?.songId)) return setting.songId.includes(songId);
+    return setting?.songId === songId;
+  });
+}
 
 async function loadMapMissionContext() {
   if (!mapMode) return;
@@ -146,6 +174,19 @@ async function loadMapMissionContext() {
     activeMapPiece = mapData.pieces?.find(piece => piece.id === currentMapPieceId) || null;
     if (!activeMapPiece) {
       console.warn(`[Map Mission] ${currentMapId} にピース ${currentMapPieceId} が見つかりません。`);
+      return;
+    }
+    document.body.classList.toggle("mapHardGauge", activeMapPiece.gauge === "hard");
+    const challengeOrder = Array.isArray(mapData.challengeOrder) ? mapData.challengeOrder : [];
+    const orderIndex = challengeOrder.indexOf(currentMapPieceId);
+    if (orderIndex > 0) {
+      const saveData = getSaveData();
+      const clearedPieces = new Set(saveData.mapProgress?.[currentMapId]?.clearedPieces || []);
+      if (!clearedPieces.has(challengeOrder[orderIndex - 1])) {
+        mapPieceChallengeLocked = true;
+        activeMapPiece = null;
+        location.replace(`unlock-map.html?map=${encodeURIComponent(currentMapId)}`);
+      }
     }
   } catch (error) {
     console.error("[Map Mission] マップデータの読み込みに失敗しました。", error);
@@ -185,6 +226,8 @@ function preloadCurrentGameImages() {
 
   return preloadImageAssets([
     song35StoryChallenge && `songs/${currentSong}/backgroundBefore.png`,
+    song28Map04Piece5Event && "songs/song28/backgroundB.png",
+    boss5IntroMode && "songs/boss5/backgroundB.png",
     boss4ChaosIntroMode && "songs/boss4/background2.png",
     songInfo.background && `songs/${currentSong}/${songInfo.background}`,
     `songs/${currentSong}/jacket.png`,
@@ -201,7 +244,7 @@ const settings = saveDataForSettings.settings || {};
 const configuredMusicVolume = Number.isFinite(Number(settings.musicVolume))
   ? Math.min(100, Math.max(0, Number(settings.musicVolume))) / 100
   : 0.7;
-const song35FinalTrialDistortionActive = isSong35FinalPuzzleReady();
+const song35FinalTrialDistortionActive = !suppressAutomaticSongEvents && isSong35FinalPuzzleReady();
 const musicVolume = configuredMusicVolume;
 const noteThickness = Number.isFinite(Number(settings.noteThickness))
   ? Math.min(100, Math.max(50, Math.round(Number(settings.noteThickness))))
@@ -209,7 +252,8 @@ const noteThickness = Number.isFinite(Number(settings.noteThickness))
 // 80 = 従来の20px。中心位置は変えず、見た目の厚みだけを変更する。
 document.documentElement.style.setProperty("--note-thickness", `${noteThickness / 4}px`);
 const boss4SecondTrialGameplayActive =
-  saveDataForSettings.storyFlags?.boss4PuzzleStarted === true
+  !suppressAutomaticSongEvents
+  && saveDataForSettings.storyFlags?.boss4PuzzleStarted === true
   && Number(saveDataForSettings.storyFlags?.boss4PuzzleStage || 0) === 1
   && saveDataForSettings.storyFlags?.boss4PuzzleTransitionPending !== true
   && Number(settings.musicVolume ?? 70) === 0;
@@ -300,6 +344,7 @@ function getLaneFromInput(e) {
 }
 
 let songInfo = {};
+let rateSongCatalog = [];
 let titleDefinitions = { rateTitles: [], recordTitles: [], specialTitles: [] };
 
 const music = new Audio(`songs/${currentSong}/music.wav`);
@@ -827,6 +872,7 @@ let song11BgEventTriggered = false;
 let song11BgEventTime = null;
 let song35BgEventTriggered = false;
 let song35BgEventTime = null;
+let song28BackgroundTransitionTriggered = false;
 let song35LightLinesActive = false;
 let song35NextLightLineAt = 0;
 let song35LightLineSequenceIndex = 0;
@@ -865,6 +911,7 @@ let bulletFinalEventDarkened = false;
 let bulletPauseLocked = false;
 let bulletTutorialActive = false;
 let boss3IntroActive = boss3Intro;
+let boss5IntroActive = boss5IntroMode;
 let boss3IntroRunning = false;
 let boss3HoverTapsShown = false;
 let boss3HoverTapsRemoved = false;
@@ -874,6 +921,17 @@ let boss3Background3TransitionStarted = false;
 let boss3Background3Preload = null;
 let boss3TempoWarpStarted = false;
 let boss3TempoWarpFinished = false;
+let boss5TempoWarpStarted = false;
+let boss5TempoWarpFinished = false;
+let boss5BackgroundBTransitionStarted = false;
+let boss5StrongWarpStarted = false;
+let boss5StrongWarpFinished = false;
+let boss5ReturnTransitionPhase = 0;
+let boss5OrangeLaneGlowStarted = false;
+let boss5FinalTempoWarpStarted = false;
+let boss5FinalTempoWarpFinished = false;
+let boss5SecondTempoWarpStarted = false;
+let boss5SecondTempoWarpFinished = false;
 let boss3FinalWhiteMistShown = false;
 let boss3BranchDifficultyIndex = null;
 let boss4BackgroundRevealIndex = 0;
@@ -999,7 +1057,9 @@ async function loadSongInfo() {
 
   const initialBackground = song35StoryChallenge
     ? "backgroundBefore.png"
-    : songInfo.background;
+    : song28Map04Piece5Event
+      ? "backgroundB.png"
+      : songInfo.background;
   if (initialBackground) {
   document.body.style.backgroundImage = `url('songs/${currentSong}/${initialBackground}')`;
   document.body.style.backgroundSize = "cover";
@@ -1282,6 +1342,7 @@ rushEvents.sort((a, b) => a.timeMs - b.timeMs);
         measure: Number(parts[0]),
         division: parts[1].split("/").map(Number),
         type: "dual",
+        contracting: parts.includes("shrink"),
         hitTime: hitTime + offset,
         spawned: false
       });
@@ -1341,7 +1402,7 @@ rushEvents.sort((a, b) => a.timeMs - b.timeMs);
     const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
 secretBossUnlocked = saveData.secretBossUnlocked === true;
 
-if (currentSong === SECRET_SOURCE_SONG && !secretBossUnlocked) {
+if (!suppressAutomaticSongEvents && currentSong === SECRET_SOURCE_SONG && !secretBossUnlocked) {
   secretBossTriggerTime = getNoteTime(SECRET_TRIGGER_MEASURE, [0, 1]) + offset;
 } else {
   secretBossTriggerTime = null;
@@ -1649,13 +1710,88 @@ function spawnLaneGlow(laneIndex, color, opacity = 0.3) {
   setTimeout(() => glow.remove(), 400);
 }
 
-function showFinishSplash(text, color) {
+function showFinishCelebration(tier, color, durationMs) {
+  document.querySelector(".finishCelebration")?.remove();
+  if (tier === "clear") return;
+
+  const celebration = document.createElement("div");
+  celebration.className = `finishCelebration ${tier}`;
+  celebration.style.setProperty("--finish-color", color);
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "finishCelebrationBackdrop";
+  celebration.appendChild(backdrop);
+
+  const flash = document.createElement("div");
+  flash.className = "finishCelebrationFlash";
+  celebration.appendChild(flash);
+
+  for (const side of ["left", "right"]) {
+    const beam = document.createElement("div");
+    beam.className = `finishCelebrationBeam ${side}`;
+    celebration.appendChild(beam);
+  }
+
+  const ringCount = tier === "ultimatePerfect" ? 3 : 2;
+  for (let index = 0; index < ringCount; index++) {
+    const ring = document.createElement("div");
+    ring.className = "finishCelebrationRing";
+    ring.style.setProperty("--ring-delay", `${index * 110}ms`);
+    celebration.appendChild(ring);
+  }
+
+  const particleCount = tier === "ultimatePerfect" ? 34 : tier === "allPerfect" ? 28 : 22;
+  for (let index = 0; index < particleCount; index++) {
+    const particle = document.createElement("span");
+    particle.className = "finishCelebrationParticle";
+    const angle = (Math.PI * 2 * index / particleCount) + (Math.random() - 0.5) * 0.24;
+    const distance = 95 + Math.random() * 190;
+    particle.style.setProperty("--particle-x", `${Math.cos(angle) * distance}px`);
+    particle.style.setProperty("--particle-y", `${Math.sin(angle) * distance * 0.58}px`);
+    particle.style.setProperty("--particle-size", `${2.5 + Math.random() * 4}px`);
+    particle.style.setProperty("--particle-delay", `${Math.random() * 70}ms`);
+    celebration.appendChild(particle);
+  }
+
+  document.body.appendChild(celebration);
+  setTimeout(() => celebration.remove(), durationMs + 180);
+}
+
+async function loadRateSongCatalog() {
+  const response = await fetch("songs/songlist.json", { cache: "no-store" });
+  if (!response.ok) throw new Error(`songlist.json: HTTP ${response.status}`);
+  const data = await response.json();
+  const songIds = [...new Set((data.folders || []).flatMap(folder => folder.songs || []))];
+
+  rateSongCatalog = await Promise.all(songIds.map(async songId => {
+    const infoResponse = await fetch(`songs/${songId}/info.json`, { cache: "no-store" });
+    if (!infoResponse.ok) throw new Error(`${songId}/info.json: HTTP ${infoResponse.status}`);
+    const info = await infoResponse.json();
+    return {
+      id: songId,
+      levels: (info.charts || []).map(chart => Number(chart.level || 0))
+    };
+  }));
+}
+
+function placeBoss5HudAtViewportRoot() {
+  if (!boss5IntroMode) return;
+  for (const id of ["scoreArea", "pauseButton", "lifeText", "lifeBar"]) {
+    const element = document.getElementById(id);
+    if (element && element.parentElement !== document.body) document.body.appendChild(element);
+  }
+}
+
+function showFinishSplash(text, color, tier = "clear") {
   if (life <= 0) return;
 
   const clearSplash = document.getElementById("clearSplash");
   if (!clearSplash) return;
+  if (clearSplash.parentElement !== document.body) document.body.appendChild(clearSplash);
 
   clearSplash.textContent = text;
+  clearSplash.dataset.text = text;
+  clearSplash.dataset.tier = tier;
   clearSplash.style.color = color;
 
   clearSplash.classList.remove("show");
@@ -1667,14 +1803,24 @@ function showFinishSplash(text, color) {
     spawnParticles(lane, particleColor);
   }
 
+  const splashDurationMs = tier === "ultimatePerfect"
+    ? 2350
+    : tier === "clear"
+      ? 1600
+      : 2150;
+  if (tier !== "clear") {
+    showFinishCelebration(tier, particleColor, splashDurationMs);
+  }
+
   setTimeout(() => {
     clearSplash.classList.remove("show");
-  }, 1300);
+  }, splashDurationMs);
 }
 
 function showFinishRing(color = "rgba(255, 183, 197, 0.8)") {
   const ring = document.getElementById("finishRing");
   if (!ring) return;
+  if (ring.parentElement !== document.body) document.body.appendChild(ring);
 
   ring.style.borderColor = color;
   ring.classList.remove("show");
@@ -1978,9 +2124,39 @@ function checkFailure() {
   }, 1800);
   return;
 }
+    if (mapMode && activeMapPiece?.gauge === "hard") {
+      triggerMapHardGaugeFailure();
+      return;
+    }
     comboText.style.display = "none";
     failedText.style.opacity = "1";
   }
+}
+
+function triggerMapHardGaugeFailure() {
+  if (mapHardGaugeFailureTriggered || showResult.called) return;
+  mapHardGaugeFailureTriggered = true;
+  started = false;
+  for (const key of Object.keys(keys)) keys[key] = false;
+  comboText.style.display = "none";
+  fadeOutAudio(music, 900);
+
+  gameOverSE.currentTime = 0;
+  gameOverSE.play().catch(error => {
+    console.log("gameover play failed:", error);
+  });
+
+  document.getElementById("unlockFailShutter")?.classList.add("close");
+  const unlockFailedText = document.getElementById("unlockFailedText");
+  if (unlockFailedText) {
+    unlockFailedText.textContent = "UNLOCK FAILED";
+    unlockFailedText.classList.remove("silenced");
+    unlockFailedText.style.opacity = "1";
+  }
+
+  setTimeout(() => {
+    location.href = `unlock-map.html?map=${encodeURIComponent(currentMapId)}`;
+  }, 1800);
 }
 
 function fadeOutAudio(audio, durationMs = 900) {
@@ -2037,7 +2213,7 @@ function applyMiss(showText = true) {
   // song35のStory Challengeも、最終ミッションが表示中なら通常プレイ同様にライフを減らす。
   const song35FinalMissionActive = song35StoryChallenge && isSong35FinalPuzzleReady();
   if (!boss3Intro && (!song35StoryChallenge || song35FinalMissionActive)) {
-    const missDamage = song19StoryChallenge ? 60 : 70;
+    const missDamage = isHardGaugeActive() ? 60 : 70;
     damageTakenDuringPlay += missDamage;
     life -= missDamage;
     if (life < 0) life = 0;
@@ -2051,8 +2227,8 @@ function applyMiss(showText = true) {
   updateJudgeCounters();
 }
 
-function applySong19GoodDamage() {
-  if (!song19StoryChallenge || boss3Intro || life <= 0) return;
+function applyHardGaugeGoodDamage() {
+  if (!isHardGaugeActive() || boss3Intro || life <= 0) return;
 
   const goodDamage = 5;
   damageTakenDuringPlay += goodDamage;
@@ -2716,27 +2892,49 @@ function primeInitialNoteRendering() {
   void document.getElementById("game")?.offsetHeight;
 }
 
-function isBoss4ContractingDual(noteData) {
+function isContractingDual(noteData) {
   const measure = Number(noteData?.measure);
-  return boss4ChaosIntroMode
-    && noteData?.type === "dual"
+  if (noteData?.type !== "dual") return false;
+  return noteData.contracting === true || (
+    boss4ChaosIntroMode
     && measure >= 66
-    && measure <= 73;
+    && measure <= 73
+  );
 }
 
-function updateBoss4ContractingDual(noteData) {
-  if (!isBoss4ContractingDual(noteData) || !noteData.element) return;
+function updateContractingDual(noteData) {
+  if (!isContractingDual(noteData) || !noteData.element) return;
 
-  const fallDistance = Math.max(1, judgeY - spawnY);
+  const contractionEndY = judgeY - 50;
+  const fallDistance = Math.max(1, contractionEndY - spawnY);
   const rawProgress = Math.max(0, Math.min(1, (noteData.y - spawnY) / fallDistance));
   const shrinkProgress = rawProgress * rawProgress * (3 - 2 * rawProgress);
   const fullLaneLeft = 10;
   const fullLaneWidth = 480;
-  const targetLeft = noteData.boss4DualTargetLeft;
-  const targetWidth = noteData.boss4DualTargetWidth;
+  const targetLeft = noteData.contractingDualTargetLeft;
+  const targetWidth = noteData.contractingDualTargetWidth;
 
   noteData.element.style.left = `${fullLaneLeft + (targetLeft - fullLaneLeft) * shrinkProgress}px`;
   noteData.element.style.width = `${fullLaneWidth + (targetWidth - fullLaneWidth) * shrinkProgress}px`;
+}
+
+function isBoss5Measure88ExtendingLong(noteData) {
+  return currentSong === "boss5"
+    && noteData?.type === "long"
+    && Number(noteData.measure) === 88
+    && Number(noteData.division?.[0]) === 0;
+}
+
+function updateBoss5Measure88LongExtension(noteData, currentMs) {
+  if (!noteData.boss5VisualExtension || !noteData.element) return;
+  const durationMs = 520;
+  const progress = Math.max(0, Math.min(1, (currentMs - noteData.hitTime) / durationMs));
+  const easedProgress = 1 - Math.pow(1 - progress, 3);
+  const height = noteData.boss5InitialVisualLength
+    + (noteData.boss5FullVisualLength - noteData.boss5InitialVisualLength) * easedProgress;
+  noteData.element.style.height = `${height}px`;
+  noteData.length = height;
+  if (progress >= 1) noteData.boss5VisualExtension = false;
 }
 
 function createNote(noteData, { hidden = false } = {}) {
@@ -2760,7 +2958,20 @@ function createNote(noteData, { hidden = false } = {}) {
  if (noteData.type === "long") {
   const startVisual = getVisualOffsetFromTime(noteData.hitTime);
   const endVisual = getVisualOffsetFromTime(noteData.endTime);
-  noteData.length = (endVisual - startVisual) + longStartVisualOffsetPx;
+  const fullVisualLength = (endVisual - startVisual) + longStartVisualOffsetPx;
+  if (isBoss5Measure88ExtendingLong(noteData)) {
+    const initialEndTime = getNoteTime(88, [1, 8]) + offset;
+    noteData.boss5InitialVisualLength = Math.max(
+      longStartVisualOffsetPx,
+      getVisualOffsetFromTime(initialEndTime) - startVisual + longStartVisualOffsetPx
+    );
+    noteData.boss5FullVisualLength = fullVisualLength;
+    noteData.boss5VisualExtension = true;
+    noteData.length = noteData.boss5InitialVisualLength;
+    note.classList.add("boss5ExtendingLong");
+  } else {
+    noteData.length = fullVisualLength;
+  }
   note.style.height = noteData.length + "px";
   note.style.transform = "translateY(-100%)";
   note.style.background = "#FF8800";
@@ -2771,9 +2982,9 @@ function createNote(noteData, { hidden = false } = {}) {
     const maxLane = Math.max(...noteData.lanes);
     const laneSpan = maxLane - minLane + 1;
     const noteWidth = laneSpan * 100 - 20;
-    noteData.boss4DualTargetLeft = minLane * 100 + 10;
-    noteData.boss4DualTargetWidth = noteWidth;
-    note.style.width = (isBoss4ContractingDual(noteData) ? 480 : noteWidth) + "px";
+    noteData.contractingDualTargetLeft = minLane * 100 + 10;
+    noteData.contractingDualTargetWidth = noteWidth;
+    note.style.width = (isContractingDual(noteData) ? 480 : noteWidth) + "px";
 
     if (chapter4StoryChallenge) {
       const symbol = document.createElement("span");
@@ -2794,7 +3005,7 @@ function createNote(noteData, { hidden = false } = {}) {
 
     const game = document.getElementById("game");
 
-  note.style.left = isBoss4ContractingDual(noteData)
+  note.style.left = isContractingDual(noteData)
     ? "10px"
     : (laneIndex * 100 + 10) + "px";
   game.appendChild(note);
@@ -3230,7 +3441,7 @@ function judgeLongNoteEnd(note) {
     showJudgeText("Good!", "#88FF88", note.lane);
     score += goodScore;
     goodCount++;
-    applySong19GoodDamage();
+    applyHardGaugeGoodDamage();
     applyJudgementRecoverySkill("good");
   }
 
@@ -3313,6 +3524,37 @@ function updateBoss3HoverTapEffect(currentMs) {
     taps.forEach(tap => tap.classList.add("exiting"));
     setTimeout(() => taps.forEach(tap => tap.remove()), 260);
   }
+}
+
+function triggerSong28Map04BackgroundTransition(currentMs) {
+  if (!song28Map04Piece5Event || song28BackgroundTransitionTriggered) return;
+  const transitionTime = getNoteTime(74, [0, 1]) + offset;
+  if (currentMs < transitionTime) return;
+  song28BackgroundTransitionTriggered = true;
+
+  const transition = document.getElementById("song28BackgroundTransition");
+  const shardField = document.getElementById("song28BackgroundShards");
+  document.body.style.backgroundImage = "url('songs/song28/background.png')";
+  if (!transition || !shardField) return;
+
+  shardField.replaceChildren();
+  for (let index = 0; index < 10; index++) {
+    const shard = document.createElement("span");
+    const leftSide = index % 2 === 0;
+    shard.className = leftSide ? "left" : "right";
+    shard.style.top = `${8 + (index * 17) % 82}%`;
+    shard.style.setProperty("--song28-shard-y", `${(index % 3 - 1) * 18}px`);
+    shard.style.setProperty("--song28-shard-delay", `${(index % 5) * 28}ms`);
+    shardField.appendChild(shard);
+  }
+
+  transition.classList.remove("active");
+  void transition.offsetWidth;
+  transition.classList.add("active");
+  setTimeout(() => {
+    transition.classList.remove("active");
+    shardField.replaceChildren();
+  }, 900);
 }
 
 function triggerBoss3Background2Transition(currentMs) {
@@ -3956,6 +4198,219 @@ function updateBoss3TempoWarp(currentMs) {
   }
 }
 
+function updateBoss5TempoWarp(currentMs) {
+  if (!boss5IntroMode || boss5TempoWarpFinished) return;
+
+  const startTime = getNoteTime(41, [0, 1]) + offset;
+  const fadeTime = getNoteTime(56, [1, 2]) + offset;
+  const finishTime = getNoteTime(57, [0, 1]) + offset;
+  if (currentMs < startTime) return;
+
+  const warp = document.getElementById("boss3TempoWarp");
+  if (!warp) {
+    boss5TempoWarpFinished = true;
+    return;
+  }
+
+  if (!boss5TempoWarpStarted) {
+    boss5TempoWarpStarted = true;
+    document.body.classList.add("boss5TempoWarpActive");
+  }
+
+  const pulse = Math.sin(currentMs * (Math.PI * 2) / ((60000 / 262) * 2));
+  const fadeOut = currentMs < fadeTime
+    ? 1
+    : Math.max(0, 1 - (currentMs - fadeTime) / Math.max(1, finishTime - fadeTime));
+  warp.style.setProperty("--boss3-warp-opacity", String(.7 * fadeOut));
+  warp.style.setProperty("--boss3-warp-scale", String(1 + (.022 + pulse * .004) * fadeOut));
+  warp.style.setProperty("--boss3-warp-ring-opacity", String(.7 * fadeOut));
+  warp.style.setProperty("--boss3-warp-ring-scale", String(1 + (.036 + pulse * .008) * fadeOut));
+  warp.style.setProperty("--boss3-warp-edge-opacity", String(.76 * fadeOut));
+  warp.style.setProperty("--boss3-warp-pulse-scale", String(1 + pulse * .012 * fadeOut));
+
+  if (currentMs >= finishTime) {
+    boss5TempoWarpFinished = true;
+    document.body.classList.remove("boss5TempoWarpActive");
+    warp.removeAttribute("style");
+  }
+}
+
+function triggerBoss5BackgroundBTransition(currentMs) {
+  if (!boss5IntroMode || boss5BackgroundBTransitionStarted) return;
+  if (currentMs < getNoteTime(88, [0, 1]) + offset) return;
+  boss5BackgroundBTransitionStarted = true;
+
+  document.body.classList.add("boss5BackgroundBWiping", "boss5BlackLanes");
+  const radius = Math.hypot(window.innerWidth / 2, window.innerHeight) + 12;
+  const wipe = document.createElement("div");
+  wipe.id = "boss5BackgroundBWipe";
+  document.body.prepend(wipe);
+
+  const wipeAnimation = wipe.animate(
+    [
+      { clipPath: "circle(0px at 50% 0%)" },
+      { clipPath: `circle(${radius}px at 50% 0%)` }
+    ],
+    {
+      duration: 1050,
+      delay: 50,
+      easing: "cubic-bezier(0.22, 0.65, 0.3, 1)",
+      fill: "both"
+    }
+  );
+
+  wipeAnimation.finished.catch(() => {}).then(() => {
+    document.body.style.backgroundImage = "url('songs/boss5/backgroundB.png')";
+    document.body.classList.add("boss5BackgroundBApplied");
+    document.body.classList.remove("boss5BackgroundBWiping");
+    wipe.remove();
+  });
+}
+
+function updateBoss5StrongWarp(currentMs) {
+  if (!boss5IntroMode || boss5StrongWarpFinished) return;
+  const startTime = getNoteTime(111, [0, 1]) + offset;
+  const fadeTime = getNoteTime(112, [1, 4]) + offset;
+  const finishTime = getNoteTime(112, [1, 2]) + offset;
+  if (currentMs < startTime) return;
+
+  const warp = document.getElementById("boss3TempoWarp");
+  if (!warp) {
+    boss5StrongWarpFinished = true;
+    return;
+  }
+  if (!boss5StrongWarpStarted) {
+    boss5StrongWarpStarted = true;
+    document.body.classList.add("boss5StrongWarpActive");
+  }
+
+  const pulse = Math.sin(currentMs * (Math.PI * 2) / (60000 / 262));
+  const fadeOut = currentMs < fadeTime
+    ? 1
+    : Math.max(0, 1 - (currentMs - fadeTime) / Math.max(1, finishTime - fadeTime));
+  warp.style.setProperty("--boss3-warp-opacity", String(.67 * fadeOut));
+  warp.style.setProperty("--boss3-warp-scale", String(1 + (.04 + pulse * .005) * fadeOut));
+  warp.style.setProperty("--boss3-warp-ring-opacity", String(.72 * fadeOut));
+  warp.style.setProperty("--boss3-warp-ring-scale", String(1 + (.064 + pulse * .009) * fadeOut));
+  warp.style.setProperty("--boss3-warp-edge-opacity", String(.76 * fadeOut));
+  warp.style.setProperty("--boss3-warp-pulse-scale", String(1 + pulse * .014 * fadeOut));
+
+  if (currentMs >= finishTime) {
+    boss5StrongWarpFinished = true;
+    document.body.classList.remove("boss5StrongWarpActive");
+    warp.removeAttribute("style");
+  }
+}
+
+function updateBoss5ReturnTransition(currentMs) {
+  if (!boss5IntroMode || boss5ReturnTransitionPhase >= 3) return;
+  const rightTime = getNoteTime(124, [1, 4]) + offset;
+  const leftTime = getNoteTime(124, [1, 2]) + offset;
+  const flashTime = getNoteTime(124, [3, 4]) + offset;
+  const transition = document.getElementById("boss5ReturnTransition");
+
+  if (boss5ReturnTransitionPhase === 0 && currentMs >= rightTime) {
+    boss5ReturnTransitionPhase = 1;
+    document.body.style.backgroundImage = "url('songs/boss5/background.png')";
+    transition?.classList.add("active", "rightLeaving");
+  }
+
+  if (boss5ReturnTransitionPhase === 1 && currentMs >= leftTime) {
+    boss5ReturnTransitionPhase = 2;
+    transition?.classList.add("leftLeaving");
+  }
+
+  if (boss5ReturnTransitionPhase === 2 && currentMs >= flashTime) {
+    boss5ReturnTransitionPhase = 3;
+    placeBoss5HudAtViewportRoot();
+    document.body.classList.add("boss5FullHud");
+    const flash = document.getElementById("song11WhiteFlash");
+    if (flash) {
+      flash.classList.remove("show");
+      void flash.offsetWidth;
+      flash.classList.add("show");
+    }
+    setTimeout(() => transition?.classList.remove("active", "rightLeaving", "leftLeaving"), 520);
+  }
+}
+
+function updateBoss5SecondTempoWarp(currentMs) {
+  if (!boss5IntroMode || boss5SecondTempoWarpFinished) return;
+  const startTime = getNoteTime(133, [0, 1]) + offset;
+  const fadeTime = getNoteTime(140, [1, 2]) + offset;
+  const finishTime = getNoteTime(141, [0, 1]) + offset;
+  if (currentMs < startTime) return;
+
+  const warp = document.getElementById("boss3TempoWarp");
+  if (!warp) {
+    boss5SecondTempoWarpFinished = true;
+    return;
+  }
+  if (!boss5SecondTempoWarpStarted) {
+    boss5SecondTempoWarpStarted = true;
+    document.body.classList.add("boss5TempoWarpActive");
+  }
+
+  const pulse = Math.sin(currentMs * (Math.PI * 2) / ((60000 / 262) * 2));
+  const fadeOut = currentMs < fadeTime
+    ? 1
+    : Math.max(0, 1 - (currentMs - fadeTime) / Math.max(1, finishTime - fadeTime));
+  warp.style.setProperty("--boss3-warp-opacity", String(.7 * fadeOut));
+  warp.style.setProperty("--boss3-warp-scale", String(1 + (.022 + pulse * .004) * fadeOut));
+  warp.style.setProperty("--boss3-warp-ring-opacity", String(.7 * fadeOut));
+  warp.style.setProperty("--boss3-warp-ring-scale", String(1 + (.036 + pulse * .008) * fadeOut));
+  warp.style.setProperty("--boss3-warp-edge-opacity", String(.76 * fadeOut));
+  warp.style.setProperty("--boss3-warp-pulse-scale", String(1 + pulse * .012 * fadeOut));
+
+  if (currentMs >= finishTime) {
+    boss5SecondTempoWarpFinished = true;
+    document.body.classList.remove("boss5TempoWarpActive");
+    warp.removeAttribute("style");
+  }
+}
+
+function triggerBoss5OrangeLaneGlow(currentMs) {
+  if (!boss5IntroMode || boss5OrangeLaneGlowStarted) return;
+  if (currentMs < getNoteTime(149, [0, 1]) + offset) return;
+  boss5OrangeLaneGlowStarted = true;
+  document.body.classList.add("boss5OrangeLaneGlow");
+}
+
+function updateBoss5FinalTempoWarp(currentMs) {
+  if (!boss5IntroMode || boss5FinalTempoWarpFinished) return;
+  const startTime = getNoteTime(149, [0, 1]) + offset;
+  const fadeTime = getNoteTime(156, [1, 2]) + offset;
+  const finishTime = getNoteTime(157, [0, 1]) + offset;
+  if (currentMs < startTime) return;
+
+  const warp = document.getElementById("boss3TempoWarp");
+  if (!warp) {
+    boss5FinalTempoWarpFinished = true;
+    return;
+  }
+  if (!boss5FinalTempoWarpStarted) {
+    boss5FinalTempoWarpStarted = true;
+    document.body.classList.add("boss5TempoWarpActive");
+  }
+
+  const pulse = Math.sin(currentMs * (Math.PI * 2) / ((60000 / 262) * 2));
+  const fadeOut = currentMs < fadeTime
+    ? 1
+    : Math.max(0, 1 - (currentMs - fadeTime) / Math.max(1, finishTime - fadeTime));
+  warp.style.setProperty("--boss3-warp-opacity", String(.7 * fadeOut));
+  warp.style.setProperty("--boss3-warp-scale", String(1 + (.022 + pulse * .004) * fadeOut));
+  warp.style.setProperty("--boss3-warp-ring-opacity", String(.7 * fadeOut));
+  warp.style.setProperty("--boss3-warp-ring-scale", String(1 + (.036 + pulse * .008) * fadeOut));
+  warp.style.setProperty("--boss3-warp-edge-opacity", String(.76 * fadeOut));
+  warp.style.setProperty("--boss3-warp-pulse-scale", String(1 + pulse * .012 * fadeOut));
+
+  if (currentMs >= finishTime) {
+    boss5FinalTempoWarpFinished = true;
+    document.body.classList.remove("boss5TempoWarpActive");
+    warp.removeAttribute("style");
+  }
+}
+
 function prepareBoss3FinalWhiteMistEffect(targetCount = 28) {
   if (!boss3Intro || currentSong !== "boss3") return;
   const mist = document.getElementById("boss3FinalWhiteMist");
@@ -4071,6 +4526,7 @@ function gameLoop() {
   triggerSong19LongCut(currentMs);
   triggerBoss3OpeningLongEnd(currentMs);
   updateBoss3HoverTapEffect(currentMs);
+  triggerSong28Map04BackgroundTransition(currentMs);
   triggerBoss3Background2Transition(currentMs);
   triggerBoss4FirstBackgroundTransition(currentMs);
   triggerBoss4Background2Transition(currentMs);
@@ -4083,6 +4539,13 @@ function gameLoop() {
   triggerBoss3Background3Transition(currentMs);
   triggerBoss3FinalWhiteMist(currentMs);
   updateBoss3TempoWarp(currentMs);
+  updateBoss5TempoWarp(currentMs);
+  triggerBoss5BackgroundBTransition(currentMs);
+  updateBoss5StrongWarp(currentMs);
+  updateBoss5ReturnTransition(currentMs);
+  updateBoss5SecondTempoWarp(currentMs);
+  triggerBoss5OrangeLaneGlow(currentMs);
+  updateBoss5FinalTempoWarp(currentMs);
   updateBoss3HeartDrop(currentMs);
   updateBoss3HeartFade(currentMs);
   const rawMs = getRawCurrentMs();
@@ -4145,11 +4608,12 @@ function gameLoop() {
 
 if (note.type === "long") {
   note.element.style.top = (note.y + longStartVisualOffsetPx) + "px";
+  updateBoss5Measure88LongExtension(note, currentMs);
 } else {
   note.element.style.top = note.y + "px";
 }
 
-updateBoss4ContractingDual(note);
+updateContractingDual(note);
 
 // ロングノーツの処理
  if (note.type === "long") {
@@ -4329,12 +4793,13 @@ if (chapter4StoryChallenge && chapter4DualNoteGoodCount < chapter4DualNoteQuota)
 
   if (yellowPerfectCount === getTotalJudgementNoteCount()) {
   showFinishRing("rgba(255, 255, 255, 0.9)");
-  showFinishSplash("ULTIMATE PERFECT!!!", "#FFB7C5");
+  showFinishSplash("ULTIMATE PERFECT!!!", "#f7d7ff", "ultimatePerfect");
 } else if (missCount === 0 && goodCount === 0) {
   showFinishRing("rgba(255, 183, 197, 0.8)");
-  showFinishSplash("ALL PERFECT!!", "#FFB7C5");
+  showFinishSplash("ALL PERFECT!!", "#FFB7C5", "allPerfect");
 } else if (missCount === 0) {
-  showFinishSplash("FULL COMBO!!", "#FFD700");
+  showFinishRing("rgba(255, 215, 0, 0.8)");
+  showFinishSplash("FULL COMBO!!", "#FFD700", "fullCombo");
 } else {
   showFinishSplash("CLEAR!", "#66ddff");
 }
@@ -4394,18 +4859,14 @@ function applyRateRankMark(element, rate, username) {
 function calculateRateFromSaveData(saveData) {
   const rateConstants = [];
 
-  for (const songId in saveData) {
-    if (songId === "settings" || songId === "profile" || songId === "secretBossUnlocked") {
-      continue;
-    }
-
-    const songScores = saveData[songId];
-    if (!songScores || typeof songScores !== "object") continue;
-
-    for (const difficultyIndex in songScores) {
-      const record = songScores[difficultyIndex];
+  // 選曲画面と同じ現行の楽曲一覧・譜面レベルだけを集計対象にする。
+  // 保存データ全体を走査すると、削除済み譜面やスコアに似た別データまで
+  // レートへ混入し、表示値と称号判定が食い違うことがある。
+  for (const song of rateSongCatalog) {
+    for (let difficultyIndex = 0; difficultyIndex < song.levels.length; difficultyIndex++) {
+      const record = saveData[song.id]?.[difficultyIndex];
       const bestScore = Number(record?.bestScore || 0);
-      const level = Number(record?.level || 0);
+      const level = song.levels[difficultyIndex];
 
       if (bestScore <= 0 || level <= 0) continue;
 
@@ -4929,7 +5390,7 @@ function showResult() {
     const backgroundVideo = document.getElementById("boss4Background3Video");
     if (backgroundVideo) backgroundVideo.pause();
   }
-  if (secretBossTriggered && !secretBossUnlocked) {
+  if (!suppressAutomaticSongEvents && secretBossTriggered && !secretBossUnlocked) {
   blackOverlay.classList.add("dark");
 
   setTimeout(() => {
@@ -4945,6 +5406,19 @@ function showResult() {
   const playShardReward = Math.floor(20 * playRewardRatio * playRewardRatio);
   const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
   const boss4PuzzleWasStarted = saveData.storyFlags?.boss4PuzzleStarted === true;
+
+  if (
+    mapMode
+    && activeMapPiece
+    && life > 0
+    && (currentSong === "song28" || currentSong === "song43")
+    && mapPieceIncludesSong(activeMapPiece, currentSong)
+  ) {
+    if (!saveData.mapClearUnlockedSongs || typeof saveData.mapClearUnlockedSongs !== "object") {
+      saveData.mapClearUnlockedSongs = {};
+    }
+    saveData.mapClearUnlockedSongs[currentSong] = true;
+  }
 
   if (mapMode && activeMapPiece) {
     const missionFailures = evaluateMapMissionConditions(activeMapPiece);
@@ -4976,6 +5450,9 @@ prev.level = Number(currentChart.level || 0);
 
   if (isNewBest) prev.bestScore = finalScore;
   prev.level = Number(currentChart.level || 0);
+  if (boss5IntroMode && Object.prototype.hasOwnProperty.call(prev, "bestScore")) {
+    saveData.boss5InitialScoreSaved = true;
+  }
   if (life > 0) prev.cleared = true;
   if (missCount === 0) prev.fullCombo = true;
   if (missCount === 0 && goodCount === 0) prev.allPerfect = true;
@@ -5011,7 +5488,7 @@ if (chapter4StoryChallenge && life > 0) {
   saveData.storyFlags.chapter4Episode6ChallengeCleared = true;
 }
 
-if (currentSong === "song35" && life > 0) {
+if (!suppressAutomaticSongEvents && currentSong === "song35" && life > 0) {
   if (!saveData.storyFlags) {
     saveData.storyFlags = {};
   }
@@ -5021,7 +5498,7 @@ if (currentSong === "song35" && life > 0) {
   }
 }
 
-if (currentSong === "song35") {
+if (!suppressAutomaticSongEvents && currentSong === "song35") {
   if (!saveData.storyFlags) {
     saveData.storyFlags = {};
   }
@@ -5033,6 +5510,7 @@ const goodOrLowerCount = goodCount + missCount;
 const isAllPerfectMinusOne = goodOrLowerCount === 1;
 const isUltimatePerfectMinusOne = perfectCount === 1 && goodOrLowerCount === 0;
 const boss4FirstTrialCompleted =
+  !suppressAutomaticSongEvents &&
   boss4PuzzleWasStarted &&
   boss4PuzzleStage === 0 &&
   saveData.storyFlags?.boss4PuzzleTransitionPending !== true &&
@@ -5042,6 +5520,7 @@ if (boss4FirstTrialCompleted) {
   saveData.storyFlags.boss4PuzzleTransitionPending = true;
 }
 const boss4SecondTrialCompleted =
+  !suppressAutomaticSongEvents &&
   boss4PuzzleWasStarted &&
   boss4PuzzleStage === 1 &&
   saveData.storyFlags?.boss4PuzzleTransitionPending !== true &&
@@ -5265,6 +5744,9 @@ if (life <= 0) {
     retryButton.disabled = true;
   }
   if (boss4ChaosIntroMode) {
+    retryButton.disabled = true;
+  }
+  if (boss5IntroMode) {
     retryButton.disabled = true;
   }
   setTimeout(() => {
@@ -5700,6 +6182,175 @@ async function runBoss3IntroSequence() {
 
 document.getElementById("boss3IntroOverlay")?.addEventListener("click", runBoss3IntroSequence, { once: true });
 
+function runBoss5AwakeningSequence() {
+  if (!boss5IntroActive) return;
+  const overlay = document.getElementById("boss5Awakening");
+  if (!overlay) {
+    boss5IntroActive = false;
+    document.body.classList.add("boss5GameplayReveal");
+    startGamePlay();
+    return;
+  }
+
+  const holdDurationMs = 2400;
+  const impactSound = new Audio("sounds/canon_glow_start.mp3");
+  impactSound.preload = "auto";
+  impactSound.volume = 0.78;
+  impactSound.load();
+  let holdStartedAt = 0;
+  let accumulatedHoldMs = 0;
+  let openingProgress = 0;
+  let holding = false;
+  let completed = false;
+  let animationFrame = null;
+  let hintTimer = null;
+
+  const clearIdleHint = () => {
+    if (hintTimer !== null) clearTimeout(hintTimer);
+    hintTimer = null;
+    overlay.classList.remove("idleHint");
+  };
+
+  const scheduleIdleHint = () => {
+    clearIdleHint();
+    hintTimer = setTimeout(() => {
+      if (!holding && !completed) overlay.classList.add("idleHint");
+    }, 3000);
+  };
+
+  const setOpening = progress => {
+    openingProgress = Math.min(1, Math.max(0, progress));
+    const shift = openingProgress * 108;
+    overlay.style.setProperty("--boss5-top-shift", `${-shift}%`);
+    overlay.style.setProperty("--boss5-bottom-shift", `${shift}%`);
+    overlay.style.setProperty("--boss5-scene-blur", `${(12 * (1 - openingProgress)).toFixed(2)}px`);
+    overlay.style.setProperty("--boss5-scene-scale", (1.045 - openingProgress * .045).toFixed(4));
+  };
+
+  const removeListeners = () => {
+    overlay.removeEventListener("pointerdown", beginPointerHold);
+    window.removeEventListener("pointerup", endHold);
+    window.removeEventListener("pointercancel", endHold);
+    window.removeEventListener("blur", endHold);
+    window.removeEventListener("keydown", beginKeyHold, true);
+    window.removeEventListener("keyup", endKeyHold, true);
+    clearIdleHint();
+  };
+
+  const completeOpening = () => {
+    if (completed) return;
+    completed = true;
+    holding = false;
+    removeListeners();
+    setOpening(1);
+    overlay.classList.remove("holding");
+    overlay.classList.add("completed");
+
+    impactSound.currentTime = 0;
+    impactSound.play().catch(() => { });
+
+    setTimeout(() => {
+      overlay.remove();
+      document.body.classList.add("boss5GameplayReveal");
+      setTimeout(() => {
+        boss5IntroActive = false;
+        startGamePlay();
+      }, 950);
+    }, 680);
+  };
+
+  const updateHold = now => {
+    if (!holding || completed) return;
+    const heldMs = accumulatedHoldMs + now - holdStartedAt;
+    const progress = Math.min(1, heldMs / holdDurationMs);
+    setOpening(progress);
+    if (progress >= 1) {
+      accumulatedHoldMs = holdDurationMs;
+      completeOpening();
+      return;
+    }
+    animationFrame = requestAnimationFrame(updateHold);
+  };
+
+  const startClosing = () => {
+    if (completed || openingProgress <= 0) return;
+    const closingStartedAt = performance.now();
+    const startingProgress = openingProgress;
+    const closingDurationMs = Math.max(240, 950 * startingProgress);
+
+    const updateClosing = now => {
+      if (holding || completed) return;
+      const elapsed = Math.min(1, (now - closingStartedAt) / closingDurationMs);
+      const eased = 1 - Math.pow(1 - elapsed, 2);
+      setOpening(startingProgress * (1 - eased));
+      accumulatedHoldMs = openingProgress * holdDurationMs;
+      if (elapsed < 1) {
+        animationFrame = requestAnimationFrame(updateClosing);
+      } else {
+        animationFrame = null;
+        accumulatedHoldMs = 0;
+      }
+    };
+
+    animationFrame = requestAnimationFrame(updateClosing);
+  };
+
+  const beginHold = () => {
+    if (holding || completed) return;
+    clearIdleHint();
+    if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    accumulatedHoldMs = openingProgress * holdDurationMs;
+    holding = true;
+    holdStartedAt = performance.now();
+    overlay.classList.add("holding");
+    animationFrame = requestAnimationFrame(updateHold);
+  };
+
+  function endHold() {
+    if (!holding || completed) return;
+    accumulatedHoldMs = Math.min(
+      holdDurationMs,
+      accumulatedHoldMs + performance.now() - holdStartedAt
+    );
+    holding = false;
+    overlay.classList.remove("holding");
+    if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    setOpening(accumulatedHoldMs / holdDurationMs);
+    startClosing();
+    scheduleIdleHint();
+  }
+
+  function beginPointerHold(event) {
+    event.preventDefault();
+    beginHold();
+  }
+
+  function beginKeyHold(event) {
+    if (event.code !== "Space" && event.code !== "Enter") return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    if (!event.repeat) beginHold();
+  }
+
+  function endKeyHold(event) {
+    if (event.code !== "Space" && event.code !== "Enter") return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    endHold();
+  }
+
+  setOpening(0);
+  overlay.addEventListener("pointerdown", beginPointerHold);
+  window.addEventListener("pointerup", endHold);
+  window.addEventListener("pointercancel", endHold);
+  window.addEventListener("blur", endHold);
+  window.addEventListener("keydown", beginKeyHold, true);
+  window.addEventListener("keyup", endKeyHold, true);
+  scheduleIdleHint();
+}
+
 // ---- キー入力 ----
 function setupBulletChallenge() {
   if (!bulletChallenge || !heartPlayer) return;
@@ -5748,6 +6399,11 @@ document.addEventListener("keydown", async (e) => {
   }
 
   if (boss3IntroActive) {
+    e.preventDefault();
+    return;
+  }
+
+  if (boss5IntroActive) {
     e.preventDefault();
     return;
   }
@@ -5937,7 +6593,7 @@ spawnParticles(laneIndex, "#FFE87C");
   combo++;
   maxCombo = Math.max(maxCombo, combo);
   goodCount++
-  applySong19GoodDamage();
+  applyHardGaugeGoodDamage();
   applyJudgementRecoverySkill("good");
   if (judgedMs < note.hitTime) {
     fastCount++;
@@ -6270,6 +6926,7 @@ async function playBoss4ChaosIntro() {
 }
 
 function triggerSong35FinalPuzzle(currentMs) {
+  if (suppressAutomaticSongEvents) return;
   if (song35FinalPuzzleTriggered || song35FinalPuzzleTriggerTime === null) return;
   if (currentMs < song35FinalPuzzleTriggerTime) return;
 
@@ -6368,7 +7025,7 @@ function updateSong35LightLines(currentMs) {
 // ---- 起動 ----
 async function startGame() {
   if (!boss4AccessAuthorized) return;
-  await Promise.all([loadSongInfo(), loadTitleDefinitions()]);
+  await Promise.all([loadSongInfo(), loadTitleDefinitions(), loadRateSongCatalog()]);
 
   if (song35StoryChallenge) {
     disposeStoryChallengeIntro();
@@ -6380,6 +7037,7 @@ async function startGame() {
     preloadMusicForPlayback(),
     loadMapMissionContext()
   ]);
+  if (mapPieceChallengeLocked) return;
   unlockGameStartSpecialTitles();
   setupBulletChallenge();
 
@@ -6468,6 +7126,8 @@ async function startGame() {
 
   if (boss4ChaosIntroMode) {
     playBoss4ChaosIntro();
+  } else if (boss5IntroMode) {
+    runBoss5AwakeningSequence();
   } else if (autoStart) {
     setTimeout(() => startGamePlay(), 800);
   }
@@ -6502,14 +7162,14 @@ function goToSelect() {
       : mapPieceWasNewlyCleared && currentMapPieceId
       ? `&restored=${encodeURIComponent(currentMapPieceId)}`
       : "";
-    location.href = boss4PuzzleTransitionPending
+    location.href = mapMode && currentMapId
+      ? `unlock-map.html?map=${encodeURIComponent(currentMapId)}${outcomeQuery}`
+      : boss4PuzzleTransitionPending
       ? "select.html?song=song35"
       : boss3Intro && currentSong === "boss3"
       ? "story.html?episode=chapter3_episode13"
       : boss3Challenge
       ? "story.html?episode=chapter3_episode12"
-      : mapMode && currentMapId
-      ? `unlock-map.html?map=${encodeURIComponent(currentMapId)}${outcomeQuery}`
       : `select.html?song=${currentSong}&difficulty=${currentDifficulty}`;
   }, 600);
 }
@@ -6554,6 +7214,15 @@ pauseRetryButton.addEventListener("click", () => {
 });
 
 document.getElementById("selectButton").addEventListener("click", () => {
+  if (boss5IntroMode) {
+    resultBGM.pause();
+    resultBGM.currentTime = 0;
+    blackOverlay.classList.add("dark");
+    setTimeout(() => {
+      location.href = "story.html?episode=chapter5_episode7&source=boss5Event";
+    }, 600);
+    return;
+  }
   if (boss4ChaosIntroMode) {
     resultBGM.pause();
     resultBGM.currentTime = 0;

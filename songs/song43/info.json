@@ -1,0 +1,13 @@
+{
+  "title": "Two Sides of the Truth",
+  "artist": "ユーフルカ",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 7.7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.2, "file": "expert.txt" }],
+  "achievementTitles": [
+  {
+    "id": "song43achieve",
+    "name": "既知なる未知",
+    "difficulty": ["EXPERT"],
+    "condition": "fc"
+  }]
+}

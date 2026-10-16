@@ -20,6 +20,10 @@ body {
   background: #07101c url("assets/bg/select_bg.jpg") center / cover no-repeat;
 }
 
+body.map04Theme {
+  background-image: url("assets/bg/story_chapter5.png");
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -46,6 +50,34 @@ body::before {
 #mapTransitionOverlay.leaving {
   opacity: 1;
   pointer-events: auto;
+}
+
+#mapTransitionOverlay.piece05StoryTransition {
+  opacity: 1;
+  background: #fff;
+  pointer-events: auto;
+  transition:
+    opacity 2.45s cubic-bezier(.42, 0, .2, 1),
+    background-color .75s ease;
+}
+
+#mapTransitionOverlay.piece05StoryTransition.piece05StoryDarkening {
+  background: #000;
+}
+
+#mapTransitionOverlay.map04GateTransition {
+  opacity: 0;
+  background: #edf4f6;
+  pointer-events: auto;
+  transition: opacity .34s ease-out, background-color .48s ease-in;
+}
+
+#mapTransitionOverlay.map04GateTransition.map04GateWhite {
+  opacity: 1;
+}
+
+#mapTransitionOverlay.map04GateTransition.map04GateDarkening {
+  background: #000;
 }
 
 #mapRewardUnlockOverlay {
@@ -263,6 +295,137 @@ body.mapRewardInteractionLocked #mapScreen { pointer-events: none; }
 #mapBoard::before { content: ""; position: absolute; inset: -7px; z-index: -1; border: 1px solid rgba(129, 173, 238, 0.2); box-shadow: 0 0 24px rgba(94, 92, 225, 0.2); pointer-events: none; }
 #mapBoard::after { content: ""; position: absolute; inset: 0; z-index: 1; background: none; box-shadow: none; pointer-events: none; }
 
+#mapBoard.map04GateActive {
+  cursor: pointer;
+  box-shadow: 0 0 42px rgba(220, 248, 255, .82), 0 0 108px rgba(103, 112, 255, .64);
+}
+
+#mapBoard.map04GateActive::before {
+  inset: -12px;
+  border-color: rgba(211, 239, 255, 0.78);
+  box-shadow: 0 0 42px rgba(211, 249, 255, .74), 0 0 72px rgba(119, 94, 255, .48);
+  animation: map04GateFramePulse 2.8s ease-in-out infinite;
+}
+
+#mapBoard.map04GateActive::after {
+  inset: -2px;
+  z-index: 4;
+  border: 2px solid rgba(226, 247, 255, 0.72);
+  background:
+    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.78) 0%, rgba(140, 225, 255, 0.24) 13%, transparent 42%),
+    linear-gradient(90deg, transparent 38%, rgba(218, 249, 255, 0.2) 48%, rgba(255, 255, 255, 0.48) 50%, rgba(218, 249, 255, 0.2) 52%, transparent 62%);
+  box-shadow: inset 0 0 46px rgba(193, 238, 255, 0.58), inset 0 0 100px rgba(111, 102, 255, 0.34);
+  mix-blend-mode: screen;
+  animation: map04GateSurface 2.1s ease-in-out infinite;
+}
+
+.map04GateEffect {
+  position: absolute;
+  inset: -18%;
+  z-index: 6;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.map04GateCore {
+  position: absolute;
+  inset: 13%;
+  border-radius: 48% 52% 50% 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.72), rgba(136, 224, 255, 0.2) 28%, transparent 68%);
+  box-shadow: 0 0 30px rgba(154, 225, 255, 0.68);
+  animation: map04GateCoreBreathe 2.3s ease-in-out infinite;
+}
+
+.map04GateParticles,
+.map04GateParticles span {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.map04GateParticles span::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--gate-size);
+  height: var(--gate-size);
+  border-radius: 50%;
+  background: #f4fdff;
+  box-shadow: 0 0 5px #fff, 0 0 13px #86e9ff, 0 0 24px rgba(134, 113, 255, 0.9);
+  will-change: transform, opacity;
+  animation: map04GateParticle var(--gate-duration) ease-in-out var(--gate-delay) infinite;
+}
+
+@keyframes map04GateFramePulse {
+  0%, 100% { opacity: .58; }
+  50% { opacity: 1; }
+}
+
+@keyframes map04GateSurface {
+  0%, 100% { opacity: .55; }
+  50% { opacity: .94; }
+}
+
+@keyframes map04GateCoreBreathe {
+  0%, 100% { opacity: .52; transform: scale(.86, 1); }
+  50% { opacity: 1; transform: scale(1.04, 1.08); }
+}
+
+@keyframes map04GateParticle {
+  0% { opacity: 0; transform: translate(var(--gate-x), var(--gate-y)) scale(.35); }
+  24% { opacity: .95; }
+  72% { opacity: .72; }
+  100% { opacity: 0; transform: translate(0, 0) scale(1.45); }
+}
+
+#mapBoard.map04GateActive.map04GateEntering {
+  pointer-events: none;
+  animation: map04GateDive .72s cubic-bezier(.55, .02, .72, .32) both;
+}
+
+#mapBoard.map04GateEntering::after {
+  animation: map04GateBurst .72s cubic-bezier(.2, .72, .25, 1) both;
+}
+
+#mapBoard.map04GateEntering .map04GateCore {
+  animation: map04GateCoreBurst .72s cubic-bezier(.16, .75, .2, 1) both;
+}
+
+#mapBoard.map04GateEntering .map04GateParticles span::before {
+  animation: map04GateParticleRush .58s cubic-bezier(.42, 0, .88, .42) both;
+}
+
+@keyframes map04GateDive {
+  0% {
+    transform: translateY(-10px) rotate(-5deg) scale(1);
+  }
+  48% {
+    transform: translateY(-10px) rotate(-2deg) scale(.9);
+  }
+  100% {
+    transform: translateY(-10px) rotate(0deg) scale(.64);
+  }
+}
+
+@keyframes map04GateBurst {
+  0% { opacity: .48; transform: scale(.82); }
+  56% { opacity: .72; transform: scale(1.02); }
+  100% { opacity: .78; transform: scale(2.5); }
+}
+
+@keyframes map04GateCoreBurst {
+  0% { opacity: .46; transform: scale(.86, 1); }
+  58% { opacity: .78; transform: scale(.28, 1.12); }
+  100% { opacity: .82; transform: scale(3); }
+}
+
+@keyframes map04GateParticleRush {
+  0% { opacity: 1; transform: translate(var(--gate-x), var(--gate-y)) scale(.65); }
+  82% { opacity: 1; transform: translate(0, 0) scale(1.65); }
+  100% { opacity: 0; transform: translate(0, 0) scale(2.5); }
+}
+
 .jigsawLayer {
   position: absolute;
   inset: 0;
@@ -293,6 +456,25 @@ body.mapRewardInteractionLocked #mapScreen { pointer-events: none; }
   stroke: rgba(224, 241, 255, 0.96);
   stroke-width: 1.3px;
   filter: none;
+}
+
+#mapBoard.hideUnclearedImage .jigsawPieceShape:not(.cleared) {
+  fill: rgb(1, 5, 17);
+}
+
+#mapBoard.hideUnclearedImage .jigsawPieceShape.selected:not(.cleared) {
+  fill: rgb(3, 8, 22);
+}
+
+#mapBoard.hideUnclearedImage .jigsawPieceShape.challengeLocked:not(.cleared) {
+  fill: #000;
+}
+
+#mapBoard.hideUnclearedImage .jigsawPieceShape.challengeLocked.hasUnclearedImage:not(.cleared) {
+  filter: none;
+  opacity: 1;
+  mix-blend-mode: normal;
+  color-interpolation: sRGB;
 }
 
 .jigsawPieceShape.cleared {
@@ -337,6 +519,103 @@ body.mapRewardInteractionLocked #mapScreen { pointer-events: none; }
   }
 }
 
+#mapBoard.map04Piece05Restoring::after {
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(circle at 50% 50%, transparent 0 16%, rgba(0, 0, 0, .34) 34%, rgba(0, 0, 0, .82) 78%);
+  animation: map04Piece05Surroundings 3.4s ease-in-out both;
+}
+
+#mapBoard.map04Piece05Restoring {
+  animation: map04Piece05BoardPulse 3.4s ease-in-out both;
+}
+
+.map04Piece05ZoomVisual {
+  position: fixed;
+  z-index: 9998;
+  background-repeat: no-repeat;
+  opacity: 1;
+  transform: translateZ(0) rotate(-5deg) scale(1);
+  transform-origin: center;
+  transition: transform 2.7s cubic-bezier(.34, .08, .2, 1), opacity 2.7s ease-in;
+  contain: strict;
+  backface-visibility: hidden;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.map04Piece05ZoomVisual.active {
+  opacity: .3;
+  transform: translateZ(0) rotate(0deg) scale(var(--piece05-zoom-scale, 4));
+}
+
+#mapBoard.map04Piece05Restoring .jigsawPieceShape.cleared.restoring[data-piece-id="piece05"] {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: map04Piece05Reveal 3.4s cubic-bezier(.22, .72, .2, 1) both;
+}
+
+#mapBoard.map04Piece05Restoring .jigsawJunctionLayer,
+#mapBoard.map04Piece05Restoring .mapPiece:not([data-piece-id="piece05"]) {
+  animation: map04Piece05SurroundingsFade 3.4s ease-in-out both;
+}
+
+@keyframes map04Piece05Surroundings {
+  0%, 100% { opacity: 0; }
+  13%, 78% { opacity: 1; }
+}
+
+@keyframes map04Piece05SurroundingsFade {
+  0%, 100% { opacity: 1; }
+  13%, 78% { opacity: .14; }
+}
+
+@keyframes map04Piece05BoardPulse {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(122, 176, 255, .2), 0 0 52px rgba(84, 73, 190, .3);
+  }
+  48% {
+    box-shadow: 0 0 28px rgba(255, 255, 255, .32), 0 0 76px rgba(171, 45, 62, .38);
+  }
+  68% {
+    box-shadow: 0 0 46px rgba(255, 236, 236, .52), 0 0 104px rgba(188, 37, 57, .48);
+  }
+}
+
+@keyframes map04Piece05Reveal {
+  0%, 27% {
+    fill: #000;
+    stroke: rgba(223, 229, 241, .32);
+    filter: brightness(.25);
+    transform: scale(.965);
+  }
+  42% {
+    fill: rgba(20, 3, 7, .96);
+    stroke: rgba(255, 178, 185, .76);
+    filter: brightness(.72) drop-shadow(0 0 5px rgba(255, 68, 83, .5));
+    transform: scale(.985);
+  }
+  58% {
+    fill: rgba(255, 235, 238, .52);
+    stroke: #fff;
+    stroke-width: .024;
+    filter: brightness(2.1) drop-shadow(0 0 12px #fff) drop-shadow(0 0 34px rgba(255, 75, 92, .95));
+    transform: scale(1.025);
+  }
+  72% {
+    fill: rgba(120, 18, 30, .12);
+    stroke: rgba(255, 232, 235, .92);
+    filter: brightness(1.35) drop-shadow(0 0 18px rgba(255, 105, 118, .78));
+    transform: scale(1);
+  }
+  100% {
+    fill: transparent;
+    stroke: rgba(220, 229, 255, .48);
+    filter: none;
+    transform: scale(1);
+  }
+}
+
 .mapPiece {
   position: relative;
   z-index: 2;
@@ -353,6 +632,9 @@ body.mapRewardInteractionLocked #mapScreen { pointer-events: none; }
 }
 
 .mapPiece:hover, .mapPiece.selected { z-index: 3; background: transparent; box-shadow: none; }
+.mapPiece.challengeLocked { cursor: not-allowed; filter: grayscale(.8) brightness(.52); }
+.mapPiece.challengeLocked:hover { z-index: 2; }
+.mapPieceLock { margin-top: 7px; color: rgba(220, 226, 240, .72); font: 500 9px/1 "Orbitron", sans-serif; letter-spacing: 1.5px; text-shadow: 0 0 6px rgba(117, 145, 198, .42); }
 .mapPiece.cleared { cursor: default; }
 .mapPiece.cleared .mapPieceTypeIcon,
 .mapPiece.cleared .mapPieceTypeName { visibility: hidden; }
@@ -404,6 +686,289 @@ body.mapRewardInteractionLocked #mapScreen { pointer-events: none; }
 .mapPieceTypeName { display: block; color: #eef1ff; font-size: clamp(10px, 1vw, 14px); font-weight: 700; letter-spacing: 1px; text-shadow: 0 1px 5px #000, 0 0 8px rgba(139, 158, 255, 0.4); }
 #mapRightRail { display: flex; flex-direction: column; justify-content: flex-start; min-width: 0; min-height: 0; transform: none; }
 #mapPieceDetail { position: fixed; top: var(--map-detail-top); right: var(--map-reward-right); bottom: calc(var(--map-reward-bottom) + var(--map-reward-height) + var(--map-detail-gap)); z-index: 10; width: var(--map-reward-width); min-height: 0; padding: 18px 24px 20px; display: flex; flex-direction: column; transform: none; }
+body.mapWithoutCompletionRewards:not(.mapWithResearchRecords) #mapPieceDetail { bottom: var(--map-reward-bottom); }
+body.mapWithoutCompletionRewards #mapNextReward { display: none; }
+
+#researchRecordsButton {
+  position: fixed;
+  right: calc(var(--map-reward-right) + 94px);
+  bottom: calc(var(--map-reward-bottom) + 3px);
+  z-index: 24;
+  width: 142px;
+  height: 142px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+#researchRecordsButton.hidden {
+  display: none;
+}
+
+#researchRecordsButton img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#researchRecordsButton:hover {
+  transform: scale(1.035);
+}
+
+#researchRecordsButton.hasUnread::after {
+  content: "！";
+  position: absolute;
+  top: 9px;
+  right: 8px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid rgba(255, 220, 224, .9);
+  border-radius: 50%;
+  color: #fff;
+  background: #b51f2a;
+  font: 700 17px/1 "Orbitron", sans-serif;
+  box-shadow: 0 0 12px rgba(224, 43, 56, .72);
+  animation: researchRecordUnreadPulse 2.2s ease-in-out infinite;
+}
+
+#researchRecordsOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: grid;
+  place-items: center;
+  padding: 5vh 5vw;
+  box-sizing: border-box;
+  background: rgba(3, 4, 7, 0.38);
+  -webkit-backdrop-filter: blur(5px) brightness(0.82);
+  backdrop-filter: blur(5px) brightness(0.82);
+}
+
+#researchRecordsOverlay.hidden {
+  display: none;
+}
+
+#researchRecordsOverlay.autoOpening {
+  animation: researchRecordsAutoOverlayIn 220ms ease-out both;
+}
+
+#researchRecordsOverlay.autoOpening #researchRecordsPanel {
+  transform-origin: center;
+  animation: researchRecordsAutoPanelIn 240ms cubic-bezier(0.2, 0.82, 0.28, 1) both;
+}
+
+@keyframes researchRecordsAutoOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes researchRecordsAutoPanelIn {
+  from {
+    opacity: 0;
+    transform: scale(0.28);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+#researchRecordsPanel {
+  width: min(1040px, 92vw);
+  height: min(680px, 86vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(198, 54, 62, 0.58);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(45, 8, 13, 0.96), rgba(8, 11, 17, 0.98) 43%), #080b11;
+  box-shadow: 0 0 50px rgba(110, 7, 14, 0.46), inset 0 0 50px rgba(94, 12, 18, 0.2);
+}
+
+#researchRecordsHeader {
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 22px 13px 28px;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(190, 57, 64, 0.38);
+}
+
+#researchRecordsKicker {
+  color: rgba(222, 102, 108, 0.68);
+  font-family: "Orbitron", sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.23em;
+}
+
+#researchRecordsHeading {
+  margin: 3px 0 0;
+  color: #f4e8e8;
+  font-size: 25px;
+  letter-spacing: 0.12em;
+}
+
+#researchRecordsClose {
+  min-width: 82px;
+  height: 34px;
+  padding: 0 16px;
+  border: 1px solid rgba(210, 84, 91, 0.52);
+  border-radius: 4px;
+  background: rgba(53, 8, 13, 0.72);
+  color: #f7dfe0;
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+
+#researchRecordsContent {
+  min-height: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 310px 1fr;
+}
+
+#researchRecordsList {
+  overflow-y: auto;
+  padding: 18px 14px;
+  border-right: 1px solid rgba(190, 57, 64, 0.28);
+  background: rgba(9, 5, 8, 0.44);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(166, 43, 51, 0.72) transparent;
+}
+
+.researchRecordListItem {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 9px;
+  align-items: center;
+  margin-bottom: 9px;
+  padding: 13px 12px;
+  box-sizing: border-box;
+  border: 1px solid rgba(173, 67, 74, 0.28);
+  border-radius: 5px;
+  background: rgba(28, 10, 14, 0.7);
+  color: #dbc8c9;
+  text-align: left;
+  cursor: pointer;
+}
+
+.researchRecordListItem.unread {
+  padding-right: 38px;
+}
+
+.researchRecordListItem.unread::after {
+  content: "！";
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  color: #ff8188;
+  font: 700 17px/1 "Orbitron", sans-serif;
+  text-shadow: 0 0 8px rgba(239, 55, 66, .86);
+  animation: researchRecordUnreadPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes researchRecordUnreadPulse {
+  0%, 100% { opacity: .48; filter: brightness(.86); }
+  50% { opacity: 1; filter: brightness(1.2); }
+}
+
+.researchRecordListItem.active {
+  border-color: rgba(235, 83, 91, 0.78);
+  background: linear-gradient(90deg, rgba(106, 18, 26, 0.72), rgba(41, 11, 16, 0.78));
+  box-shadow: 0 0 16px rgba(169, 25, 34, 0.24);
+}
+
+.researchRecordListId {
+  color: #e1686e;
+  font-family: "Orbitron", sans-serif;
+  font-size: 11px;
+}
+
+.researchRecordListTitle {
+  overflow: hidden;
+  font-size: 13px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#researchRecordViewer {
+  overflow-y: auto;
+  padding: 42px 48px 52px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(166, 43, 51, 0.72) transparent;
+}
+
+#researchRecordsList::-webkit-scrollbar,
+#researchRecordViewer::-webkit-scrollbar {
+  width: 7px;
+}
+
+#researchRecordsList::-webkit-scrollbar-track,
+#researchRecordViewer::-webkit-scrollbar-track,
+#researchRecordsList::-webkit-scrollbar-corner,
+#researchRecordViewer::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+#researchRecordsList::-webkit-scrollbar-thumb,
+#researchRecordViewer::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(166, 43, 51, 0.72);
+}
+
+#researchRecordsList::-webkit-scrollbar-button,
+#researchRecordViewer::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+#researchRecordId {
+  color: #dc5961;
+  font-family: "Orbitron", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+}
+
+#researchRecordTitle {
+  margin: 11px 0 20px;
+  color: #fff2f2;
+  font-size: 25px;
+  letter-spacing: 0.05em;
+}
+
+#researchRecordDivider {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 28px;
+  background: linear-gradient(90deg, rgba(224, 73, 81, 0.72), transparent);
+}
+
+#researchRecordBody {
+  margin: 0;
+  color: #d9d3d3;
+  font-size: 16px;
+  line-height: 2.05;
+  letter-spacing: 0.045em;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 760px) {
+  #researchRecordsButton { width: 112px; height: 112px; right: calc(var(--map-reward-right) + 109px); }
+  #researchRecordsContent { grid-template-columns: 210px 1fr; }
+  #researchRecordViewer { padding: 30px 26px 42px; }
+}
 #mapPieceDetail.hidden { display: none; }
 #mapPieceDetail.acquired > * { opacity: 0.2; filter: brightness(0.52); }
 #mapPieceDetail.acquired::after {
@@ -428,8 +993,11 @@ body.mapRewardInteractionLocked #mapScreen { pointer-events: none; }
 #selectedPieceTarget { flex: 0 0 auto; margin-top: 12px; color: #e5c65b; font-weight: 700; text-align: center; }
 #selectedPieceReward { flex: 0 0 auto; display: grid; gap: 8px; margin: 10px 0 14px; font-size: 12px; }
 .selectedRewardRow { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px; }
+.selectedRewardRow.researchRecordRewardRow { grid-template-columns: 22px 1fr; }
+.selectedRewardMystery { color: #dbe2f2; font-weight: 700; letter-spacing: .18em; text-align: center; }
 #selectedPieceReward strong { font: 500 13px "Orbitron", sans-serif; }
 .staminaRewardHeart { color: #ff76ae; font-size: 21px; line-height: 1; text-align: center; text-shadow: 0 0 7px rgba(255, 80, 155, 0.65); }
+.researchRecordRewardIcon { display: grid; place-items: center; width: 21px; height: 21px; border: 1px solid rgba(232, 102, 110, .72); border-radius: 3px; color: #ff9da3; background: rgba(91, 17, 24, .68); font-size: 11px; line-height: 1; box-shadow: 0 0 7px rgba(199, 40, 51, .35); }
 #mapPieceActionArea { flex: 0 0 auto; }
 #mapPieceActionArea > .mapPanelDivider { margin-block: 10px; }
 #pieceCrackProgress { flex: 0 0 auto; margin-bottom: 4px; }

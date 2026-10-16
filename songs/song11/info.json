@@ -6,7 +6,7 @@
   "achievementTitles": [
   {
     "id": "song11",
-    "name": "あなたに、届く旋律。",
+    "name": "あなたに届く旋律",
     "difficulty": ["BASIC", "EXPERT"],
     "condition": "clear"
   }]

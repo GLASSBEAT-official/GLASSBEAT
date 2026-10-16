@@ -5,7 +5,7 @@ window.partners = {
     icon: "images/partners/breaka_icon.png",
     full: "images/partners/breaka_full.png",
     iconScale: 1.0,
-    fullScale: 1.1,
+    fullScale: 1.2,
     resultBottom: 20,
     messages: [
       "どうも。よろしくね。",

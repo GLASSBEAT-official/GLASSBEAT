@@ -364,6 +364,196 @@ body.song35EventMinimalHud #storyChallengeIntro {
   display: none !important;
 }
 
+/* boss5初回：暗闇を長押しで開き、song35同様の最小HUDから開始する。 */
+body.boss5IntroMode:not(.resultProfileVisible) #playProfileArea,
+body.boss5IntroMode:not(.resultProfileVisible) #playSkillLine,
+body.boss5IntroMode:not(.resultProfileVisible) #lifeText,
+body.boss5IntroMode:not(.resultProfileVisible) #lifeBar,
+body.boss5IntroMode:not(.resultProfileVisible) #pauseButton,
+body.boss5IntroMode:not(.resultProfileVisible) #scoreArea,
+body.boss5IntroMode:not(.resultProfileVisible) #songInfo,
+body.boss5IntroMode:not(.resultProfileVisible) #damageVignette,
+body.boss5IntroMode:not(.resultProfileVisible) .lifeHealParticle,
+body.boss5IntroMode #startText,
+body.boss5IntroMode #storyChallengeIntro {
+  display: none !important;
+}
+
+body.boss5IntroMode.boss5FullHud:not(.resultProfileVisible) #playProfileArea {
+  display: flex !important;
+  animation: boss5HudReveal .55s ease-out both;
+}
+
+body.boss5IntroMode.boss5FullHud:not(.resultProfileVisible) #playSkillLine:not(.hidden),
+body.boss5IntroMode.boss5FullHud:not(.resultProfileVisible) #lifeText,
+body.boss5IntroMode.boss5FullHud:not(.resultProfileVisible) #lifeBar,
+body.boss5IntroMode.boss5FullHud:not(.resultProfileVisible) #pauseButton,
+body.boss5IntroMode.boss5FullHud:not(.resultProfileVisible) #scoreArea,
+body.boss5IntroMode.boss5FullHud:not(.resultProfileVisible) #songInfo,
+body.boss5IntroMode.boss5FullHud:not(.resultProfileVisible) #damageVignette {
+  display: block !important;
+  animation: boss5HudReveal .55s ease-out both;
+}
+
+@keyframes boss5HudReveal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+body.boss5IntroMode #game,
+body.boss5IntroMode #judgeCounterPanel {
+  opacity: 0;
+  transition: opacity .9s ease;
+}
+
+body.boss5IntroMode.boss5GameplayReveal #game,
+body.boss5IntroMode.boss5GameplayReveal #judgeCounterPanel {
+  opacity: 1;
+}
+
+#boss5Awakening {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: none;
+  overflow: hidden;
+  touch-action: none;
+  cursor: default;
+  pointer-events: auto;
+}
+
+body.boss5IntroMode #boss5Awakening {
+  display: block;
+}
+
+#boss5AwakeningScene {
+  position: absolute;
+  inset: -18px;
+  z-index: 0;
+  background: #05060a center / cover no-repeat url("songs/boss5/background.png");
+  filter: blur(var(--boss5-scene-blur, 12px)) brightness(.78) saturate(.82);
+  transform: scale(var(--boss5-scene-scale, 1.045));
+  transform-origin: center;
+  will-change: transform, filter;
+}
+
+.boss5AwakeningLid {
+  position: absolute;
+  left: -7%;
+  z-index: 2;
+  width: 114%;
+  height: 54%;
+  background: #000;
+  will-change: transform;
+}
+
+.boss5AwakeningLid.top {
+  top: 0;
+  border-radius: 0 0 50% 50% / 0 0 13% 13%;
+  transform: translateY(var(--boss5-top-shift, 0%));
+}
+
+.boss5AwakeningLid.bottom {
+  bottom: 0;
+  border-radius: 50% 50% 0 0 / 13% 13% 0 0;
+  transform: translateY(var(--boss5-bottom-shift, 0%));
+}
+
+#boss5AwakeningHint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  width: 1px;
+  height: 1px;
+  transform: translate(-50%, -50%);
+}
+
+#boss5AwakeningHint::before,
+#boss5AwakeningHint::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  border: 2px solid rgba(231, 247, 255, .9);
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(45deg) scale(1.6);
+  box-shadow: 0 0 8px rgba(225, 245, 255, .7), inset 0 0 7px rgba(168, 218, 255, .38);
+}
+
+#boss5AwakeningHint::after {
+  width: 64px;
+  height: 64px;
+  border-color: rgba(181, 224, 255, .62);
+  box-shadow: 0 0 11px rgba(170, 218, 255, .46), inset 0 0 8px rgba(168, 218, 255, .22);
+}
+
+#boss5Awakening.idleHint #boss5AwakeningHint::before {
+  animation: boss5AwakeningHoldCue 2.2s ease-in-out infinite;
+}
+
+#boss5Awakening.idleHint #boss5AwakeningHint::after {
+  animation: boss5AwakeningHoldCueOuter 2.2s .16s ease-in-out infinite;
+}
+
+#boss5AwakeningImpact {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  opacity: 0;
+  background: #fff;
+  pointer-events: none;
+}
+
+#boss5Awakening.completed {
+  pointer-events: none;
+}
+
+#boss5Awakening.completed #boss5AwakeningScene {
+  filter: blur(0) brightness(1) saturate(1);
+  animation: boss5AwakeningSceneImpact .62s cubic-bezier(.18, .72, .22, 1) both;
+}
+
+#boss5Awakening.completed #boss5AwakeningHint {
+  display: none;
+}
+
+#boss5Awakening.completed #boss5AwakeningImpact {
+  animation: boss5AwakeningImpact .68s ease-out forwards;
+}
+
+@keyframes boss5AwakeningHoldCue {
+  0%, 14% { opacity: 0; transform: translate(-50%, -50%) rotate(45deg) scale(1.6); }
+  26% { opacity: .9; }
+  72% { opacity: .42; transform: translate(-50%, -50%) rotate(45deg) scale(.68); }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(45deg) scale(.6); }
+}
+
+@keyframes boss5AwakeningHoldCueOuter {
+  0%, 12% { opacity: 0; transform: translate(-50%, -50%) rotate(45deg) scale(1.48); }
+  24% { opacity: .68; }
+  72% { opacity: .28; transform: translate(-50%, -50%) rotate(45deg) scale(.72); }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(45deg) scale(.64); }
+}
+
+@keyframes boss5AwakeningImpact {
+  0% { opacity: .72; }
+  18% { opacity: .24; }
+  100% { opacity: 0; }
+}
+
+@keyframes boss5AwakeningSceneImpact {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  9% { transform: translate3d(-9px, 5px, 0) scale(1.018); }
+  19% { transform: translate3d(8px, -5px, 0) scale(1.014); }
+  31% { transform: translate3d(-6px, -2px, 0) scale(1.01); }
+  45% { transform: translate3d(4px, 3px, 0) scale(1.006); }
+  64% { transform: translate3d(-2px, 0, 0) scale(1.003); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
 #song35LightLines {
   position: fixed;
   inset: 0;
@@ -508,6 +698,133 @@ body {
   z-index: 1;
 }
 
+#song28BackgroundTransition {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#song28BackgroundTransition.active { visibility: visible; }
+
+#song28BackgroundTransition::before,
+#song28BackgroundTransition::after {
+  content: "";
+  position: absolute;
+  top: -8%;
+  bottom: -8%;
+  z-index: 2;
+  width: 22vw;
+  opacity: 0;
+  background:
+    linear-gradient(90deg, rgba(116, 205, 255, .48), transparent 68%),
+    repeating-linear-gradient(112deg, transparent 0 24px, rgba(216, 247, 255, .28) 26px, transparent 29px 47px);
+  box-shadow: inset 20px 0 38px rgba(122, 215, 255, .3), 8px 0 22px rgba(113, 110, 255, .24);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+#song28BackgroundTransition::before { left: 0; transform-origin: left center; }
+#song28BackgroundTransition::after {
+  right: 0;
+  transform: scaleX(-1);
+  transform-origin: right center;
+}
+
+#song28BackgroundTransition.active::before {
+  animation: song28EdgeRefractionLeft .78s ease-out both;
+}
+
+#song28BackgroundTransition.active::after {
+  animation: song28EdgeRefractionRight .78s ease-out both;
+}
+
+.song28BackgroundPane {
+  position: absolute;
+  inset: 0;
+  background: center / cover no-repeat url("songs/song28/backgroundB.png");
+  will-change: transform, opacity;
+}
+
+.song28BackgroundPane.left { clip-path: polygon(0 0, 50.7% 0, 48.8% 100%, 0 100%); }
+.song28BackgroundPane.right { clip-path: polygon(49.3% 0, 100% 0, 100% 100%, 51.2% 100%); }
+
+#song28BackgroundTransition.active .song28BackgroundPane.left {
+  animation: song28PaneLeaveLeft .78s cubic-bezier(.28, .62, .25, 1) both;
+}
+
+#song28BackgroundTransition.active .song28BackgroundPane.right {
+  animation: song28PaneLeaveRight .78s cubic-bezier(.28, .62, .25, 1) both;
+}
+
+#song28BackgroundShards {
+  position: absolute;
+  inset: 0;
+}
+
+#song28BackgroundShards span {
+  position: absolute;
+  width: 9px;
+  height: 22px;
+  opacity: 0;
+  background: linear-gradient(145deg, rgba(247, 254, 255, .92), rgba(116, 195, 235, .54));
+  clip-path: polygon(50% 0, 100% 72%, 58% 100%, 0 68%);
+  box-shadow: 0 0 9px rgba(221, 248, 255, .86), 0 0 17px rgba(110, 145, 255, .48);
+  will-change: transform, opacity;
+}
+
+#song28BackgroundShards span.left { left: 6%; }
+#song28BackgroundShards span.right { right: 6%; }
+
+#song28BackgroundTransition.active #song28BackgroundShards span.left {
+  animation: song28ShardLeaveLeft .64s ease-out var(--song28-shard-delay) both;
+}
+
+#song28BackgroundTransition.active #song28BackgroundShards span.right {
+  animation: song28ShardLeaveRight .64s ease-out var(--song28-shard-delay) both;
+}
+
+@keyframes song28PaneLeaveLeft {
+  0% { opacity: 1; transform: translateX(0); }
+  32% { opacity: .96; transform: translateX(-1.8%) skewY(-.7deg) scale(1.012); }
+  100% { opacity: 0; transform: translateX(-12%) skewY(-1.8deg) scale(1.025); }
+}
+
+@keyframes song28PaneLeaveRight {
+  0% { opacity: 1; transform: translateX(0); }
+  32% { opacity: .96; transform: translateX(1.8%) skewY(.7deg) scale(1.012); }
+  100% { opacity: 0; transform: translateX(12%) skewY(1.8deg) scale(1.025); }
+}
+
+@keyframes song28EdgeRefractionLeft {
+  0% { opacity: 0; transform: scaleX(.38) translateX(-22%); }
+  20% { opacity: .92; transform: scaleX(1.08) translateX(0); }
+  58% { opacity: .68; transform: scaleX(.82) translateX(-8%); }
+  100% { opacity: 0; transform: scaleX(.45) translateX(-55%); }
+}
+
+@keyframes song28EdgeRefractionRight {
+  0% { opacity: 0; transform: scaleX(-.38) translateX(-22%); }
+  20% { opacity: .92; transform: scaleX(-1.08) translateX(0); }
+  58% { opacity: .68; transform: scaleX(-.82) translateX(-8%); }
+  100% { opacity: 0; transform: scaleX(-.45) translateX(-55%); }
+}
+
+@keyframes song28ShardLeaveLeft {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(.5); }
+  20% { opacity: .82; }
+  100% { opacity: 0; transform: translate(-90px, var(--song28-shard-y)) rotate(-150deg) scale(1); }
+}
+
+@keyframes song28ShardLeaveRight {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(.5); }
+  20% { opacity: .82; }
+  100% { opacity: 0; transform: translate(90px, var(--song28-shard-y)) rotate(150deg) scale(1); }
+}
+
 /* boss3初回終盤：レーンの奥にある背景だけを円状に屈折させる。 */
 #boss3TempoWarp {
   position: fixed;
@@ -531,6 +848,16 @@ body {
   background: center / cover no-repeat url("songs/boss3/background3.png");
   transform-origin: center;
   will-change: transform, opacity;
+}
+
+body.boss5IntroMode #boss3TempoWarp,
+body.boss5IntroMode #boss3TempoWarp::before {
+  background-image: url("songs/boss5/background.png");
+}
+
+body.boss5IntroMode.boss5StrongWarpActive #boss3TempoWarp,
+body.boss5IntroMode.boss5StrongWarpActive #boss3TempoWarp::before {
+  background-image: url("songs/boss5/backgroundB.png");
 }
 
 #boss3TempoWarp::before {
@@ -563,6 +890,146 @@ body {
 
 body.boss3TempoWarpActive #boss3TempoWarp {
   opacity: var(--boss3-warp-opacity, 0);
+}
+
+body.boss5TempoWarpActive #boss3TempoWarp {
+  opacity: var(--boss3-warp-opacity, 0);
+}
+
+body.boss5StrongWarpActive #boss3TempoWarp {
+  opacity: var(--boss3-warp-opacity, 0);
+}
+
+#boss5ReturnTransition {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  visibility: hidden;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#boss5ReturnTransition.active {
+  visibility: visible;
+}
+
+.boss5ReturnPane {
+  position: absolute;
+  inset: 0;
+  background: center / cover no-repeat url("songs/boss5/backgroundB.png");
+  will-change: transform, opacity, filter;
+}
+
+.boss5ReturnPane.left {
+  clip-path: polygon(0 0, 50.7% 0, 48.8% 100%, 0 100%);
+}
+
+.boss5ReturnPane.right {
+  clip-path: polygon(49.3% 0, 100% 0, 100% 100%, 51.2% 100%);
+}
+
+#boss5ReturnTransition.rightLeaving .boss5ReturnPane.right {
+  animation: boss5ReturnRight .28s cubic-bezier(.2, .7, .25, 1) forwards;
+}
+
+#boss5ReturnTransition.leftLeaving .boss5ReturnPane.left {
+  animation: boss5ReturnLeft .28s cubic-bezier(.2, .7, .25, 1) forwards;
+}
+
+@keyframes boss5ReturnRight {
+  0% { opacity: 1; transform: translateX(0) skewY(0); filter: brightness(1); }
+  100% { opacity: 0; transform: translateX(13%) skewY(1.5deg); filter: brightness(1.3); }
+}
+
+@keyframes boss5ReturnLeft {
+  0% { opacity: 1; transform: translateX(0) skewY(0); filter: brightness(1); }
+  100% { opacity: 0; transform: translateX(-13%) skewY(-1.5deg); filter: brightness(1.3); }
+}
+
+body.boss5OrangeLaneGlow #game::after {
+  content: "";
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  bottom: 0;
+  z-index: 1;
+  height: 58%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    to top,
+    rgba(255, 122, 24, .72) 0%,
+    rgba(255, 122, 24, .52) 18%,
+    rgba(255, 122, 24, .3) 38%,
+    rgba(255, 122, 24, .14) 58%,
+    rgba(255, 122, 24, 0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 76% 78% at 50% -25%,
+    transparent 0 62%,
+    rgba(0, 0, 0, .12) 66%,
+    rgba(0, 0, 0, .42) 70%,
+    rgba(0, 0, 0, .78) 74%,
+    #000 79% 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 76% 78% at 50% -25%,
+    transparent 0 62%,
+    rgba(0, 0, 0, .12) 66%,
+    rgba(0, 0, 0, .42) 70%,
+    rgba(0, 0, 0, .78) 74%,
+    #000 79% 100%
+  );
+  animation: boss5OrangeLaneGlowIn 1.25s ease-out forwards, boss5OrangeLaneGlowPulse 1.8s 1.25s ease-in-out infinite alternate;
+}
+
+@keyframes boss5OrangeLaneGlowIn {
+  from { opacity: 0; transform: translateY(16%) scaleY(.72); }
+  to { opacity: .88; transform: translateY(0) scaleY(1); }
+}
+
+@keyframes boss5OrangeLaneGlowPulse {
+  0% { opacity: .74; transform: translate3d(-3px, 1px, 0) scaleX(1.01); }
+  50% { opacity: .9; transform: translate3d(2px, -1px, 0) scaleX(.995); }
+  100% { opacity: .8; transform: translate3d(3px, 1px, 0) scaleX(1.008); }
+}
+
+#boss5BackgroundBWipe {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background: center / cover no-repeat url("songs/boss5/backgroundB.png");
+  will-change: clip-path;
+  contain: strict;
+  transform: translateZ(0);
+}
+
+body.boss5IntroMode #game,
+body.boss5IntroMode #game .lane {
+  transition: background-color 1.25s ease, border-color 1.25s ease, box-shadow 1.25s ease, opacity .9s ease;
+}
+
+body.boss5BlackLanes #game {
+  z-index: 92;
+  background-color: #000;
+}
+
+body.boss5BlackLanes #game .lane {
+  background-color: #07080a;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  box-shadow: none;
+}
+
+body.boss5BackgroundBWiping #game .note,
+body.boss5BackgroundBWiping #game .damageNote,
+body.boss5BackgroundBWiping #game .damageLongShape,
+body.boss5BackgroundBWiping #judgeline,
+body.boss5BackgroundBWiping #combo,
+body.boss5BackgroundBWiping #fastLate,
+body.boss5BackgroundBWiping #judgeCounterPanel {
+  z-index: 95;
 }
 
 /* boss3初回94小節目以降：画面下部全体から白い光と光球を立ち上げる。 */
@@ -1722,12 +2189,14 @@ body.chapter4StoryChallenge #storyDualGauge.missionCompleteLeaving {
   border-radius: 7px
 }
 
-body.song19StoryChallenge #lifeBar {
+body.song19StoryChallenge #lifeBar,
+body.mapHardGauge #lifeBar {
   border-color: rgba(142, 225, 255, .96);
   animation: song19LifeBarFlame 1.05s ease-in-out infinite alternate;
 }
 
-body.song19StoryChallenge #lifeFill {
+body.song19StoryChallenge #lifeFill,
+body.mapHardGauge #lifeFill {
   background-color: #37bfff !important;
   background-image: linear-gradient(90deg, #176cff, #43d8ff 55%, #b7f5ff);
   animation: song19LifeFillFlicker .72s ease-in-out infinite alternate;
@@ -1896,7 +2365,8 @@ body.song19StoryChallenge #lifeFill {
   text-shadow: 0 0 6px rgba(38, 174, 255, .9), 0 0 14px rgba(20, 106, 255, .65);
 }
 
-body.song19StoryChallenge #song19HardCondition {
+body.song19StoryChallenge #song19HardCondition,
+body.mapHardGauge #song19HardCondition {
   display: block;
 }
 
@@ -1972,35 +2442,6 @@ body.song19StoryChallenge #song19HardCondition {
   font-family: 'Orbitron', 'M PLUS 1', sans-serif;
 }
 
-#finishRing {
-  position: fixed;
-  left: 50%;
-  top: 42%;
-  width: 80px;
-  height: 80px;
-  border: 2px solid rgba(255, 183, 197, 0.8);
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0.2);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 119;
-}
-
-#finishRing.show {
-  animation: finishRingExpand 0.55s ease-out forwards;
-}
-
-@keyframes finishRingExpand {
-  0% {
-    opacity: 0.75;
-    transform: translate(-50%, -50%) scale(0.2);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(8);
-  }
-}
-
 #clearSplash {
   position: fixed;
   left: 50%;
@@ -2016,10 +2457,287 @@ body.song19StoryChallenge #song19HardCondition {
   text-shadow:
     0 0 10px currentColor,
     0 0 28px currentColor;
+  backface-visibility: hidden;
+  will-change: transform, opacity, letter-spacing, background-position;
 }
 
 #clearSplash.show {
-  animation: clearSplashFade 1.2s ease forwards;
+  animation: clearSplashFade 1.5s ease forwards;
+}
+
+#finishRing {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 80px;
+  height: 80px;
+  border: 2px solid rgba(255, 183, 197, 0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 119;
+}
+
+#finishRing.show {
+  animation: finishRingExpand 0.55s ease-out forwards;
+}
+
+@keyframes finishRingExpand {
+  0% { opacity: 0.58; transform: translate(-50%, -50%) scale(0.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(8); }
+}
+
+#clearSplash.show[data-tier="fullCombo"] {
+  top: 50%;
+  animation: achievementSplash 2.1s cubic-bezier(.16, .82, .22, 1) forwards;
+}
+
+#clearSplash.show[data-tier="allPerfect"] {
+  top: 50%;
+  animation: allPerfectAchievementSplash 2.1s cubic-bezier(.2, .74, .24, 1) forwards;
+}
+
+#clearSplash.show[data-tier="ultimatePerfect"] {
+  top: 50%;
+  animation: ultimateAchievementSplash 2.3s cubic-bezier(.16, .82, .22, 1) forwards;
+}
+
+#clearSplash[data-tier="fullCombo"] {
+  background: linear-gradient(180deg, #fffbd1 0%, #ffd43b 45%, #f39a13 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 5px rgba(255, 204, 46, .56));
+}
+
+#clearSplash[data-tier="allPerfect"] {
+  background: linear-gradient(180deg, #fff 0%, #ffd9ef 42%, #ff8fc7 100%);
+  background-size: 100% 160%;
+  background-position: 50% 0%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 5px rgba(255, 167, 211, .56));
+}
+
+#clearSplash[data-tier="ultimatePerfect"] {
+  font-size: clamp(54px, 7.2vw, 82px);
+  letter-spacing: .05em;
+  background: linear-gradient(100deg, #fff 0%, #ffe4f5 18%, #b9edff 42%, #fff7bd 64%, #f3c4ff 82%, #fff 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 5px rgba(207, 232, 255, .6));
+}
+
+@keyframes achievementSplash {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.54); letter-spacing: .28em; }
+  13% { opacity: 1; transform: translate(-50%, -50%) scale(1.12); letter-spacing: .12em; }
+  24% { transform: translate(-50%, -50%) scale(.98); letter-spacing: .07em; }
+  72% { opacity: 1; transform: translate(-50%, -50%) scale(1); letter-spacing: .07em; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.12); letter-spacing: .07em; }
+}
+
+@keyframes allPerfectAchievementSplash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.72);
+    letter-spacing: .14em;
+    background-position: 50% 0%;
+  }
+  16% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.06);
+    letter-spacing: .09em;
+  }
+  30% {
+    transform: translate(-50%, -50%) scale(.99);
+    letter-spacing: .07em;
+  }
+  74% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    letter-spacing: .07em;
+    background-position: 50% 100%;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.08);
+    letter-spacing: .07em;
+    background-position: 50% 100%;
+  }
+}
+
+@keyframes ultimateAchievementSplash {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.42) rotateX(38deg); background-position: 0% 50%; letter-spacing: .12em; }
+  12% { opacity: 1; transform: translate(-50%, -50%) scale(1.14) rotateX(0); background-position: 18% 50%; letter-spacing: .07em; }
+  25% { transform: translate(-50%, -50%) scale(.98) rotateX(0); background-position: 38% 50%; letter-spacing: .05em; }
+  72% { opacity: 1; transform: translate(-50%, -50%) scale(1.02) rotateX(0); background-position: 100% 50%; letter-spacing: .05em; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.2) rotateX(0); background-position: 100% 50%; letter-spacing: .05em; }
+}
+
+.finishCelebration {
+  --finish-color: #ffd700;
+  position: fixed;
+  inset: 0;
+  z-index: 119;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.finishCelebrationBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .4);
+  opacity: 0;
+  pointer-events: none;
+  animation: finishCelebrationBackdrop 2.1s ease-in-out forwards;
+}
+
+.finishCelebration.ultimatePerfect .finishCelebrationBackdrop {
+  animation-duration: 2.3s;
+}
+
+.finishCelebrationFlash,
+.finishCelebrationBeam,
+.finishCelebrationRing,
+.finishCelebrationParticle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+}
+
+.finishCelebrationParticle {
+  width: var(--particle-size);
+  height: var(--particle-size);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--finish-color) 68%, white);
+  box-shadow: 0 0 7px color-mix(in srgb, var(--finish-color) 65%, transparent);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.25);
+  animation: finishCelebrationParticle 1.95s var(--particle-delay) cubic-bezier(.15, .72, .25, 1) forwards;
+}
+
+.finishCelebrationBeam {
+  top: auto;
+  bottom: -12vh;
+  width: clamp(56px, 7vw, 104px);
+  height: 112vh;
+  transform-origin: 50% 100%;
+  clip-path: polygon(39% 100%, 61% 100%, 100% 0, 0 0);
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--finish-color) 62%, white) 0%,
+    color-mix(in srgb, var(--finish-color) 24%, transparent) 52%,
+    transparent 100%
+  );
+  filter: blur(2px) drop-shadow(0 0 12px color-mix(in srgb, var(--finish-color) 48%, transparent));
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+.finishCelebrationBeam.left {
+  left: 13%;
+  --beam-start: 4deg;
+  --beam-end: 37deg;
+  animation: finishCelebrationBeam 1.55s cubic-bezier(.18, .72, .24, 1) forwards;
+}
+
+.finishCelebrationBeam.right {
+  left: 87%;
+  --beam-start: -4deg;
+  --beam-end: -37deg;
+  animation: finishCelebrationBeam 1.55s cubic-bezier(.18, .72, .24, 1) forwards;
+}
+
+.finishCelebrationFlash {
+  width: 72vw;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, color-mix(in srgb, var(--finish-color) 22%, white) 0%, transparent 68%);
+  transform: translate(-50%, -50%) scale(.3);
+  mix-blend-mode: screen;
+  animation: finishCelebrationFlash 1.15s ease-out forwards;
+}
+
+.finishCelebrationRing {
+  width: 90px;
+  height: 90px;
+  border: 3px solid color-mix(in srgb, var(--finish-color) 65%, white);
+  border-radius: 50%;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--finish-color) 56%, transparent), inset 0 0 8px color-mix(in srgb, var(--finish-color) 52%, transparent);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(.15);
+  animation: finishCelebrationRing 1.35s var(--ring-delay) cubic-bezier(.12, .72, .18, 1) forwards;
+}
+
+@keyframes finishCelebrationFlash {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.25); }
+  14% { opacity: .35; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+}
+
+@keyframes finishCelebrationBackdrop {
+  0% { opacity: 0; }
+  14% { opacity: 1; }
+  72% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes finishCelebrationBeam {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) rotate(var(--beam-start)) scaleX(.72);
+  }
+  12% {
+    opacity: .44;
+  }
+  70% {
+    opacity: .44;
+    transform: translateX(-50%) rotate(var(--beam-end)) scaleX(1);
+  }
+  78% {
+    opacity: .44;
+    transform: translateX(-50%) rotate(var(--beam-end)) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) rotate(var(--beam-end)) scaleX(1.08);
+  }
+}
+
+@keyframes finishCelebrationRing {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.15); }
+  16% { opacity: .58; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(9); border-width: 1px; }
+}
+
+@keyframes finishCelebrationParticle {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.25);
+  }
+  12% {
+    opacity: .78;
+  }
+  58% {
+    opacity: .68;
+    transform: translate(calc(-50% + var(--particle-x)), calc(-50% + var(--particle-y))) scale(.72);
+  }
+  76% {
+    opacity: .55;
+    transform: translate(calc(-50% + var(--particle-x)), calc(-50% + var(--particle-y))) scale(.64);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--particle-x)), calc(-50% + var(--particle-y) - 12px)) scale(.08);
+  }
 }
 
 @keyframes clearSplashFade {

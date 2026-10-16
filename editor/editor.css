@@ -483,10 +483,12 @@ body {
   position: absolute;
   left: 2px;
   font-size: 9px;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.78);
   font-family: monospace;
   pointer-events: none;
   top: -12px;
+  z-index: 40;
+  text-shadow: 0 1px 2px #111, 0 0 3px #111;
 }
 
 .editorNote {
@@ -530,6 +532,24 @@ body {
 .editorNote.dual {
   background: cyan;
   border-radius: 2px;
+}
+
+.editorNote.dual.contracting {
+  background: repeating-linear-gradient(135deg, #78f7ff 0 9px, #9c70ff 9px 18px);
+  border: 1px solid rgba(255, 255, 255, .9);
+  box-shadow: 0 0 8px rgba(126, 225, 255, .9);
+}
+
+.editorNote.dual.contracting::after {
+  content: "⇥⇤";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  text-shadow: 0 0 4px #4b2d9f;
+  transform: translate(-50%, -50%);
 }
 
 .editorNote.damageCircle,

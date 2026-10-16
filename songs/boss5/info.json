@@ -1,0 +1,32 @@
+{
+  "title": "Arc Resonance",
+  "artist": "EigHt",
+   "background":"background.png",
+  "charts":[{"difficulty": "BASIC","level": 9.7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 13.0, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.1, "file": "fracture.txt" }],
+  "achievementTitles": [
+  {
+    "id": "boss5achieve",
+    "name": "祈りの漸近線",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  },
+  {
+    "id": "boss5achieve2",
+    "name": "Arc Archived",
+    "difficulty": ["FRACTURE"],
+    "condition": "fc"
+  },
+  {
+    "id": "boss5achieve3",
+    "name": "Celestial Harmonics",
+    "difficulty": ["BASIC","EXPERT"],
+    "condition": "ap"
+  },
+  {
+    "id": "boss5achieve4",
+    "name": "共鳴の果てに、君を識る",
+    "difficulty": "FRACTURE",
+    "condition": "ap"
+  }
+]
+}
