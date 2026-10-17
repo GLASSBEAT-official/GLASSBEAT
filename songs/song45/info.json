@@ -2,5 +2,8 @@
   "title": "Credits",
   "artist": "Frums",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 8.0,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 12.9, "file": "expert.txt" }]
+     "scrappedChart": {
+    "level": 12.9
+  },
+  "charts":[{"difficulty": "BASIC","level": 7.7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 10.9, "file": "expert.txt" }]
 }

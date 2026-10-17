@@ -1,6 +1,8 @@
 const params = new URLSearchParams(window.location.search);
 const currentSong = params.get("song") || "song1";
 const currentDifficulty = Number(params.get("difficulty")) || 0;
+const scrappedDifficulty = params.get("scrapped") === "1";
+const currentScoreKey = scrappedDifficulty ? "scrapped" : currentDifficulty;
 const bossChallenge = params.get("bossChallenge") === "1";
 const SECRET_SOURCE_SONG = "song3";
 const SECRET_BOSS_SONG = "boss";
@@ -346,6 +348,18 @@ function getLaneFromInput(e) {
 let songInfo = {};
 let rateSongCatalog = [];
 let titleDefinitions = { rateTitles: [], recordTitles: [], specialTitles: [] };
+
+function getCurrentChartInfo() {
+  if (scrappedDifficulty) {
+    const configuredLevel = Number(songInfo.scrappedChart?.level);
+    return {
+      difficulty: "SCRAPPED",
+      level: Number.isFinite(configuredLevel) && configuredLevel > 0 ? configuredLevel : 0,
+      file: "scrapped.txt"
+    };
+  }
+  return songInfo.charts?.[currentDifficulty];
+}
 
 const music = new Audio(`songs/${currentSong}/music.wav`);
 music.preload = "auto";
@@ -1028,13 +1042,15 @@ async function loadSongInfo() {
   document.getElementById("songTitle").textContent = songInfo.title;
   document.getElementById("songArtist").textContent = songInfo.artist;
 
-  const currentchart = songInfo.charts[currentDifficulty];
+  const currentchart = getCurrentChartInfo();
   const diffEl = document.getElementById("songDifficulty");
   const concealBoss3ChallengeDifficulty =
     boss3Challenge && currentSong === "song19";
   diffEl.textContent = concealBoss3ChallengeDifficulty
     ? `${currentchart.difficulty} Lv.？`
-    : currentchart.difficulty + " Lv." + getDisplayedChartLevel(currentchart.level);
+    : scrappedDifficulty
+      ? `SCRAPPED Lv.${currentchart.level > 0 ? getDisplayedChartLevel(currentchart.level) : "？"}`
+      : currentchart.difficulty + " Lv." + getDisplayedChartLevel(currentchart.level);
 
   if (bulletChallenge) {
     diffEl.style.display = "none";
@@ -1053,6 +1069,8 @@ async function loadSongInfo() {
     diffEl.style.background = "linear-gradient(90deg, #FFB7C5, #B7E0FF)";
     diffEl.style.webkitBackgroundClip = "text";
     diffEl.style.webkitTextFillColor = "transparent";
+  } else if (currentchart.difficulty.toLowerCase() === "scrapped") {
+    diffEl.style.color = "#888888";
   }
 
   const initialBackground = song35StoryChallenge
@@ -1085,7 +1103,7 @@ async function loadChart() {
     ? "challenge.txt"
     : boss3Intro && currentSong === "boss3"
       ? BOSS3_INTRO_CHART_FILE
-    : `charts/${songInfo.charts[currentDifficulty].file}`;
+    : `charts/${getCurrentChartInfo().file}`;
   const response = await fetch(`songs/${currentSong}/${chartFile}`);
   let text = await response.text();
 
@@ -4966,7 +4984,7 @@ function unlockGameStartSpecialTitles() {
 }
 
 function calcExpGain(level) {
-  const chartLevel = songInfo.charts[currentDifficulty].level;
+  const chartLevel = Number(getCurrentChartInfo()?.level || 0);
   const finalScore = Math.round(score);
 
   // GOOD以上の数（yellowPerfect + perfect + good）
@@ -5437,14 +5455,14 @@ function showResult() {
 
   // 自己ベスト取得・更新
 if (!saveData[currentSong]) saveData[currentSong] = {};
-if (!saveData[currentSong][currentDifficulty]) saveData[currentSong][currentDifficulty] = {};
-const prev = saveData[currentSong][currentDifficulty];
+if (!saveData[currentSong][currentScoreKey]) saveData[currentSong][currentScoreKey] = {};
+const prev = saveData[currentSong][currentScoreKey];
 const wasPlayed = prev.played === true;
 prev.played = true;
 const oldRate = Number(saveData.profile?.rate || 0);
 const suppressChallengeScoreSave = boss3Intro && currentSong === "boss3";
 const isNewBest = !suppressChallengeScoreSave && finalScore > (prev.bestScore || 0);
-const currentChart = songInfo.charts[currentDifficulty];
+const currentChart = getCurrentChartInfo();
 
 prev.level = Number(currentChart.level || 0);
 
@@ -5640,7 +5658,9 @@ resultPartnerImage.style.bottom =
   resultTitle.textContent = songInfo.title;
   resultArtist.textContent = songInfo.artist;
 resultDifficulty.textContent =
-  currentChart.difficulty + " Lv." + getDisplayedChartLevel(currentChart.level);
+  currentChart.difficulty.toLowerCase() === "scrapped"
+    ? `SCRAPPED Lv.${currentChart.level > 0 ? getDisplayedChartLevel(currentChart.level) : "？"}`
+    : currentChart.difficulty + " Lv." + getDisplayedChartLevel(currentChart.level);
 resultDifficulty.hidden = boss3Intro && currentSong === "boss3";
 
 // ジャケット画像
@@ -5659,6 +5679,8 @@ if (currentChart.difficulty.toLowerCase() === "basic") {
   resultDifficulty.style.background = "linear-gradient(90deg, #FFB7C5, #B7E0FF)";
   resultDifficulty.style.webkitBackgroundClip = "text";
   resultDifficulty.style.webkitTextFillColor = "transparent";
+} else if (currentChart.difficulty.toLowerCase() === "scrapped") {
+  resultDifficulty.style.color = "#888888";
 }
 
   resultScore.textContent = finalScore.toString().padStart(7, "0");
@@ -7170,7 +7192,7 @@ function goToSelect() {
       ? "story.html?episode=chapter3_episode13"
       : boss3Challenge
       ? "story.html?episode=chapter3_episode12"
-      : `select.html?song=${currentSong}&difficulty=${currentDifficulty}`;
+      : `select.html?song=${currentSong}&difficulty=${currentDifficulty}${scrappedDifficulty ? "&scrapped=1" : ""}`;
   }, 600);
 }
 

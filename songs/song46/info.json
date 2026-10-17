@@ -1,0 +1,14 @@
+{
+  "title": "LUCKYEAH!!!!",
+  "artist": "Lalot.",
+   "background":"background.png",
+  "shardUnlockCost": 150,
+  "charts":[{"difficulty": "BASIC","level": 8.1,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.8, "file": "expert.txt" }],
+    "achievementTitles": [
+  {
+    "id": "song37achieve",
+    "name": "LUCKY STRIKE!!!!",
+    "difficulty": ["BASIC", "EXPERT"],
+    "condition": "fc"
+  }]
+}

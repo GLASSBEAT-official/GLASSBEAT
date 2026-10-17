@@ -2,7 +2,7 @@
   "title": "Arc Resonance",
   "artist": "EigHt",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 9.7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 13.0, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.1, "file": "fracture.txt" }],
+  "charts":[{"difficulty": "BASIC","level": 9.7,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 13.0, "file": "expert.txt" }, { "difficulty": "FRACTURE", "level": 15.2, "file": "fracture.txt" }],
   "achievementTitles": [
   {
     "id": "boss5achieve",

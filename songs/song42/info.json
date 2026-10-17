@@ -2,5 +2,5 @@
   "title": "aliz",
   "artist": "dingerbox",
    "background":"background.png",
-  "charts":[{"difficulty": "BASIC","level": 8.2,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.1, "file": "expert.txt" }]
+  "charts":[{"difficulty": "BASIC","level": 8.2,"file":"basic.txt"}, { "difficulty": "EXPERT", "level": 11.3, "file": "expert.txt" }]
 }

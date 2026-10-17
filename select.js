@@ -3,6 +3,8 @@ let folders = [];
 let selectedFolderIndex = 0;
 let selectedSongIndex = 0;
 let selectedDifficulty = 0;
+let selectedScrapped = false;
+let selectedScrappedSongId = "";
 let songSortMode = 0;
 const songSortLabels = ["デフォルト", "難易度順", "五十音順"];
 const bossSongIds = new Set(["boss", "boss2", "boss3", "boss4", "boss5"]);
@@ -579,9 +581,24 @@ async function loadSongList() {
 
   const allSongIds = folders.flatMap(f => f.songs);
   for (let songId of allSongIds) {
-    const infoResponse = await fetch(`songs/${songId}/info.json`, { cache: "no-store" });
+    const [infoResponse, scrappedResponse] = await Promise.all([
+      fetch(`songs/${songId}/info.json`, { cache: "no-store" }),
+      fetch(`songs/${songId}/charts/scrapped.txt`, { method: "HEAD", cache: "no-store" })
+    ]);
     const info = await infoResponse.json();
-    songList.push({ id: songId, info: info });
+    const configuredScrappedLevel = Number(info.scrappedChart?.level);
+    songList.push({
+      id: songId,
+      info: info,
+      hasScrappedChart: scrappedResponse.ok,
+      scrappedChart: {
+        difficulty: "SCRAPPED",
+        level: Number.isFinite(configuredScrappedLevel) && configuredScrappedLevel > 0
+          ? configuredScrappedLevel
+          : null,
+        file: "scrapped.txt"
+      }
+    });
   }
   // 称号の判定前に、現行の楽曲一覧を基準に保存レートを確定させる。
   calculatePlayerRate(songList);
@@ -599,12 +616,15 @@ async function loadSongList() {
     ? "song35"
     : selectParams.get("song");
   const initialDifficulty = selectParams.get("difficulty");
+  const initialScrapped = selectParams.get("scrapped") === "1";
 
   if (initialSong) {
     // URLパラメータがある場合（ゲームから戻ってきた場合など）
     const folderIndex = folders.findIndex(f => f.songs.includes(initialSong));
     if (folderIndex >= 0) selectedFolderIndex = folderIndex;
     selectedDifficulty = Number(initialDifficulty) || 0;
+    selectedScrapped = initialScrapped;
+    selectedScrappedSongId = initialScrapped ? initialSong : "";
   } else {
     // URLパラメータがない場合は保存された選択を復元
     const saveData = getSaveData();
@@ -612,6 +632,8 @@ async function loadSongList() {
     if (last) {
       selectedFolderIndex = last.folderIndex || 0;
       selectedDifficulty = last.difficulty || 0;
+      selectedScrapped = last.scrapped === true;
+      selectedScrappedSongId = selectedScrapped ? String(last.songId || "") : "";
     }
   }
 
@@ -927,6 +949,10 @@ function selectSong(index) {
     ? getRandomMapCandidates()[0]
     : visibleSongs[index];
   if (!song) return;
+  if (selectedScrappedSongId !== song.id || !song.hasScrappedChart) {
+    selectedScrapped = false;
+    selectedScrappedSongId = "";
+  }
   const bypassSongUnlock = bypassUnlocksForConfiguredRandomSongs();
   const prerequisiteLocked = !bypassSongUnlock && isSongPrerequisiteLocked(song.id);
   const isLocked = !bypassSongUnlock && isSongLocked(song.id);
@@ -942,7 +968,9 @@ function selectSong(index) {
   if (selectedDifficulty >= song.info.charts.length) {
     selectedDifficulty = song.info.charts.length - 1;
   }
-  const currentChart = song.info.charts[selectedDifficulty] || song.info.charts[0];
+  const currentChart = selectedScrapped
+    ? song.scrappedChart
+    : (song.info.charts[selectedDifficulty] || song.info.charts[0]);
   const challengeDifficultyLocked =
     isBoss3SequenceDifficultyLocked(song.id, selectedDifficulty)
     || isBoss4DifficultyLocked(song.id, selectedDifficulty);
@@ -1088,7 +1116,11 @@ function renderDifficultyButtons(song) {
     if (!isMapDifficultyAllowed(song.id, chart.difficulty)) return;
     const btn = document.createElement("button");
     btn.classList.add("diffBtn");
-    btn.classList.add("diff-" + chart.difficulty.toLowerCase());
+    const isScrappedButton = selectedScrapped
+      && selectedScrappedSongId === song.id
+      && i === selectedDifficulty;
+    const displayedDifficulty = isScrappedButton ? "SCRAPPED" : chart.difficulty;
+    btn.classList.add("diff-" + displayedDifficulty.toLowerCase());
     const challengeDifficultyLocked = isBoss3SequenceDifficultyLocked(song.id, i)
       || isBoss4DifficultyLocked(song.id, i);
     btn.classList.toggle("challengeLocked", challengeDifficultyLocked);
@@ -1100,13 +1132,18 @@ function renderDifficultyButtons(song) {
     btn.innerHTML = `
       <div class="diffFrame">
         <div class="diffBar"></div>
-        <div class="diffName">${chart.difficulty}</div>
+        <div class="diffName">${displayedDifficulty}</div>
       </div>
-      <div class="diffLevel">${isRandomMapSelection() || challengeDifficultyLocked ? "?" : getDisplayedChartLevel(chart.level)}</div>
+      <div class="diffLevel">${isScrappedButton
+        ? (Number.isFinite(song.scrappedChart?.level) ? getDisplayedChartLevel(song.scrappedChart.level) : "?")
+        : isRandomMapSelection() || challengeDifficultyLocked ? "?" : getDisplayedChartLevel(chart.level)}</div>
     `;
 
     btn.addEventListener("click", () => {
+      if (isScrappedButton) return;
       const selectedSongId = getVisibleSongs()[selectedSongIndex]?.id;
+      selectedScrapped = false;
+      selectedScrappedSongId = "";
       selectedDifficulty = i;
 
       document.querySelectorAll(".diffBtn").forEach((b, j) => {
@@ -1125,6 +1162,53 @@ function renderDifficultyButtons(song) {
       saveLastSelection(); 
     });
 
+    if (song.hasScrappedChart && ["basic", "expert"].includes(chart.difficulty.toLowerCase())) {
+      let holdTimer = null;
+      let holdActivated = false;
+      const cancelHold = () => {
+        if (holdTimer !== null) clearTimeout(holdTimer);
+        holdTimer = null;
+      };
+      const startHold = event => {
+        if (isScrappedButton || holdTimer !== null) return;
+        if (event.type === "pointerdown" && event.button !== 0) return;
+        holdActivated = false;
+        holdTimer = setTimeout(() => {
+          holdTimer = null;
+          holdActivated = true;
+          btn.classList.add("scrappedRevealOut");
+          btn.disabled = true;
+          setTimeout(() => {
+            selectedDifficulty = i;
+            selectedScrapped = true;
+            selectedScrappedSongId = song.id;
+            renderDifficultyButtons(song);
+            const scrappedButton = document.querySelector(".diffBtn.diff-scrapped.selected");
+            scrappedButton?.classList.add("scrappedRevealIn");
+            updateDifficultyColorPlate(song.scrappedChart);
+            updateBestScore(song.id);
+            renderSongList();
+            saveLastSelection();
+          }, 280);
+        }, 5000);
+      };
+      btn.addEventListener("pointerdown", startHold);
+      btn.addEventListener("pointerup", cancelHold);
+      btn.addEventListener("pointercancel", cancelHold);
+      btn.addEventListener("pointerleave", cancelHold);
+      btn.addEventListener("keydown", event => {
+        if ((event.code === "Space" || event.code === "Enter") && !event.repeat) startHold(event);
+      });
+      btn.addEventListener("keyup", cancelHold);
+      btn.addEventListener("contextmenu", event => event.preventDefault());
+      btn.addEventListener("click", event => {
+        if (!holdActivated) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        holdActivated = false;
+      }, true);
+    }
+
     area.appendChild(btn);
   });
 }
@@ -1135,6 +1219,7 @@ function getDifficultyColor(chart) {
   if (difficulty === "basic") return "cyan";
   if (difficulty === "expert") return "#ff4444";
   if (difficulty === "fracture") return "#ffb7ff";
+  if (difficulty === "scrapped") return "#777777";
 
   return "white";
 }
@@ -1150,7 +1235,10 @@ function updateDifficultyColorPlate(chart) {
 
 function updateBestScore(songId) {
   const saveData = JSON.parse(localStorage.getItem("rhythmGame") || "{}");
-  const songData = saveData[songId]?.[selectedDifficulty] || {};
+  const scoreKey = selectedScrapped && selectedScrappedSongId === songId
+    ? "scrapped"
+    : selectedDifficulty;
+  const songData = saveData[songId]?.[scoreKey] || {};
 
   const rankEl = document.getElementById("detailRank");
   const bestEl = document.getElementById("detailBest");
@@ -1258,7 +1346,10 @@ document.getElementById("startButton").addEventListener("click", async () => {
         return;
       }
     }
-    location.href = `game.html?song=${song.id}&difficulty=${selectedDifficulty}&userOffset=${userOffset}${mapQuery}`;
+    const scrappedQuery = selectedScrapped && selectedScrappedSongId === song.id
+      ? "&scrapped=1"
+      : "";
+    location.href = `game.html?song=${song.id}&difficulty=${selectedDifficulty}&userOffset=${userOffset}${scrappedQuery}${mapQuery}`;
   }, 700);
 });
 
@@ -3103,7 +3194,8 @@ function saveLastSelection() {
     folderIndex: selectedFolderIndex,
     songIndex: selectedSongIndex,
     songId: selectedSong?.id,
-    difficulty: selectedDifficulty
+    difficulty: selectedDifficulty,
+    scrapped: selectedScrapped && selectedScrappedSongId === selectedSong?.id
   };
   setSaveData(saveData);
 }

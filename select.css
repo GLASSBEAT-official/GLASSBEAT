@@ -775,6 +775,32 @@ display: flex;
 /* 難易度カラー */
 .diffBtn.diff-basic  { color: cyan; }
 .diffBtn.diff-expert { color: #ff4444; }
+.diffBtn.diff-scrapped { color: #777777; }
+.diffBtn.diff-scrapped .diffFrame {
+  background: rgba(22, 22, 22, 0.92);
+  border-color: #777777;
+}
+.diffBtn.diff-scrapped .diffBar { background: #777777; }
+.diffBtn.diff-scrapped.selected,
+.diffBtn.diff-scrapped.selected * {
+  color: #aaaaaa !important;
+  -webkit-text-fill-color: #aaaaaa !important;
+}
+.diffBtn.scrappedRevealOut {
+  pointer-events: none;
+  animation: scrappedDifficultyFadeOut 280ms ease-in forwards;
+}
+.diffBtn.scrappedRevealIn {
+  animation: scrappedDifficultyFadeIn 340ms ease-out both;
+}
+@keyframes scrappedDifficultyFadeOut {
+  from { opacity: 1; filter: grayscale(0); transform: scale(1); }
+  to { opacity: 0; filter: grayscale(1) blur(2px); transform: scale(0.97); }
+}
+@keyframes scrappedDifficultyFadeIn {
+  from { opacity: 0; filter: blur(2px); transform: scale(0.97); }
+  to { opacity: 1; filter: blur(0); transform: scale(1); }
+}
 .diffBtn.diff-fracture { color: #ffb7c5; }
 .diffBtn.diff-fracture::after { background: linear-gradient(90deg, #ffabc9 0%, #ffc1d7 64%, #bfeaff 100%); }
 .diffBtn.diff-fracture .diffFrame { border-color: #e8c9df; }
